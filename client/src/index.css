@@ -1,0 +1,118 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 7%;
+    --foreground: 0 0% 90%;
+    
+    --card: 0 0% 15%;
+    --card-foreground: 0 0% 98%;
+    
+    --popover: 0 0% 9%;
+    --popover-foreground: 0 0% 98%;
+    
+    --primary: 220 84% 45%;
+    --primary-foreground: 210 40% 98%;
+    
+    --secondary: 217 91% 53%;
+    --secondary-foreground: 210 40% 98%;
+    
+    --muted: 0 0% 12%;
+    --muted-foreground: 215 16% 57%;
+    
+    --accent: 217 91% 60%;
+    --accent-foreground: 210 40% 98%;
+    
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 217 91% 53%;
+    
+    --sidebar-background: 0 0% 12%;
+    --sidebar-foreground: 0 0% 90%;
+    --sidebar-primary: 220 84% 45%;
+    --sidebar-primary-foreground: 210 40% 98%;
+    --sidebar-accent: 217 91% 60%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 0 0% 20%;
+    --sidebar-ring: 217 91% 53%;
+    
+    --chart-1: 217 91% 53%;
+    --chart-2: 220 84% 45%;
+    --chart-3: 262 83% 58%;
+    --chart-4: 48 96% 53%;
+    --chart-5: 0 84% 60%;
+    
+    --radius: 0.5rem;
+  }
+  
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  /* Focus styles for TV/remote navigation */
+  .focus-visible:focus, 
+  a:focus-visible, 
+  button:focus-visible {
+    @apply outline-accent outline-2 outline-offset-2 ring-2 ring-accent/50;
+  }
+  
+  /* Customized scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-muted;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-border rounded;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-accent;
+  }
+  
+  /* Channel grid transitions */
+  .channel-transition {
+    @apply transition-all duration-300 ease-in-out;
+  }
+  
+  /* Channel card hover effect */
+  .channel-card {
+    @apply transition-transform duration-200 ease-in-out;
+  }
+  
+  .channel-card:hover {
+    @apply transform scale-105;
+  }
+  
+  /* EPG timeline styling */
+  .epg-timeline {
+    display: grid;
+    grid-template-columns: repeat(24, minmax(120px, 1fr));
+    @apply overflow-x-auto;
+  }
+  
+  /* Video controls fade-in/out */
+  .controls-fade {
+    @apply opacity-0 transition-opacity duration-300 ease-in-out;
+  }
+  
+  .video-container:hover .controls-fade,
+  .video-container:focus-within .controls-fade,
+  .video-container.controls-visible .controls-fade {
+    @apply opacity-100;
+  }
+}
