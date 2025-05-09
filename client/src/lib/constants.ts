@@ -1,4 +1,4 @@
-export const APP_NAME = "IPTV Player";
+export const APP_NAME = "Cable Uno Play";
 
 // Menu items for sidebar/navigation
 export const MAIN_MENU_ITEMS = [

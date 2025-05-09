@@ -17,6 +17,8 @@ import { cn } from "@/lib/utils";
 const urlFormSchema = z.object({
   name: z.string().min(1, { message: "El nombre es obligatorio" }),
   url: z.string().url({ message: "URL no válida" }).min(1, { message: "La URL es obligatoria" }),
+  username: z.string().optional(),
+  password: z.string().optional(),
 });
 
 // Formulario para validar el archivo de lista de reproducción
@@ -42,6 +44,8 @@ export default function Setup() {
     defaultValues: {
       name: "",
       url: "",
+      username: "",
+      password: "",
     },
   });
 
@@ -62,6 +66,8 @@ export default function Setup() {
       const playlist: PlaylistInsert = {
         name: data.name,
         url: data.url,
+        username: data.username || undefined,
+        password: data.password || undefined,
         isActive: true, // Lo establecemos como activo por defecto
       };
 
@@ -108,6 +114,8 @@ export default function Setup() {
       const playlist: PlaylistInsert = {
         name: data.name,
         url: "", // No hay URL cuando se sube un archivo
+        username: undefined,
+        password: undefined,
         isActive: true, // Lo establecemos como activo por defecto
       };
       
@@ -137,13 +145,13 @@ export default function Setup() {
     <div className="flex min-h-screen flex-col items-center justify-center p-4 bg-gradient-to-b from-gray-900 to-red-900">
       <div className="mb-8">
         <div className="bg-gradient-to-br from-red-600 to-red-800 p-6 rounded-lg shadow-lg text-white font-bold text-4xl inline-block">
-          TELE UNO TV
+          CABLE UNO PLAY
         </div>
       </div>
       
       <Card className="w-full max-w-md mx-auto bg-black bg-opacity-70 border-red-600">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-white">Bienvenido a Tele Uno TV</CardTitle>
+          <CardTitle className="text-2xl font-bold text-white">Bienvenido a Cable Uno Play</CardTitle>
           <CardDescription className="text-gray-300">
             Configura tu servicio IPTV para comenzar
           </CardDescription>
@@ -193,6 +201,49 @@ export default function Setup() {
                         </FormControl>
                         <FormDescription className="text-gray-400">
                           Ingresa la URL de tu lista M3U
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={urlForm.control}
+                    name="username"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-white">Usuario</FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="Usuario" 
+                            {...field} 
+                            className="bg-gray-800 text-white border-gray-700"
+                          />
+                        </FormControl>
+                        <FormDescription className="text-gray-400">
+                          Opcional: Si tu proveedor IPTV requiere usuario
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={urlForm.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-white">Contraseña</FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="password"
+                            placeholder="Contraseña" 
+                            {...field} 
+                            className="bg-gray-800 text-white border-gray-700"
+                          />
+                        </FormControl>
+                        <FormDescription className="text-gray-400">
+                          Opcional: Si tu proveedor IPTV requiere contraseña
                         </FormDescription>
                         <FormMessage />
                       </FormItem>

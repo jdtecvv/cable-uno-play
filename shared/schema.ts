@@ -8,6 +8,8 @@ export const playlists = pgTable("playlists", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   url: text("url").notNull(),
+  username: text("username"),
+  password: text("password"),
   isActive: boolean("is_active").default(false),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
