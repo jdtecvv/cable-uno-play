@@ -136,11 +136,9 @@ export default function Setup() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-4 bg-gradient-to-b from-gray-900 to-red-900">
       <div className="mb-8">
-        <img 
-          src="/attached_assets/logo%20canal%20nuevo.png.webp" 
-          alt="Tele Uno TV" 
-          className="w-48 h-auto"
-        />
+        <div className="bg-gradient-to-br from-red-600 to-red-800 p-6 rounded-lg shadow-lg text-white font-bold text-4xl inline-block">
+          TELE UNO TV
+        </div>
       </div>
       
       <Card className="w-full max-w-md mx-auto bg-black bg-opacity-70 border-red-600">

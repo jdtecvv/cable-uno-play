@@ -2,6 +2,7 @@ import { ReactNode, useState } from "react";
 import Header from "./header";
 import Sidebar from "./sidebar";
 import { useMobile } from "@/hooks/use-mobile";
+import { useLocation } from "wouter";
 
 interface LayoutProps {
   children: ReactNode;
@@ -10,6 +11,10 @@ interface LayoutProps {
 export default function Layout({ children }: LayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const isMobile = useMobile();
+  const [location] = useLocation();
+  
+  // Verificar si estamos en la página de configuración
+  const isSetupPage = location === "/setup";
   
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -19,6 +24,16 @@ export default function Layout({ children }: LayoutProps) {
     setIsSidebarOpen(false);
   };
   
+  // Si estamos en la página de configuración, mostrar solo el contenido sin el layout
+  if (isSetupPage) {
+    return (
+      <div className="h-screen overflow-hidden">
+        {children}
+      </div>
+    );
+  }
+  
+  // Si no, mostrar el layout completo con header y sidebar
   return (
     <div className="flex flex-col h-screen overflow-hidden">
       <Header toggleSidebar={toggleSidebar} />

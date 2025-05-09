@@ -4,8 +4,9 @@
 
 @layer base {
   :root {
+    /* Colores basados en el logo de Tele Uno TV: rojo, blanco y negro */
     --background: 0 0% 7%;
-    --foreground: 0 0% 90%;
+    --foreground: 0 0% 95%;
     
     --card: 0 0% 15%;
     --card-foreground: 0 0% 98%;
@@ -13,39 +14,44 @@
     --popover: 0 0% 9%;
     --popover-foreground: 0 0% 98%;
     
-    --primary: 220 84% 45%;
-    --primary-foreground: 210 40% 98%;
+    /* Rojo principal del logo */
+    --primary: 0 80% 50%;
+    --primary-foreground: 0 0% 100%;
     
-    --secondary: 217 91% 53%;
-    --secondary-foreground: 210 40% 98%;
+    /* Un tono más oscuro de rojo para el secundario */
+    --secondary: 0 75% 40%;
+    --secondary-foreground: 0 0% 100%;
     
     --muted: 0 0% 12%;
-    --muted-foreground: 215 16% 57%;
+    --muted-foreground: 0 0% 60%;
     
-    --accent: 217 91% 60%;
-    --accent-foreground: 210 40% 98%;
+    /* El acento es un rojo más brillante */
+    --accent: 0 85% 55%;
+    --accent-foreground: 0 0% 100%;
     
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
     
     --border: 0 0% 20%;
     --input: 0 0% 20%;
-    --ring: 217 91% 53%;
+    --ring: 0 80% 50%;
     
-    --sidebar-background: 0 0% 12%;
-    --sidebar-foreground: 0 0% 90%;
-    --sidebar-primary: 220 84% 45%;
-    --sidebar-primary-foreground: 210 40% 98%;
-    --sidebar-accent: 217 91% 60%;
-    --sidebar-accent-foreground: 210 40% 98%;
+    /* Configuración de la barra lateral */
+    --sidebar-background: 0 0% 10%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-primary: 0 80% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 85% 55%;
+    --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 0 0% 20%;
-    --sidebar-ring: 217 91% 53%;
+    --sidebar-ring: 0 80% 50%;
     
-    --chart-1: 217 91% 53%;
-    --chart-2: 220 84% 45%;
-    --chart-3: 262 83% 58%;
-    --chart-4: 48 96% 53%;
-    --chart-5: 0 84% 60%;
+    /* Colores de gráficos */
+    --chart-1: 0 80% 50%;
+    --chart-2: 0 70% 40%;
+    --chart-3: 0 60% 60%;
+    --chart-4: 0 50% 45%;
+    --chart-5: 0 90% 65%;
     
     --radius: 0.5rem;
   }
