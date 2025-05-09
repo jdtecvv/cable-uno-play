@@ -144,9 +144,11 @@ export default function Setup() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-4 bg-gradient-to-b from-gray-900 to-red-900">
       <div className="mb-8">
-        <div className="bg-gradient-to-br from-red-600 to-red-800 p-6 rounded-lg shadow-lg text-white font-bold text-4xl inline-block">
-          CABLE UNO PLAY
-        </div>
+        <img
+          src="/images/cable-uno-logo.png"
+          alt="Cable Uno Play"
+          className="w-64 h-auto shadow-xl"
+        />
       </div>
       
       <Card className="w-full max-w-md mx-auto bg-black bg-opacity-70 border-red-600">
