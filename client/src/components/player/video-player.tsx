@@ -101,14 +101,32 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
       setError(null);
   
       const setupHls = () => {
+        // Convert HTTP URLs to use proxy to avoid Mixed Content issues
+        const getProxiedUrl = (url: string): string => {
+          if (url.startsWith('http://')) {
+            // Use proxy for HTTP streams when page is HTTPS
+            return `/api/proxy/stream?url=${encodeURIComponent(url)}`;
+          }
+          return url;
+        };
+
         if (Hls.isSupported()) {
           const hlsInstance = new Hls({
             maxBufferLength: 30,
             maxMaxBufferLength: 60,
             lowLatencyMode: true,
+            // Intercept ALL XHR requests made by HLS.js to proxy HTTP URLs
+            xhrSetup: function(xhr: XMLHttpRequest, url: string) {
+              // If HLS is trying to load an HTTP URL, redirect through proxy
+              if (url.startsWith('http://')) {
+                const proxiedUrl = `/api/proxy/stream?url=${encodeURIComponent(url)}`;
+                xhr.open('GET', proxiedUrl, true);
+              }
+            },
           });
           
-          hlsInstance.loadSource(channel.url);
+          const streamUrl = getProxiedUrl(channel.url);
+          hlsInstance.loadSource(streamUrl);
           hlsInstance.attachMedia(videoRef.current!);
           
           hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
@@ -155,7 +173,8 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
           setHls(hlsInstance);
         } else if (videoRef.current?.canPlayType("application/vnd.apple.mpegurl")) {
           // For browsers that support HLS natively (Safari)
-          videoRef.current.src = channel.url;
+          const streamUrl = getProxiedUrl(channel.url);
+          videoRef.current.src = streamUrl;
           videoRef.current.addEventListener("loadedmetadata", () => {
             if (autoplay) {
               videoRef.current?.play()

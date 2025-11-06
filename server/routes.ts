@@ -58,6 +58,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Proxy endpoint for video streams to avoid Mixed Content issues
+  app.get(`${apiPrefix}/proxy/stream`, async (req, res) => {
+    try {
+      const url = req.query.url as string;
+      
+      if (!url) {
+        return res.status(400).json({ message: "URL parameter is required" });
+      }
+
+      // Validate URL format
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        return res.status(400).json({ message: "Invalid URL format" });
+      }
+
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        return res.status(response.status).send(`Failed to fetch stream: ${response.statusText}`);
+      }
+
+      // Forward all relevant headers
+      const contentType = response.headers.get('content-type');
+      if (contentType) {
+        res.setHeader('Content-Type', contentType);
+      }
+
+      const contentLength = response.headers.get('content-length');
+      if (contentLength) {
+        res.setHeader('Content-Length', contentLength);
+      }
+
+      // Enable CORS
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+      res.setHeader('Access-Control-Allow-Headers', 'Range');
+
+      // Handle range requests for seeking
+      const range = req.headers.range;
+      if (range) {
+        res.setHeader('Accept-Ranges', 'bytes');
+      }
+
+      // Stream the response body
+      const buffer = await response.arrayBuffer();
+      res.send(Buffer.from(buffer));
+    } catch (error) {
+      console.error("Stream proxy error:", error);
+      res.status(500).send(error instanceof Error ? error.message : "Failed to fetch stream");
+    }
+  });
+
   // Playlist routes
   app.get(`${apiPrefix}/playlists`, async (req, res) => {
     try {
