@@ -95,40 +95,58 @@ db/
 
 ## Cambios Recientes
 
-### Noviembre 6, 2025
-1. **Soporte HTTP/HTTPS**:
+### Noviembre 6, 2025 - Modo Simple Sin Base de Datos
+
+**🎉 APLICACIÓN AHORA FUNCIONA SIN NECESIDAD DE BASE DE DATOS**
+
+1. **Modo Reproductor Simple**:
+   - Nueva página `SimplePlayer` que funciona completamente en el navegador
+   - Almacenamiento de canales en localStorage (sin backend)
+   - Permite pegar URL de M3U8 y reproducir inmediatamente
+   - No requiere configuración de base de datos PostgreSQL
+
+2. **Endpoint Proxy CORS**:
+   - Nuevo endpoint `/api/proxy/m3u` que evita problemas de CORS
+   - Permite cargar archivos M3U8 de servidores externos
+   - Funciona con HTTP y HTTPS
+
+3. **Soporte HTTP/HTTPS**:
    - Modificada validación de URLs para aceptar tanto HTTP como HTTPS
    - Actualizado schema de Zod en frontend y backend
    
-2. **Autenticación Opcional**:
+4. **Autenticación Opcional**:
    - Usuario y contraseña ahora completamente opcionales
    - Nombres de playlist auto-generados si no se proporcionan
 
-3. **Parser M3U Mejorado**:
+5. **Parser M3U Mejorado**:
    - Maneja URLs directas sin metadata (#EXTINF)
    - Asigna nombres automáticos ("Canal 1", "Canal 2", etc.)
    - Soporta archivos sin encabezado #EXTM3U
    - Omite líneas de comentarios irrelevantes
 
-4. **Validación de Archivos**:
+6. **Validación de Archivos**:
    - Schema actualizado para soportar archivos subidos con `file://` prefix
    - Permite URLs vacías o con prefijos `http://`, `https://`, `file://`
 
-## Problemas Conocidos
+## Uso de la Aplicación
 
-### Conexión a Base de Datos
-⚠️ **Estado**: Requiere acción manual del usuario
-- El DATABASE_URL contiene credenciales antiguas después de recrear la base de datos
-- **Solución**: Actualizar manualmente el secreto DATABASE_URL en Replit
-  1. Ir a Secrets (🔒) en Replit
-  2. Buscar `DATABASE_URL`
-  3. Actualizar usando: `postgresql://[PGUSER]:[PGPASSWORD]@[PGHOST]/[PGDATABASE]?sslmode=require`
-  4. Reemplazar valores entre corchetes con los secretos correspondientes
+### Modo Simple (Sin Base de Datos) - ACTUAL
+1. Abre la aplicación en tu navegador
+2. Pega la URL de tu archivo M3U8 en el campo de texto (ej: `http://190.61.110.177:2728/CABLEUNO.m3u8`)
+3. Haz clic en "Cargar"
+4. Navega por los canales y haz clic en uno para reproducir
+5. Los canales se guardan en localStorage para la próxima sesión
+
+### Modo Completo (Con Base de Datos) - REQUIERE CONFIGURACIÓN
+⚠️ Para usar el modo completo con favoritos, historial, y gestión avanzada:
+1. Actualizar DATABASE_URL en Secrets con las credenciales correctas
+2. Ejecutar `npm run db:push` para crear las tablas
+3. Cambiar App.tsx para usar las rutas completas (Home, LiveTV, etc.)
 
 ## Próximos Pasos
-1. Resolver problema de DATABASE_URL
-2. Probar importación con link: `http://190.61.110.177:2728/CABLEUNO.m3u8`
-3. Verificar reproducción de canales
+1. ✅ ~~Probar importación con link: `http://190.61.110.177:2728/CABLEUNO.m3u8`~~ - Listo
+2. Mejorar UI del reproductor simple
+3. Agregar soporte para listas de favoritos en localStorage
 4. Implementar categorías automáticas desde metadata M3U
 
 ## Configuración de Desarrollo
