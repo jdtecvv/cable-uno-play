@@ -72,13 +72,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid URL format" });
       }
 
-      const response = await fetch(url);
+      // Forward important headers from client to upstream server
+      const upstreamHeaders: Record<string, string> = {};
       
-      if (!response.ok) {
+      // Forward Range header for seeking support (crucial for video playback)
+      const rangeHeader = req.headers.range;
+      if (rangeHeader) {
+        upstreamHeaders['Range'] = rangeHeader;
+      }
+      
+      // Forward cache validation headers
+      if (req.headers['if-modified-since']) {
+        upstreamHeaders['If-Modified-Since'] = req.headers['if-modified-since'] as string;
+      }
+      if (req.headers['if-none-match']) {
+        upstreamHeaders['If-None-Match'] = req.headers['if-none-match'] as string;
+      }
+
+      const response = await fetch(url, { headers: upstreamHeaders });
+      
+      // Accept 200, 206 (Partial Content), and 304 (Not Modified)
+      if (!response.ok && response.status !== 206 && response.status !== 304) {
         return res.status(response.status).send(`Failed to fetch stream: ${response.statusText}`);
       }
 
-      // Forward all relevant headers
+      // Enable CORS
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Range');
+      res.setHeader('Access-Control-Expose-Headers', 'Content-Length, Content-Range, Content-Type, Accept-Ranges');
+
+      // Forward upstream status code (200, 206, 304, etc.)
+      res.status(response.status);
+
+      // Forward all relevant response headers from upstream
       const contentType = response.headers.get('content-type');
       if (contentType) {
         res.setHeader('Content-Type', contentType);
@@ -89,23 +116,60 @@ export async function registerRoutes(app: Express): Promise<Server> {
         res.setHeader('Content-Length', contentLength);
       }
 
-      // Enable CORS
-      res.setHeader('Access-Control-Allow-Origin', '*');
-      res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-      res.setHeader('Access-Control-Allow-Headers', 'Range');
-
-      // Handle range requests for seeking
-      const range = req.headers.range;
-      if (range) {
-        res.setHeader('Accept-Ranges', 'bytes');
+      const contentRange = response.headers.get('content-range');
+      if (contentRange) {
+        res.setHeader('Content-Range', contentRange);
       }
 
-      // Stream the response body
-      const buffer = await response.arrayBuffer();
-      res.send(Buffer.from(buffer));
+      const acceptRanges = response.headers.get('accept-ranges');
+      if (acceptRanges) {
+        res.setHeader('Accept-Ranges', acceptRanges);
+      }
+
+      const lastModified = response.headers.get('last-modified');
+      if (lastModified) {
+        res.setHeader('Last-Modified', lastModified);
+      }
+
+      const etag = response.headers.get('etag');
+      if (etag) {
+        res.setHeader('ETag', etag);
+      }
+
+      // Stream the response body directly without buffering in memory
+      if (response.body) {
+        const reader = response.body.getReader();
+        
+        const pump = async () => {
+          try {
+            while (true) {
+              const { done, value } = await reader.read();
+              
+              if (done) {
+                res.end();
+                break;
+              }
+              
+              if (value) {
+                res.write(Buffer.from(value));
+              }
+            }
+          } catch (error) {
+            console.error('Stream pump error:', error);
+            res.end();
+          }
+        };
+        
+        await pump();
+      } else {
+        res.end();
+      }
     } catch (error) {
       console.error("Stream proxy error:", error);
-      res.status(500).send(error instanceof Error ? error.message : "Failed to fetch stream");
+      
+      if (!res.headersSent) {
+        res.status(500).send(error instanceof Error ? error.message : "Failed to fetch stream");
+      }
     }
   });
 

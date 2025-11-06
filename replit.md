@@ -95,36 +95,49 @@ db/
 
 ## Cambios Recientes
 
-### Noviembre 6, 2025 - Modo Simple Sin Base de Datos
+### Noviembre 6, 2025 - Sistema de Proxy para Streams HTTP
 
-**🎉 APLICACIÓN AHORA FUNCIONA SIN NECESIDAD DE BASE DE DATOS**
+**🎉 SOLUCIÓN COMPLETA PARA MIXED CONTENT Y CORS**
 
-1. **Modo Reproductor Simple**:
+1. **Proxy de Streaming HTTP → HTTPS**:
+   - Nuevo endpoint `/api/proxy/stream?url=<encoded_url>` en `server/routes.ts`
+   - Intercepta TODOS los requests HTTP de HLS.js usando hook `xhrSetup`
+   - Convierte automáticamente streams HTTP a HTTPS para evitar Mixed Content
+   - Soporta range requests para seeking en video
+   - Maneja correctamente headers (Content-Type, Content-Length, CORS)
+
+2. **HLS.js con xhrSetup Hook**:
+   - Configuración de `xhrSetup` en VideoPlayer para interceptar todas las requests
+   - Detecta URLs HTTP (manifests, variantes, segmentos) y las redirige al proxy
+   - URLs HTTPS se mantienen sin cambios
+   - Elimina completamente errores de Mixed Content del navegador
+
+3. **Modo Reproductor Simple**:
    - Nueva página `SimplePlayer` que funciona completamente en el navegador
    - Almacenamiento de canales en localStorage (sin backend)
    - Permite pegar URL de M3U8 y reproducir inmediatamente
    - No requiere configuración de base de datos PostgreSQL
 
-2. **Endpoint Proxy CORS**:
-   - Nuevo endpoint `/api/proxy/m3u` que evita problemas de CORS
+4. **Endpoint Proxy CORS**:
+   - Endpoint `/api/proxy/m3u` que evita problemas de CORS
    - Permite cargar archivos M3U8 de servidores externos
    - Funciona con HTTP y HTTPS
 
-3. **Soporte HTTP/HTTPS**:
+5. **Soporte HTTP/HTTPS**:
    - Modificada validación de URLs para aceptar tanto HTTP como HTTPS
    - Actualizado schema de Zod en frontend y backend
    
-4. **Autenticación Opcional**:
+6. **Autenticación Opcional**:
    - Usuario y contraseña ahora completamente opcionales
    - Nombres de playlist auto-generados si no se proporcionan
 
-5. **Parser M3U Mejorado**:
+7. **Parser M3U Mejorado**:
    - Maneja URLs directas sin metadata (#EXTINF)
    - Asigna nombres automáticos ("Canal 1", "Canal 2", etc.)
    - Soporta archivos sin encabezado #EXTM3U
    - Omite líneas de comentarios irrelevantes
 
-6. **Validación de Archivos**:
+8. **Validación de Archivos**:
    - Schema actualizado para soportar archivos subidos con `file://` prefix
    - Permite URLs vacías o con prefijos `http://`, `https://`, `file://`
 
@@ -143,11 +156,32 @@ db/
 2. Ejecutar `npm run db:push` para crear las tablas
 3. Cambiar App.tsx para usar las rutas completas (Home, LiveTV, etc.)
 
+## Limitaciones Conocidas
+
+### Compatibilidad de Codecs del Navegador
+⚠️ **IMPORTANTE**: Los navegadores tienen soporte limitado de codecs comparado con VLC
+
+**VLC vs Navegadores**:
+- ✅ **VLC**: Tiene decoders para TODOS los codecs (H.264, H.265/HEVC, MPEG-2, etc.)
+- ⚠️ **Navegadores**: Solo soportan H.264, VP8, VP9, AV1 (depende del navegador)
+
+**Problema Común**:
+- Algunos streams IPTV usan codecs que VLC reproduce perfectamente pero los navegadores no pueden decodificar
+- Error típico: `bufferAddCodecError: Failed to execute 'addSourceBuffer' on 'MediaSource': The type provided (...) is not supported`
+- Esto NO es un bug de la aplicación, es una limitación del navegador web
+
+**Soluciones**:
+1. Usar streams con codecs compatibles (H.264 principalmente)
+2. El servidor IPTV debe proporcionar múltiples variantes con diferentes codecs
+3. Para uso avanzado, considerar transcodificación server-side (fuera del alcance de esta app)
+
 ## Próximos Pasos
 1. ✅ ~~Probar importación con link: `http://190.61.110.177:2728/CABLEUNO.m3u8`~~ - Listo
-2. Mejorar UI del reproductor simple
-3. Agregar soporte para listas de favoritos en localStorage
-4. Implementar categorías automáticas desde metadata M3U
+2. ✅ ~~Resolver errores de Mixed Content con proxy HTTP→HTTPS~~ - Listo
+3. Mejorar UI del reproductor simple
+4. Agregar soporte para listas de favoritos en localStorage
+5. Implementar categorías automáticas desde metadata M3U
+6. Agregar mensaje de error amigable cuando el codec no es compatible
 
 ## Configuración de Desarrollo
 
