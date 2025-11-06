@@ -90,10 +90,10 @@ export const categoriesRelations = relations(categories, ({ many }) => ({
 
 export const playlistInsertSchema = createInsertSchema(playlists, {
   name: (schema) => schema.min(1, "Playlist name is required"),
-  url: (schema) => schema.min(1, "Valid URL is required").refine((url) => {
-    // Aceptar HTTP y HTTPS
-    return url.startsWith('http://') || url.startsWith('https://');
-  }, "URL must start with http:// or https://"),
+  url: (schema) => schema.refine((url) => {
+    // Allow empty URL for file uploads or URLs that start with http/https
+    return !url || url === '' || url.startsWith('http://') || url.startsWith('https://') || url.startsWith('file://');
+  }, "URL must be empty (for file uploads) or start with http://, https://, or file://"),
 });
 export type PlaylistInsert = z.infer<typeof playlistInsertSchema>;
 export type Playlist = typeof playlists.$inferSelect;

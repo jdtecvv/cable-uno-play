@@ -430,7 +430,6 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
                 </Button>
                 <div className="ml-4">
                   <h2 className="text-white font-bold text-xl">{channel?.name}</h2>
-                  <p className="text-gray-300 text-sm">{channel?.category}</p>
                 </div>
               </div>
               <div className="flex items-center space-x-2">

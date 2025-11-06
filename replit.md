@@ -1,0 +1,159 @@
+# Cable Uno Play - IPTV Streaming Application
+
+## Descripción del Proyecto
+Cable Uno Play es una aplicación de streaming IPTV multiplataforma desarrollada para reproducir contenido de televisión en vivo y bajo demanda. La aplicación está diseñada para funcionar en múltiples dispositivos (TV, tablets, móviles, web) con una interfaz en español y los colores corporativos de Cable Uno (rojo, blanco, negro).
+
+## Características Principales
+
+### Soporte de Protocolos
+- ✅ **HTTP y HTTPS**: Soporta ambos protocolos sin restricciones
+- ✅ **Streaming HLS**: Reproducción de contenido M3U8 usando HLS.js
+- ✅ **Formatos de audio y video**: Todos los formatos conocidos hasta la fecha
+
+### Autenticación Opcional
+- ✅ **Usuario y contraseña opcionales**: No obligatorios para links gratuitos
+- ✅ **Acceso sin publicidad**: Reproductor limpio sin anuncios ni elementos extra
+
+### Gestión de Metadata
+- ✅ **Información opcional**: Omite canales sin metadata
+- ✅ **Identificación básica**: Muestra solo nombre y flujo de video/audio cuando no hay información completa
+- ✅ **Nombres auto-generados**: Asigna "Canal N" cuando no hay nombre disponible
+- ✅ **URLs directas**: Soporta archivos M3U con solo URLs (sin #EXTINF)
+
+### Parser M3U Mejorado
+El parser ha sido optimizado para manejar:
+- Archivos M3U con o sin encabezado `#EXTM3U`
+- URLs directas HTTP/HTTPS sin información de canal (#EXTINF)
+- Canales con metadata incompleta o vacía
+- Asignación automática de nombres cuando no hay información
+
+## Arquitectura Técnica
+
+### Frontend (React + TypeScript)
+- **Framework**: React con Vite
+- **Routing**: Wouter
+- **Estilos**: Tailwind CSS + shadcn/ui
+- **Reproductor**: HLS.js para streaming de video
+- **Validación**: Zod para formularios
+
+### Backend (Express + TypeScript)
+- **Framework**: Express.js
+- **ORM**: Drizzle ORM
+- **Base de datos**: PostgreSQL (Neon)
+- **Validación**: Zod schemas compartidos
+
+### Estructura de Archivos Principales
+```
+client/
+  src/
+    pages/
+      setup.tsx                      # Pantalla de configuración inicial
+    lib/
+      utils/
+        m3u-parser.ts               # Parser M3U mejorado
+    components/
+      player/
+        video-player.tsx            # Reproductor de video HLS
+        player-controls.tsx         # Controles del reproductor
+    
+server/
+  routes.ts                         # API routes
+  storage.ts                        # Funciones de base de datos
+
+shared/
+  schema.ts                         # Schemas compartidos (Drizzle + Zod)
+
+db/
+  index.ts                          # Configuración de base de datos
+```
+
+## Schema de Base de Datos
+
+### Playlists
+- `id`: Serial (auto-increment)
+- `name`: Nombre de la playlist
+- `url`: URL del archivo M3U (puede estar vacío para archivos subidos, usar `file://` prefix)
+- `username`: Opcional - Usuario para autenticación
+- `password`: Opcional - Contraseña para autenticación
+- `isActive`: Boolean - Playlist activa
+- `createdAt`, `updatedAt`: Timestamps
+
+### Channels
+- `id`: Serial
+- `playlistId`: Referencia a playlist
+- `name`: Nombre del canal
+- `url`: URL del stream
+- `categoryId`: Opcional - Categoría del canal
+- `logo`: Opcional - URL del logo
+- `epgId`: Opcional - ID para guía de programación
+- `isFavorite`: Boolean
+- `lastWatched`: Timestamp del último acceso
+
+### Categories
+- `id`: Serial
+- `name`: Nombre único de categoría
+
+## Cambios Recientes
+
+### Noviembre 6, 2025
+1. **Soporte HTTP/HTTPS**:
+   - Modificada validación de URLs para aceptar tanto HTTP como HTTPS
+   - Actualizado schema de Zod en frontend y backend
+   
+2. **Autenticación Opcional**:
+   - Usuario y contraseña ahora completamente opcionales
+   - Nombres de playlist auto-generados si no se proporcionan
+
+3. **Parser M3U Mejorado**:
+   - Maneja URLs directas sin metadata (#EXTINF)
+   - Asigna nombres automáticos ("Canal 1", "Canal 2", etc.)
+   - Soporta archivos sin encabezado #EXTM3U
+   - Omite líneas de comentarios irrelevantes
+
+4. **Validación de Archivos**:
+   - Schema actualizado para soportar archivos subidos con `file://` prefix
+   - Permite URLs vacías o con prefijos `http://`, `https://`, `file://`
+
+## Problemas Conocidos
+
+### Conexión a Base de Datos
+⚠️ **Estado**: Requiere acción manual del usuario
+- El DATABASE_URL contiene credenciales antiguas después de recrear la base de datos
+- **Solución**: Actualizar manualmente el secreto DATABASE_URL en Replit
+  1. Ir a Secrets (🔒) en Replit
+  2. Buscar `DATABASE_URL`
+  3. Actualizar usando: `postgresql://[PGUSER]:[PGPASSWORD]@[PGHOST]/[PGDATABASE]?sslmode=require`
+  4. Reemplazar valores entre corchetes con los secretos correspondientes
+
+## Próximos Pasos
+1. Resolver problema de DATABASE_URL
+2. Probar importación con link: `http://190.61.110.177:2728/CABLEUNO.m3u8`
+3. Verificar reproducción de canales
+4. Implementar categorías automáticas desde metadata M3U
+
+## Configuración de Desarrollo
+
+### Variables de Entorno Requeridas
+- `DATABASE_URL`: URL de conexión PostgreSQL
+- `PGUSER`: Usuario de PostgreSQL
+- `PGPASSWORD`: Contraseña de PostgreSQL  
+- `PGHOST`: Host de PostgreSQL
+- `PGDATABASE`: Nombre de la base de datos
+
+### Comandos Útiles
+```bash
+npm run dev          # Iniciar servidor de desarrollo
+npm run db:push      # Sincronizar schema con base de datos
+npm run db:seed      # Poblar base de datos con datos de prueba
+```
+
+## Diseño UI/UX
+- **Colores**: Rojo (#DC2626), Negro (#000000), Blanco (#FFFFFF), Gris (#1F2937)
+- **Logo**: Cable Uno (ubicado en `/images/cable-uno-logo.png`)
+- **Idioma**: Español
+- **Responsive**: Diseñado para TV, tablets, móviles y web
+
+## Notas de Seguridad
+- Las contraseñas de playlist se almacenan como texto plano (solo para desarrollo)
+- HLS.js maneja automáticamente el buffering y recuperación de errores
+- Validación de URLs tanto en frontend como backend

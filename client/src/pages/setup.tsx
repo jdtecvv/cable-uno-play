@@ -121,7 +121,7 @@ export default function Setup() {
       // Crear el objeto de lista de reproducción
       const playlist: PlaylistInsert = {
         name: data.name,
-        url: "", // No hay URL cuando se sube un archivo
+        url: `file://${file.name}`, // Usar file:// como prefijo para archivos locales
         username: undefined,
         password: undefined,
         isActive: true, // Lo establecemos como activo por defecto
