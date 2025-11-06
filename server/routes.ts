@@ -26,6 +26,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   };
 
+  // Proxy endpoint to avoid CORS issues when loading M3U from external URLs
+  app.post(`${apiPrefix}/proxy/m3u`, async (req, res) => {
+    try {
+      const { url } = req.body;
+      
+      if (!url || typeof url !== 'string') {
+        return res.status(400).json({ message: "URL is required" });
+      }
+
+      // Validate URL format
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        return res.status(400).json({ message: "Invalid URL format" });
+      }
+
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        return res.status(response.status).json({ 
+          message: `Failed to fetch M3U: ${response.statusText}` 
+        });
+      }
+
+      const content = await response.text();
+      return res.json({ content });
+    } catch (error) {
+      console.error("Proxy error:", error);
+      return res.status(500).json({ 
+        message: error instanceof Error ? error.message : "Failed to fetch M3U" 
+      });
+    }
+  });
+
   // Playlist routes
   app.get(`${apiPrefix}/playlists`, async (req, res) => {
     try {
