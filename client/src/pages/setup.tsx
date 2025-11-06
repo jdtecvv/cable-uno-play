@@ -15,8 +15,13 @@ import { cn } from "@/lib/utils";
 
 // Formulario para validar la URL de la lista de reproducción
 const urlFormSchema = z.object({
-  name: z.string().min(1, { message: "El nombre es obligatorio" }),
-  url: z.string().url({ message: "URL no válida" }).min(1, { message: "La URL es obligatoria" }),
+  name: z.string().optional(),
+  url: z.string()
+    .min(1, { message: "La URL es obligatoria" })
+    .refine((url) => {
+      // Aceptar HTTP y HTTPS sin restricciones
+      return url.startsWith('http://') || url.startsWith('https://');
+    }, { message: "La URL debe comenzar con http:// o https://" }),
   username: z.string().optional(),
   password: z.string().optional(),
 });
@@ -62,9 +67,12 @@ export default function Setup() {
   const onUrlSubmit = async (data: UrlFormValues) => {
     setIsLoading(true);
     try {
+      // Auto-generar nombre si no se proporciona
+      const playlistName = data.name || `Lista ${new Date().toLocaleDateString('es-ES')}`;
+      
       // Crear el objeto de lista de reproducción
       const playlist: PlaylistInsert = {
-        name: data.name,
+        name: playlistName,
         url: data.url,
         username: data.username || undefined,
         password: data.password || undefined,
@@ -175,7 +183,7 @@ export default function Setup() {
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-white">Nombre de la lista</FormLabel>
+                        <FormLabel className="text-white">Nombre de la lista (opcional)</FormLabel>
                         <FormControl>
                           <Input 
                             placeholder="Mi lista IPTV" 
@@ -183,6 +191,9 @@ export default function Setup() {
                             className="bg-gray-800 text-white border-gray-700"
                           />
                         </FormControl>
+                        <FormDescription className="text-gray-400">
+                          Si no ingresas un nombre, se generará automáticamente
+                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
