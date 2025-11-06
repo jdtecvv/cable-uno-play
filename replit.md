@@ -141,6 +141,13 @@ db/
    - Schema actualizado para soportar archivos subidos con `file://` prefix
    - Permite URLs vacías o con prefijos `http://`, `https://`, `file://`
 
+9. **Autenticación HTTP Básica** (Noviembre 6, 2025):
+   - Campos opcionales de usuario/contraseña en la UI
+   - Parser M3U extrae credenciales de URLs con formato `http://user:pass@host/`
+   - Credenciales se envían vía header `X-Stream-Auth` (NO query params)
+   - Proxy convierte a `Authorization: Basic` para el servidor IPTV
+   - Soporta credenciales embebidas en M3U o ingresadas manualmente
+
 ## Uso de la Aplicación
 
 ### Modo Simple (Sin Base de Datos) - ACTUAL
@@ -175,6 +182,19 @@ db/
 2. El servidor IPTV debe proporcionar múltiples variantes con diferentes codecs
 3. Para uso avanzado, considerar transcodificación server-side (fuera del alcance de esta app)
 
+### Autenticación HTTP Básica en iOS Safari
+⚠️ **LIMITACIÓN**: iOS Safari no soporta credenciales con HLS nativo
+
+**Detalles**:
+- iOS Safari no tiene Media Source Extensions (MSE), por lo que HLS.js no funciona
+- El reproductor nativo de Safari en iOS no permite agregar headers de autenticación
+- **Resultado**: Streams HTTP con autenticación NO funcionan en iOS Safari
+
+**Workarounds**:
+1. Usar streams HTTPS con autenticación (HTTPS sí funciona en navegadores desktop con HLS.js)
+2. Usar la aplicación en navegadores desktop (Chrome, Firefox, Safari desktop)
+3. Para producción iOS, considerar una app nativa que soporte autenticación HTTP
+
 ## Próximos Pasos
 1. ✅ ~~Probar importación con link: `http://190.61.110.177:2728/CABLEUNO.m3u8`~~ - Listo
 2. ✅ ~~Resolver errores de Mixed Content con proxy HTTP→HTTPS~~ - Listo
@@ -206,6 +226,17 @@ npm run db:seed      # Poblar base de datos con datos de prueba
 - **Responsive**: Diseñado para TV, tablets, móviles y web
 
 ## Notas de Seguridad
-- Las contraseñas de playlist se almacenan como texto plano (solo para desarrollo)
+
+### Autenticación y Almacenamiento
+- **LocalStorage**: Las credenciales se guardan en localStorage en texto plano para el modo simple
+  - ⚠️ Esto es aceptable SOLO para uso personal/desarrollo
+  - Para producción, implementar encriptación o almacenamiento seguro
+- **Transmisión de Credenciales**: Se envían vía header HTTPS (`X-Stream-Auth`)
+  - NO se usan query params (evita logs del servidor y browser history)
+  - Se codifican en Base64 antes de transmitir
+- **Proxy**: Convierte credenciales a `Authorization: Basic` para el servidor IPTV
+
+### General
 - HLS.js maneja automáticamente el buffering y recuperación de errores
 - Validación de URLs tanto en frontend como backend
+- HTTPS requerido para evitar exposición de credenciales

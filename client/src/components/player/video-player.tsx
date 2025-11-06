@@ -30,6 +30,8 @@ export interface VideoPlayerProps {
   channel: Channel;
   onClose?: () => void;
   autoplay?: boolean;
+  username?: string;
+  password?: string;
 }
 
 export interface VideoPlayerRef {
@@ -44,7 +46,7 @@ export interface VideoPlayerRef {
 }
 
 const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
-  ({ channel, onClose, autoplay = true }, ref) => {
+  ({ channel, onClose, autoplay = true, username, password }, ref) => {
     const videoRef = useRef<HTMLVideoElement>(null);
     const playerContainerRef = useRef<HTMLDivElement>(null);
     const [hls, setHls] = useState<Hls | null>(null);
@@ -105,6 +107,7 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
         const getProxiedUrl = (url: string): string => {
           if (url.startsWith('http://')) {
             // Use proxy for HTTP streams when page is HTTPS
+            // Credentials are sent via header (X-Stream-Auth) not query params for security
             return `/api/proxy/stream?url=${encodeURIComponent(url)}`;
           }
           return url;
@@ -115,12 +118,30 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
             maxBufferLength: 30,
             maxMaxBufferLength: 60,
             lowLatencyMode: true,
-            // Intercept ALL XHR requests made by HLS.js to proxy HTTP URLs
+            // Intercept ALL XHR requests made by HLS.js
             xhrSetup: function(xhr: XMLHttpRequest, url: string) {
-              // If HLS is trying to load an HTTP URL, redirect through proxy
+              // Handle HTTP URLs - redirect through proxy to avoid Mixed Content
               if (url.startsWith('http://')) {
                 const proxiedUrl = `/api/proxy/stream?url=${encodeURIComponent(url)}`;
                 xhr.open('GET', proxiedUrl, true);
+                
+                // Send credentials via header for proxy to forward
+                if (username && password) {
+                  const credentials = btoa(`${username}:${password}`);
+                  xhr.setRequestHeader('X-Stream-Auth', credentials);
+                }
+              } else if (url.startsWith('/api/proxy/stream')) {
+                // Already proxied URL (manifests reference segments via proxy) - add credentials
+                if (username && password) {
+                  const credentials = btoa(`${username}:${password}`);
+                  xhr.setRequestHeader('X-Stream-Auth', credentials);
+                }
+              } else if (url.startsWith('https://')) {
+                // For HTTPS URLs, add Authorization header directly (no proxy needed)
+                if (username && password) {
+                  const credentials = btoa(`${username}:${password}`);
+                  xhr.setRequestHeader('Authorization', `Basic ${credentials}`);
+                }
               }
             },
           });
@@ -213,7 +234,7 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
           window.clearTimeout(controlsTimerRef.current);
         }
       };
-    }, [channel?.url, autoplay, toast]);
+    }, [channel?.url, autoplay, toast, username, password]);
 
     // Expose functions via ref
     useImperativeHandle(ref, () => ({

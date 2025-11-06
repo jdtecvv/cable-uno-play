@@ -12,10 +12,14 @@ interface SimpleChannel {
   url: string;
   logo?: string;
   group?: string;
+  username?: string;
+  password?: string;
 }
 
 export default function SimplePlayer() {
   const [m3uUrl, setM3uUrl] = useState("http://190.61.110.177:2728/CABLEUNO.m3u8");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [channels, setChannels] = useState<SimpleChannel[]>([]);
   const [currentChannel, setCurrentChannel] = useState<SimpleChannel | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -68,6 +72,9 @@ export default function SimplePlayer() {
         url: item.url,
         logo: item.tvg?.logo || undefined,
         group: item.group?.title || undefined,
+        // Usar credenciales del M3U (si existen) o las ingresadas manualmente
+        username: item.username || username || undefined,
+        password: item.password || password || undefined,
       }));
 
       setChannels(simpleChannels);
@@ -110,6 +117,8 @@ export default function SimplePlayer() {
             createdAt: new Date(),
             updatedAt: new Date(),
           }}
+          username={currentChannel.username}
+          password={currentChannel.password}
           onClose={() => setCurrentChannel(null)}
           autoplay={true}
         />
@@ -141,21 +150,44 @@ export default function SimplePlayer() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="flex gap-2">
-              <Input
-                type="text"
-                placeholder="http://ejemplo.com/lista.m3u8"
-                value={m3uUrl}
-                onChange={(e) => setM3uUrl(e.target.value)}
-                className="bg-gray-800 border-gray-700 text-white"
-              />
-              <Button
-                onClick={loadM3U}
-                disabled={isLoading}
-                className="bg-red-600 hover:bg-red-700 text-white"
-              >
-                {isLoading ? "Cargando..." : "Cargar"}
-              </Button>
+            <div className="space-y-3">
+              <div className="flex gap-2">
+                <Input
+                  type="text"
+                  placeholder="http://ejemplo.com/lista.m3u8"
+                  value={m3uUrl}
+                  onChange={(e) => setM3uUrl(e.target.value)}
+                  className="bg-gray-800 border-gray-700 text-white"
+                />
+                <Button
+                  onClick={loadM3U}
+                  disabled={isLoading}
+                  className="bg-red-600 hover:bg-red-700 text-white whitespace-nowrap"
+                >
+                  {isLoading ? "Cargando..." : "Cargar"}
+                </Button>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-2">
+                <Input
+                  type="text"
+                  placeholder="Usuario (opcional)"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="bg-gray-800 border-gray-700 text-white"
+                />
+                <Input
+                  type="password"
+                  placeholder="Contraseña (opcional)"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="bg-gray-800 border-gray-700 text-white"
+                />
+              </div>
+              
+              <p className="text-gray-500 text-xs">
+                Solo ingresa usuario y contraseña si tu proveedor IPTV lo requiere
+              </p>
             </div>
           </CardContent>
         </Card>

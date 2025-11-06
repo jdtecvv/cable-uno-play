@@ -1,6 +1,30 @@
 import { M3UEntry, M3UPlaylist } from '@/lib/types';
 
 /**
+ * Extrae credenciales de una URL si están presentes
+ * @param url URL que puede contener credenciales en formato http://usuario:contraseña@servidor.com
+ * @returns Objeto con URL limpia y credenciales (si existen)
+ */
+function extractCredentialsFromUrl(url: string): { url: string; username?: string; password?: string } {
+  try {
+    const urlObj = new URL(url);
+    const username = urlObj.username || undefined;
+    const password = urlObj.password || undefined;
+    
+    // Si hay credenciales, crear URL limpia sin ellas
+    if (username || password) {
+      const cleanUrl = `${urlObj.protocol}//${urlObj.host}${urlObj.pathname}${urlObj.search}${urlObj.hash}`;
+      return { url: cleanUrl, username, password };
+    }
+    
+    return { url };
+  } catch {
+    // Si falla el parseo, retornar URL original
+    return { url };
+  }
+}
+
+/**
  * Parsea un archivo M3U y devuelve una estructura de playlist con entradas
  * @param content Contenido del archivo M3U como texto
  * @returns Estructura de playlist con entradas
@@ -83,9 +107,15 @@ export function parseM3U(content: string): M3UPlaylist {
     } 
     // URL de stream (línea que no comienza con #)
     else if (!line.startsWith('#') && (line.startsWith('http://') || line.startsWith('https://'))) {
+      // Extraer credenciales de la URL si existen
+      const { url, username, password } = extractCredentialsFromUrl(line);
+      
       // Si hay una entrada actual del #EXTINF anterior, asignarle esta URL
       if (Object.keys(currentEntry).length > 0) {
-        currentEntry.url = line;
+        currentEntry.url = url;
+        if (username) currentEntry.username = username;
+        if (password) currentEntry.password = password;
+        
         if (currentEntry.name) {
           playlist.items.push(currentEntry as M3UEntry);
           channelCounter++;
@@ -95,7 +125,9 @@ export function parseM3U(content: string): M3UPlaylist {
         // URL directa sin #EXTINF - crear entrada básica
         const basicEntry: M3UEntry = {
           name: `Canal ${channelCounter}`,
-          url: line,
+          url,
+          username,
+          password,
           group: { title: '' },
           tvg: { id: '', name: `Canal ${channelCounter}`, logo: '', url: '' },
           http: { referrer: '', 'user-agent': '' },

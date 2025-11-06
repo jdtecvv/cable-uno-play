@@ -22,6 +22,8 @@ export interface ChannelsByCategory {
 export interface M3UEntry {
   name: string;
   url: string;
+  username?: string;
+  password?: string;
   tvg: {
     id?: string;
     name?: string;

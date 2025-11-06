@@ -75,6 +75,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Forward important headers from client to upstream server
       const upstreamHeaders: Record<string, string> = {};
       
+      // Extract credentials from custom header (secure approach)
+      const streamAuth = req.headers['x-stream-auth'] as string | undefined;
+      if (streamAuth) {
+        // streamAuth is already base64 encoded from client
+        upstreamHeaders['Authorization'] = `Basic ${streamAuth}`;
+      }
+      
       // Forward Range header for seeking support (crucial for video playback)
       const rangeHeader = req.headers.range;
       if (rangeHeader) {
@@ -99,7 +106,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Enable CORS
       res.setHeader('Access-Control-Allow-Origin', '*');
       res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Range');
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Range, X-Stream-Auth');
       res.setHeader('Access-Control-Expose-Headers', 'Content-Length, Content-Range, Content-Type, Accept-Ranges');
 
       // Forward upstream status code (200, 206, 304, etc.)
