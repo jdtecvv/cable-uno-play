@@ -195,13 +195,60 @@ db/
 2. Usar la aplicación en navegadores desktop (Chrome, Firefox, Safari desktop)
 3. Para producción iOS, considerar una app nativa que soporte autenticación HTTP
 
+## Instalación Móvil (Android)
+
+### PWA - Progressive Web App (RECOMENDADA)
+✅ **Instalación instantánea sin APK**
+
+1. Abre Chrome en tu Android
+2. Visita la app en Replit
+3. Menú → "Agregar a pantalla de inicio"
+4. ¡Listo! Funciona como app nativa
+
+**Características PWA:**
+- ✅ `manifest.json` configurado con colores Cable Uno
+- ✅ Service Worker para funcionamiento offline
+- ✅ Meta tags optimizados para Android/iOS
+- ✅ Íconos PWA (192x192, 512x512)
+- ✅ Auto-actualización automática
+
+### APK Nativo con Capacitor
+📱 **Para compilar en Android Studio**
+
+**Proyecto configurado:**
+- ✅ Capacitor 7.4 instalado
+- ✅ Plataforma Android agregada
+- ✅ Configuración lista en `capacitor.config.ts`
+- ✅ Proyecto Android en carpeta `/android`
+
+**Para compilar APK:**
+1. Descarga el proyecto completo desde Replit (ZIP o Git)
+2. Instala dependencias: `npm install`
+3. Build producción: `npm run build`
+4. Sync Android: `npx cap sync android`
+5. Abre Android Studio: `npx cap open android`
+6. Compila APK: `Build → Build APK(s)`
+
+**Documentación completa:**
+- `README_ANDROID.md` - Guía completa del proyecto
+- `INSTALACION_APK.md` - Instrucciones paso a paso
+
 ## Próximos Pasos
-1. ✅ ~~Probar importación con link: `http://190.61.110.177:2728/CABLEUNO.m3u8`~~ - Listo
-2. ✅ ~~Resolver errores de Mixed Content con proxy HTTP→HTTPS~~ - Listo
-3. Mejorar UI del reproductor simple
-4. Agregar soporte para listas de favoritos en localStorage
-5. Implementar categorías automáticas desde metadata M3U
-6. Agregar mensaje de error amigable cuando el codec no es compatible
+
+### Completado ✅
+1. ✅ Probar importación con link M3U8
+2. ✅ Resolver errores de Mixed Content con proxy HTTP→HTTPS
+3. ✅ Autenticación HTTP básica
+4. ✅ PWA instalable (manifest + service worker)
+5. ✅ Proyecto Android con Capacitor configurado
+6. ✅ Documentación completa de instalación
+
+### Pendiente
+7. Mejorar UI del reproductor simple
+8. Agregar soporte para listas de favoritos en localStorage
+9. Implementar categorías automáticas desde metadata M3U
+10. Agregar mensaje de error amigable cuando el codec no es compatible
+11. Sistema Premium completo (Xtream Codes, VOD, Series, EPG)
 
 ## Configuración de Desarrollo
 
