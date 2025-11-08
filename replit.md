@@ -221,17 +221,31 @@ db/
 - ✅ Configuración lista en `capacitor.config.ts`
 - ✅ Proyecto Android en carpeta `/android`
 
-**Para compilar APK:**
-1. Descarga el proyecto completo desde Replit (ZIP o Git)
-2. Instala dependencias: `npm install`
-3. Build producción: `npm run build`
-4. Sync Android: `npx cap sync android`
-5. Abre Android Studio: `npx cap open android`
-6. Compila APK: `Build → Build APK(s)`
+**📥 OPCIÓN A: Descargar APK Pre-compilado desde GitHub Actions**
 
-**Documentación completa:**
+Si subes el proyecto a GitHub, el APK se compila automáticamente:
+1. Sube proyecto a GitHub (Replit → Tools → Git → Create GitHub repo)
+2. GitHub Actions compila el APK automáticamente
+3. Descarga APK desde: GitHub → Actions → Artifacts
+
+**🔨 OPCIÓN B: Compilar APK Localmente**
+
+1. Descarga el proyecto completo desde Replit (⋮ → Download as ZIP)
+2. Instala herramientas: Node.js, Java JDK 17, Android Studio
+3. Ejecuta script automático:
+   - Windows: `compilar.bat`
+   - Linux/Mac: `bash compilar.sh`
+4. Abre Android Studio: `npx cap open android`
+5. Compila APK: `Build → Build APK(s)`
+6. APK en: `android/app/build/outputs/apk/debug/app-debug.apk`
+
+**📚 Documentación completa:**
+- `COMPILAR_APK.md` - Guía paso a paso para compilar localmente
+- `COMPILAR_EN_GITHUB.md` - Guía para compilación automática en GitHub
+- `compilar.bat` / `compilar.sh` - Scripts automatizados
 - `README_ANDROID.md` - Guía completa del proyecto
 - `INSTALACION_APK.md` - Instrucciones paso a paso
+- `.github/workflows/build-apk.yml` - Workflow GitHub Actions
 
 ## Próximos Pasos
 
