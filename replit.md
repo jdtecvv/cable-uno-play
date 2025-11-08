@@ -152,10 +152,11 @@ db/
 
 ### Modo Simple (Sin Base de Datos) - ACTUAL
 1. Abre la aplicación en tu navegador
-2. Pega la URL de tu archivo M3U8 en el campo de texto (ej: `http://190.61.110.177:2728/CABLEUNO.m3u8`)
-3. Haz clic en "Cargar"
-4. Navega por los canales y haz clic en uno para reproducir
-5. Los canales se guardan en localStorage para la próxima sesión
+2. Pega la URL de tu archivo M3U8 en el campo de texto
+3. (Opcional) Ingresa usuario y contraseña si tu proveedor IPTV lo requiere
+4. Haz clic en "Cargar"
+5. Navega por los canales y haz clic en uno para reproducir
+6. Los canales se guardan en localStorage para la próxima sesión
 
 ### Modo Completo (Con Base de Datos) - REQUIERE CONFIGURACIÓN
 ⚠️ Para usar el modo completo con favoritos, historial, y gestión avanzada:

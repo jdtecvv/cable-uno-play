@@ -17,7 +17,7 @@ interface SimpleChannel {
 }
 
 export default function SimplePlayer() {
-  const [m3uUrl, setM3uUrl] = useState("http://190.61.110.177:2728/CABLEUNO.m3u8");
+  const [m3uUrl, setM3uUrl] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [channels, setChannels] = useState<SimpleChannel[]>([]);
@@ -37,6 +37,18 @@ export default function SimplePlayer() {
       }
     }
   }, []);
+
+  const clearChannels = () => {
+    setChannels([]);
+    setM3uUrl("");
+    setUsername("");
+    setPassword("");
+    localStorage.removeItem('simple-channels');
+    toast({
+      title: "Limpiado",
+      description: "Todos los canales han sido eliminados",
+    });
+  };
 
   const loadM3U = async () => {
     if (!m3uUrl) {
@@ -166,6 +178,15 @@ export default function SimplePlayer() {
                 >
                   {isLoading ? "Cargando..." : "Cargar"}
                 </Button>
+                {channels.length > 0 && (
+                  <Button
+                    onClick={clearChannels}
+                    variant="outline"
+                    className="border-gray-700 text-gray-300 hover:bg-gray-800 whitespace-nowrap"
+                  >
+                    Limpiar
+                  </Button>
+                )}
               </div>
               
               <div className="grid grid-cols-2 gap-2">
@@ -257,7 +278,7 @@ export default function SimplePlayer() {
               No hay canales cargados. Ingresa una URL de M3U arriba para comenzar.
             </p>
             <p className="text-gray-500 text-sm">
-              Ejemplo: http://190.61.110.177:2728/CABLEUNO.m3u8
+              Ejemplo: http://ejemplo.com/lista.m3u8
             </p>
           </div>
         )}
