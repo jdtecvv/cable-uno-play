@@ -1,304 +1,37 @@
 # Cable Uno Play - IPTV Streaming Application
 
-## Descripción del Proyecto
-Cable Uno Play es una aplicación de streaming IPTV multiplataforma desarrollada para reproducir contenido de televisión en vivo y bajo demanda. La aplicación está diseñada para funcionar en múltiples dispositivos (TV, tablets, móviles, web) con una interfaz en español y los colores corporativos de Cable Uno (rojo, blanco, negro).
+## Overview
+Cable Uno Play is a cross-platform IPTV streaming application designed to deliver live and on-demand television content. It supports multiple devices (TV, tablets, mobile, web) and features a Spanish-language interface with Cable Uno's corporate colors. The project aims to provide a robust, ad-free streaming experience with advanced M3U parsing and flexible authentication, addressing common issues like mixed content and CORS. Future ambitions include a comprehensive premium system with VOD, series, and EPG.
 
-## Características Principales
+## User Preferences
+I prefer iterative development with clear, concise summaries of changes. Please prioritize features that enhance user experience and address critical technical challenges like mixed content and CORS. For database interactions, ensure Drizzle ORM is utilized effectively. I appreciate detailed documentation for deployment and setup processes, especially for mobile and server environments. My preferred language for interaction and documentation is Spanish. When making changes, please explain the rationale and potential impacts.
 
-### Soporte de Protocolos
-- ✅ **HTTP y HTTPS**: Soporta ambos protocolos sin restricciones
-- ✅ **Streaming HLS**: Reproducción de contenido M3U8 usando HLS.js
-- ✅ **Formatos de audio y video**: Todos los formatos conocidos hasta la fecha
+## System Architecture
+### UI/UX Decisions
+The application uses Cable Uno's corporate colors (red, white, black, gray) and is designed to be responsive across TV, tablets, mobile, and web. The interface is in Spanish. A "Simple Player" mode is available for immediate use without backend configuration, storing channels in localStorage. Progressive Web App (PWA) features are implemented for mobile installation, including `manifest.json` with corporate colors, a Service Worker for offline functionality, and optimized meta tags for Android/iOS.
 
-### Autenticación Opcional
-- ✅ **Usuario y contraseña opcionales**: No obligatorios para links gratuitos
-- ✅ **Acceso sin publicidad**: Reproductor limpio sin anuncios ni elementos extra
+### Technical Implementations
+- **Frontend**: React with Vite, Wouter for routing, Tailwind CSS + shadcn/ui for styling, HLS.js for video streaming, and Zod for form validation.
+- **Backend**: Express.js with TypeScript, Drizzle ORM for database interaction, and PostgreSQL (Neon) as the database. Shared Zod schemas are used for validation across frontend and backend.
+- **Streaming**: Supports HTTP and HTTPS protocols, HLS streaming (M3U8) via HLS.js, and all known audio/video formats.
+- **M3U Parser**: Optimized to handle M3U files with or without `#EXTM3U` headers, direct URLs without `#EXTINF`, incomplete metadata, and automatic naming for channels without information.
+- **Proxy System**: A server-side proxy (`/api/proxy/stream` and `/api/proxy/m3u`) converts HTTP streams to HTTPS to prevent mixed content errors and handles CORS issues. It supports range requests and proper header management.
+- **Authentication**: Optional user and password for playlists. The parser extracts credentials from URLs, and the proxy converts them to `Authorization: Basic` for the IPTV server, sending them via `X-Stream-Auth` header.
+- **Mobile Compilation**: Capacitor is configured for building native Android APKs. Automated scripts (`compilar.sh`, `compilar.bat`) and GitHub Actions workflows are provided for local and automated APK compilation.
 
-### Gestión de Metadata
-- ✅ **Información opcional**: Omite canales sin metadata
-- ✅ **Identificación básica**: Muestra solo nombre y flujo de video/audio cuando no hay información completa
-- ✅ **Nombres auto-generados**: Asigna "Canal N" cuando no hay nombre disponible
-- ✅ **URLs directas**: Soporta archivos M3U con solo URLs (sin #EXTINF)
+### Feature Specifications
+- **Metadata Management**: Optional metadata, basic identification for channels, auto-generated names ("Canal N") for missing information, and support for direct URLs in M3U files.
+- **Security**: Credentials for the simple mode are stored in localStorage (for personal use only). Credentials are sent via HTTPS headers (`X-Stream-Auth`), Base64 encoded, and converted by the proxy to `Authorization: Basic`.
+- **Deployment**: An automated `install-server.sh` script handles full Linux server setup including Node.js, PostgreSQL, Nginx, PM2, SSL/HTTPS with Let's Encrypt, UFW firewall, and daily backups.
 
-### Parser M3U Mejorado
-El parser ha sido optimizado para manejar:
-- Archivos M3U con o sin encabezado `#EXTM3U`
-- URLs directas HTTP/HTTPS sin información de canal (#EXTINF)
-- Canales con metadata incompleta o vacía
-- Asignación automática de nombres cuando no hay información
+### Database Schema
+- **Playlists**: `id`, `name`, `url` (M3U file), `username` (optional), `password` (optional), `isActive`, `createdAt`, `updatedAt`.
+- **Channels**: `id`, `playlistId`, `name`, `url` (stream), `categoryId` (optional), `logo` (optional), `epgId` (optional), `isFavorite`, `lastWatched`.
+- **Categories**: `id`, `name`.
 
-## Arquitectura Técnica
-
-### Frontend (React + TypeScript)
-- **Framework**: React con Vite
-- **Routing**: Wouter
-- **Estilos**: Tailwind CSS + shadcn/ui
-- **Reproductor**: HLS.js para streaming de video
-- **Validación**: Zod para formularios
-
-### Backend (Express + TypeScript)
-- **Framework**: Express.js
-- **ORM**: Drizzle ORM
-- **Base de datos**: PostgreSQL (Neon)
-- **Validación**: Zod schemas compartidos
-
-### Estructura de Archivos Principales
-```
-client/
-  src/
-    pages/
-      setup.tsx                      # Pantalla de configuración inicial
-    lib/
-      utils/
-        m3u-parser.ts               # Parser M3U mejorado
-    components/
-      player/
-        video-player.tsx            # Reproductor de video HLS
-        player-controls.tsx         # Controles del reproductor
-    
-server/
-  routes.ts                         # API routes
-  storage.ts                        # Funciones de base de datos
-
-shared/
-  schema.ts                         # Schemas compartidos (Drizzle + Zod)
-
-db/
-  index.ts                          # Configuración de base de datos
-```
-
-## Schema de Base de Datos
-
-### Playlists
-- `id`: Serial (auto-increment)
-- `name`: Nombre de la playlist
-- `url`: URL del archivo M3U (puede estar vacío para archivos subidos, usar `file://` prefix)
-- `username`: Opcional - Usuario para autenticación
-- `password`: Opcional - Contraseña para autenticación
-- `isActive`: Boolean - Playlist activa
-- `createdAt`, `updatedAt`: Timestamps
-
-### Channels
-- `id`: Serial
-- `playlistId`: Referencia a playlist
-- `name`: Nombre del canal
-- `url`: URL del stream
-- `categoryId`: Opcional - Categoría del canal
-- `logo`: Opcional - URL del logo
-- `epgId`: Opcional - ID para guía de programación
-- `isFavorite`: Boolean
-- `lastWatched`: Timestamp del último acceso
-
-### Categories
-- `id`: Serial
-- `name`: Nombre único de categoría
-
-## Cambios Recientes
-
-### Noviembre 6, 2025 - Sistema de Proxy para Streams HTTP
-
-**🎉 SOLUCIÓN COMPLETA PARA MIXED CONTENT Y CORS**
-
-1. **Proxy de Streaming HTTP → HTTPS**:
-   - Nuevo endpoint `/api/proxy/stream?url=<encoded_url>` en `server/routes.ts`
-   - Intercepta TODOS los requests HTTP de HLS.js usando hook `xhrSetup`
-   - Convierte automáticamente streams HTTP a HTTPS para evitar Mixed Content
-   - Soporta range requests para seeking en video
-   - Maneja correctamente headers (Content-Type, Content-Length, CORS)
-
-2. **HLS.js con xhrSetup Hook**:
-   - Configuración de `xhrSetup` en VideoPlayer para interceptar todas las requests
-   - Detecta URLs HTTP (manifests, variantes, segmentos) y las redirige al proxy
-   - URLs HTTPS se mantienen sin cambios
-   - Elimina completamente errores de Mixed Content del navegador
-
-3. **Modo Reproductor Simple**:
-   - Nueva página `SimplePlayer` que funciona completamente en el navegador
-   - Almacenamiento de canales en localStorage (sin backend)
-   - Permite pegar URL de M3U8 y reproducir inmediatamente
-   - No requiere configuración de base de datos PostgreSQL
-
-4. **Endpoint Proxy CORS**:
-   - Endpoint `/api/proxy/m3u` que evita problemas de CORS
-   - Permite cargar archivos M3U8 de servidores externos
-   - Funciona con HTTP y HTTPS
-
-5. **Soporte HTTP/HTTPS**:
-   - Modificada validación de URLs para aceptar tanto HTTP como HTTPS
-   - Actualizado schema de Zod en frontend y backend
-   
-6. **Autenticación Opcional**:
-   - Usuario y contraseña ahora completamente opcionales
-   - Nombres de playlist auto-generados si no se proporcionan
-
-7. **Parser M3U Mejorado**:
-   - Maneja URLs directas sin metadata (#EXTINF)
-   - Asigna nombres automáticos ("Canal 1", "Canal 2", etc.)
-   - Soporta archivos sin encabezado #EXTM3U
-   - Omite líneas de comentarios irrelevantes
-
-8. **Validación de Archivos**:
-   - Schema actualizado para soportar archivos subidos con `file://` prefix
-   - Permite URLs vacías o con prefijos `http://`, `https://`, `file://`
-
-9. **Autenticación HTTP Básica** (Noviembre 6, 2025):
-   - Campos opcionales de usuario/contraseña en la UI
-   - Parser M3U extrae credenciales de URLs con formato `http://user:pass@host/`
-   - Credenciales se envían vía header `X-Stream-Auth` (NO query params)
-   - Proxy convierte a `Authorization: Basic` para el servidor IPTV
-   - Soporta credenciales embebidas en M3U o ingresadas manualmente
-
-## Uso de la Aplicación
-
-### Modo Simple (Sin Base de Datos) - ACTUAL
-1. Abre la aplicación en tu navegador
-2. Pega la URL de tu archivo M3U8 en el campo de texto
-3. (Opcional) Ingresa usuario y contraseña si tu proveedor IPTV lo requiere
-4. Haz clic en "Cargar"
-5. Navega por los canales y haz clic en uno para reproducir
-6. Los canales se guardan en localStorage para la próxima sesión
-
-### Modo Completo (Con Base de Datos) - REQUIERE CONFIGURACIÓN
-⚠️ Para usar el modo completo con favoritos, historial, y gestión avanzada:
-1. Actualizar DATABASE_URL en Secrets con las credenciales correctas
-2. Ejecutar `npm run db:push` para crear las tablas
-3. Cambiar App.tsx para usar las rutas completas (Home, LiveTV, etc.)
-
-## Limitaciones Conocidas
-
-### Compatibilidad de Codecs del Navegador
-⚠️ **IMPORTANTE**: Los navegadores tienen soporte limitado de codecs comparado con VLC
-
-**VLC vs Navegadores**:
-- ✅ **VLC**: Tiene decoders para TODOS los codecs (H.264, H.265/HEVC, MPEG-2, etc.)
-- ⚠️ **Navegadores**: Solo soportan H.264, VP8, VP9, AV1 (depende del navegador)
-
-**Problema Común**:
-- Algunos streams IPTV usan codecs que VLC reproduce perfectamente pero los navegadores no pueden decodificar
-- Error típico: `bufferAddCodecError: Failed to execute 'addSourceBuffer' on 'MediaSource': The type provided (...) is not supported`
-- Esto NO es un bug de la aplicación, es una limitación del navegador web
-
-**Soluciones**:
-1. Usar streams con codecs compatibles (H.264 principalmente)
-2. El servidor IPTV debe proporcionar múltiples variantes con diferentes codecs
-3. Para uso avanzado, considerar transcodificación server-side (fuera del alcance de esta app)
-
-### Autenticación HTTP Básica en iOS Safari
-⚠️ **LIMITACIÓN**: iOS Safari no soporta credenciales con HLS nativo
-
-**Detalles**:
-- iOS Safari no tiene Media Source Extensions (MSE), por lo que HLS.js no funciona
-- El reproductor nativo de Safari en iOS no permite agregar headers de autenticación
-- **Resultado**: Streams HTTP con autenticación NO funcionan en iOS Safari
-
-**Workarounds**:
-1. Usar streams HTTPS con autenticación (HTTPS sí funciona en navegadores desktop con HLS.js)
-2. Usar la aplicación en navegadores desktop (Chrome, Firefox, Safari desktop)
-3. Para producción iOS, considerar una app nativa que soporte autenticación HTTP
-
-## Instalación Móvil (Android)
-
-### PWA - Progressive Web App (RECOMENDADA)
-✅ **Instalación instantánea sin APK**
-
-1. Abre Chrome en tu Android
-2. Visita la app en Replit
-3. Menú → "Agregar a pantalla de inicio"
-4. ¡Listo! Funciona como app nativa
-
-**Características PWA:**
-- ✅ `manifest.json` configurado con colores Cable Uno
-- ✅ Service Worker para funcionamiento offline
-- ✅ Meta tags optimizados para Android/iOS
-- ✅ Íconos PWA (192x192, 512x512)
-- ✅ Auto-actualización automática
-
-### APK Nativo con Capacitor
-📱 **Para compilar en Android Studio**
-
-**Proyecto configurado:**
-- ✅ Capacitor 7.4 instalado
-- ✅ Plataforma Android agregada
-- ✅ Configuración lista en `capacitor.config.ts`
-- ✅ Proyecto Android en carpeta `/android`
-
-**📥 OPCIÓN A: Descargar APK Pre-compilado desde GitHub Actions**
-
-Si subes el proyecto a GitHub, el APK se compila automáticamente:
-1. Sube proyecto a GitHub (Replit → Tools → Git → Create GitHub repo)
-2. GitHub Actions compila el APK automáticamente
-3. Descarga APK desde: GitHub → Actions → Artifacts
-
-**🔨 OPCIÓN B: Compilar APK Localmente**
-
-1. Descarga el proyecto completo desde Replit (⋮ → Download as ZIP)
-2. Instala herramientas: Node.js, Java JDK 17, Android Studio
-3. Ejecuta script automático:
-   - Windows: `compilar.bat`
-   - Linux/Mac: `bash compilar.sh`
-4. Abre Android Studio: `npx cap open android`
-5. Compila APK: `Build → Build APK(s)`
-6. APK en: `android/app/build/outputs/apk/debug/app-debug.apk`
-
-**📚 Documentación completa:**
-- `COMPILAR_APK.md` - Guía paso a paso para compilar localmente
-- `COMPILAR_EN_GITHUB.md` - Guía para compilación automática en GitHub
-- `compilar.bat` / `compilar.sh` - Scripts automatizados
-- `README_ANDROID.md` - Guía completa del proyecto
-- `INSTALACION_APK.md` - Instrucciones paso a paso
-- `.github/workflows/build-apk.yml` - Workflow GitHub Actions
-
-## Próximos Pasos
-
-### Completado ✅
-1. ✅ Probar importación con link M3U8
-2. ✅ Resolver errores de Mixed Content con proxy HTTP→HTTPS
-3. ✅ Autenticación HTTP básica
-4. ✅ PWA instalable (manifest + service worker)
-5. ✅ Proyecto Android con Capacitor configurado
-6. ✅ Documentación completa de instalación
-
-### Pendiente
-7. Mejorar UI del reproductor simple
-8. Agregar soporte para listas de favoritos en localStorage
-9. Implementar categorías automáticas desde metadata M3U
-10. Agregar mensaje de error amigable cuando el codec no es compatible
-11. Sistema Premium completo (Xtream Codes, VOD, Series, EPG)
-
-## Configuración de Desarrollo
-
-### Variables de Entorno Requeridas
-- `DATABASE_URL`: URL de conexión PostgreSQL
-- `PGUSER`: Usuario de PostgreSQL
-- `PGPASSWORD`: Contraseña de PostgreSQL  
-- `PGHOST`: Host de PostgreSQL
-- `PGDATABASE`: Nombre de la base de datos
-
-### Comandos Útiles
-```bash
-npm run dev          # Iniciar servidor de desarrollo
-npm run db:push      # Sincronizar schema con base de datos
-npm run db:seed      # Poblar base de datos con datos de prueba
-```
-
-## Diseño UI/UX
-- **Colores**: Rojo (#DC2626), Negro (#000000), Blanco (#FFFFFF), Gris (#1F2937)
-- **Logo**: Cable Uno (ubicado en `/images/cable-uno-logo.png`)
-- **Idioma**: Español
-- **Responsive**: Diseñado para TV, tablets, móviles y web
-
-## Notas de Seguridad
-
-### Autenticación y Almacenamiento
-- **LocalStorage**: Las credenciales se guardan en localStorage en texto plano para el modo simple
-  - ⚠️ Esto es aceptable SOLO para uso personal/desarrollo
-  - Para producción, implementar encriptación o almacenamiento seguro
-- **Transmisión de Credenciales**: Se envían vía header HTTPS (`X-Stream-Auth`)
-  - NO se usan query params (evita logs del servidor y browser history)
-  - Se codifican en Base64 antes de transmitir
-- **Proxy**: Convierte credenciales a `Authorization: Basic` para el servidor IPTV
-
-### General
-- HLS.js maneja automáticamente el buffering y recuperación de errores
-- Validación de URLs tanto en frontend como backend
-- HTTPS requerido para evitar exposición de credenciales
+## External Dependencies
+- **Frameworks/Libraries**: React, Vite, Wouter, Tailwind CSS, shadcn/ui, HLS.js, Zod, Express.js, Drizzle ORM, Capacitor.
+- **Database**: PostgreSQL (specifically Neon for cloud-hosted environments).
+- **Web Server/Proxy**: Nginx (used in server deployments).
+- **Process Manager**: PM2 (for managing Node.js processes on servers).
+- **SSL Certificates**: Let's Encrypt (for automatic HTTPS in server deployments).
