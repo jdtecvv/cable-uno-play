@@ -60,16 +60,6 @@ export default function SimplePlayer() {
       return;
     }
 
-    // Validar que la URL sea HTTPS (seguridad iOS)
-    if (!m3uUrl.startsWith('https://')) {
-      toast({
-        title: "Error de Seguridad",
-        description: "Por razones de seguridad, solo se permiten URLs HTTPS. Contacta a tu proveedor para obtener una URL segura.",
-        variant: "destructive",
-      });
-      return;
-    }
-
     setIsLoading(true);
     try {
       // Use proxy endpoint to avoid CORS issues
@@ -176,7 +166,7 @@ export default function SimplePlayer() {
               <div className="flex gap-2">
                 <Input
                   type="text"
-                  placeholder="https://ejemplo.com/lista.m3u8"
+                  placeholder="http://ejemplo.com/lista.m3u8"
                   value={m3uUrl}
                   onChange={(e) => setM3uUrl(e.target.value)}
                   className="bg-gray-800 border-gray-700 text-white"
@@ -288,10 +278,7 @@ export default function SimplePlayer() {
               No hay canales cargados. Ingresa una URL de M3U arriba para comenzar.
             </p>
             <p className="text-gray-500 text-sm">
-              Ejemplo: https://ejemplo.com/lista.m3u8
-            </p>
-            <p className="text-gray-500 text-xs mt-2">
-              ⚠️ Solo se permiten URLs HTTPS por seguridad
+              Ejemplo: http://ejemplo.com/lista.m3u8
             </p>
           </div>
         )}
