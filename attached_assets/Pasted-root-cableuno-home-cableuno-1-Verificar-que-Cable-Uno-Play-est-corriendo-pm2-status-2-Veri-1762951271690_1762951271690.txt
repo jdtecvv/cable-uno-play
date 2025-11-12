@@ -1,0 +1,55 @@
+root@cableuno:/home/cableuno# # 1. Verificar que Cable Uno Play esté corriendo
+pm2 status
+
+# 2. Verificar que responda en localhost:5000
+curl -I http://localhost:5000
+
+# 3. Verificar sitios habilitados
+ls -la /etc/nginx/sites-enabled/
+
+# 4. Reiniciar Nginx del sistema
+sudo systemctl restart nginx
+
+# 5. Verificar que Nginx esté corriendo
+sudo systemctl status nginx
+
+# 6. Probar acceso HTTP
+curl -I http://play.teleunotv.cr
+
+# 7. Esperar que Certbot termine (Ctrl+C si sigue corriendo)
+# Luego ejecutar SSL manualmente:
+sudo certbot --nginx -d play.teleunotv.cr -d app.teleunotv.cr --email admin@cableuno.com --agree-tos --non-interactive
+
+# 8. Verificar certificados
+sudo certbot certificates
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ cable-uno-play     │ fork     │ 0    │ online    │ 0%       │ 91.5mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+HTTP/1.1 200 OK
+X-Powered-By: Express
+Accept-Ranges: bytes
+Cache-Control: public, max-age=0
+Last-Modified: Wed, 12 Nov 2025 04:24:12 GMT
+ETag: W/"8fd-19a764e949e"
+Content-Type: text/html; charset=UTF-8
+Content-Length: 2301
+Date: Wed, 12 Nov 2025 12:40:34 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+total 8
+drwxr-xr-x 2 root root 4096 nov 11 22:20 .
+drwxr-xr-x 4 root root 4096 nov 11 22:20 ..
+Failed to restart nginx.service: Unit nginx.service not found.
+Unit nginx.service could not be found.
+curl: (7) Failed to connect to play.teleunotv.cr port 80 after 236 ms: Couldn't connect to server
+Saving debug log to /var/log/letsencrypt/letsencrypt.log
+The requested nginx plugin does not appear to be installed
+Saving debug log to /var/log/letsencrypt/letsencrypt.log
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+No certificates found.
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+root@cableuno:/home/cableuno# 
