@@ -1,0 +1,78 @@
+#!/bin/bash
+
+# Script para configurar Cable Uno Play iOS en modo DESARROLLO
+# Detecta automáticamente la IP del Mac y configura Capacitor
+
+echo "🔧 Configurando Cable Uno Play para desarrollo iOS..."
+echo ""
+
+# Detectar IP local del Mac
+IP=$(ifconfig | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}' | head -1)
+
+if [ -z "$IP" ]; then
+    echo "❌ Error: No se pudo detectar la IP local del Mac"
+    echo "Por favor ejecuta manualmente: ifconfig | grep 'inet '"
+    exit 1
+fi
+
+echo "✅ IP local detectada: $IP"
+echo ""
+
+# Hacer backup del config original
+if [ ! -f "capacitor.config.ts.backup" ]; then
+    cp capacitor.config.ts capacitor.config.ts.backup
+    echo "✅ Backup creado: capacitor.config.ts.backup"
+fi
+
+# Crear configuración de desarrollo
+cat > capacitor.config.ts << EOF
+import type { CapacitorConfig } from '@capacitor/cli';
+
+const config: CapacitorConfig = {
+  appId: 'com.cableuno.play',
+  appName: 'Cable Uno Play',
+  webDir: 'dist/public',
+  server: {
+    url: 'http://${IP}:5000',
+    androidScheme: 'https',
+    iosScheme: 'https',
+    cleartext: true
+  },
+  android: {
+    buildOptions: {
+      keystorePath: undefined,
+      keystoreAlias: undefined,
+    }
+  },
+  ios: {
+    contentInset: 'automatic',
+    scrollEnabled: true
+  }
+};
+
+export default config;
+EOF
+
+echo "✅ capacitor.config.ts configurado para desarrollo"
+echo "   URL del servidor: http://${IP}:5000"
+echo ""
+
+# Build y sync
+echo "📦 Compilando frontend..."
+npm run build
+
+echo ""
+echo "📱 Sincronizando con iOS..."
+npx cap sync ios
+
+echo ""
+echo "✅ ¡Configuración completada!"
+echo ""
+echo "📋 Próximos pasos:"
+echo "   1. Asegúrate que el servidor esté corriendo: npm run dev"
+echo "   2. Abre Xcode: open ios/App/App.xcworkspace"
+echo "   3. En Xcode: Product → Clean Build Folder (Shift + Cmd + K)"
+echo "   4. Click ▶️ Play para ejecutar en el Simulator"
+echo ""
+echo "⚠️  IMPORTANTE: Antes de compilar para producción, ejecuta ./config-prod-ios.sh"
+echo ""
