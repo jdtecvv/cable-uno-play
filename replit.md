@@ -17,7 +17,7 @@ The application uses Cable Uno's corporate colors (red, white, black, gray) and 
 - **M3U Parser**: Optimized to handle M3U files with or without `#EXTM3U` headers, direct URLs without `#EXTINF`, incomplete metadata, and automatic naming for channels without information.
 - **Proxy System**: A server-side proxy (`/api/proxy/stream` and `/api/proxy/m3u`) converts HTTP streams to HTTPS to prevent mixed content errors and handles CORS issues. It supports range requests and proper header management.
 - **Authentication**: Optional user and password for playlists. The parser extracts credentials from URLs, and the proxy converts them to `Authorization: Basic` for the IPTV server, sending them via `X-Stream-Auth` header.
-- **Mobile Compilation**: Capacitor is configured for building native Android APKs. Automated scripts (`compilar.sh`, `compilar.bat`) and GitHub Actions workflows are provided for local and automated APK compilation.
+- **Mobile Compilation**: Capacitor is configured for building native Android APKs and iOS apps. Automated scripts (`compilar.sh`, `compilar.bat`, `compilar-ios.sh`) and GitHub Actions workflows are provided for local and automated compilation. iOS requires macOS with Xcode and Apple Developer Account ($99/year) for App Store distribution.
 
 ### Feature Specifications
 - **Metadata Management**: Optional metadata, basic identification for channels, auto-generated names ("Canal N") for missing information, and support for direct URLs in M3U files.
