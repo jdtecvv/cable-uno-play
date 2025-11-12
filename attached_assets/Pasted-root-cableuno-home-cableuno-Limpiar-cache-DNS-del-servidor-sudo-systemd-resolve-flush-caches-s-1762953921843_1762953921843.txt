@@ -1,0 +1,65 @@
+root@cableuno:/home/cableuno# # Limpiar cache DNS del servidor
+sudo systemd-resolve --flush-caches
+sudo systemctl restart systemd-resolved
+
+# Forzar consulta a DNS público (ignorar cache)
+dig @8.8.8.8 app.teleunotv.cr +short
+dig @8.8.8.8 play.teleunotv.cr +short
+
+# Ahora instalar SSL (usará DNS correcto)
+sudo certbot --nginx -d play.teleunotv.cr -d app.teleunotv.cr --email admin@cableuno.com --agree-tos --non-interactive
+
+# Verificar certificados
+sudo certbot certificates
+
+# Probar HTTPS
+curl -Ik https://play.teleunotv.cr
+curl -Ik https://app.teleunotv.cr
+sudo: systemd-resolve: orden no encontrada
+190.61.110.177
+190.61.110.177
+Saving debug log to /var/log/letsencrypt/letsencrypt.log
+Missing command line flag or config entry for this setting:
+You have an existing certificate that contains a portion of the domains you requested (ref: /etc/letsencrypt/renewal/play.teleunotv.cr.conf)
+
+It contains these names: play.teleunotv.cr
+
+You requested these names for the new certificate: play.teleunotv.cr, app.teleunotv.cr.
+
+Do you want to expand and replace this existing certificate with the new certificate?
+
+(You can set this with the --expand flag)
+Ask for help or search for solutions at https://community.letsencrypt.org. See the logfile /var/log/letsencrypt/letsencrypt.log or re-run Certbot with -v for more details.
+Saving debug log to /var/log/letsencrypt/letsencrypt.log
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Found the following certs:
+  Certificate Name: play.teleunotv.cr
+    Serial Number: 630c741ee523bf5c4aafa53f1b05528888b
+    Key Type: ECDSA
+    Domains: play.teleunotv.cr
+    Expiry Date: 2026-02-10 12:20:52+00:00 (VALID: 89 days)
+    Certificate Path: /etc/letsencrypt/live/play.teleunotv.cr/fullchain.pem
+    Private Key Path: /etc/letsencrypt/live/play.teleunotv.cr/privkey.pem
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+HTTP/1.1 200 OK
+Server: nginx/1.24.0 (Ubuntu)
+Date: Wed, 12 Nov 2025 13:24:08 GMT
+Content-Type: text/html; charset=UTF-8
+Content-Length: 2301
+Connection: keep-alive
+X-Powered-By: Express
+Accept-Ranges: bytes
+Cache-Control: public, max-age=0
+Last-Modified: Wed, 12 Nov 2025 04:24:12 GMT
+ETag: W/"8fd-19a764e949e"
+
+HTTP/2 404 
+date: Wed, 12 Nov 2025 13:24:08 GMT
+content-length: 9
+content-type: text/plain; charset=utf-8
+via: 1.1 google
+alt-svc: h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+
+root@cableuno:/home/cableuno# 
+
