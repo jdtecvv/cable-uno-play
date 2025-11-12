@@ -1,0 +1,281 @@
+root@cableuno:/home/cableuno# # PROBLEMA 1: Ver errores específicos de Certbot
+sudo tail -50 /var/log/letsencrypt/letsencrypt.log
+
+# PROBLEMA 2: Verificar si XUI responde en puerto 81
+curl -I http://localhost:81
+
+# Si no responde, ver procesos de Nginx de XUI
+ps aux | grep nginx
+
+# PROBLEMA 3: Verificar configuración de Nginx del sistema
+sudo nginx -t
+
+# Ver qué hay en sites-enabled
+cat /etc/nginx/sites-enabled/play.teleunotv.cr
+echo "---"
+cat /etc/nginx/sites-enabled/app.teleunotv.cr
+
+# Probar acceso a los subdominios
+curl -I http://play.teleunotv.cr
+echo "---"
+curl -I http://app.teleunotv.cr
+Hint: The Certificate Authority failed to verify the temporary nginx configuration changes made by Certbot. Ensure the listed domains point to this nginx server and that it is accessible from the internet.
+
+2025-11-12 06:57:23,463:DEBUG:certbot._internal.error_handler:Encountered exception:
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/certbot/_internal/auth_handler.py", line 108, in handle_authorizations
+    self._poll_authorizations(authzrs, max_retries, max_time_mins, best_effort)
+  File "/usr/lib/python3/dist-packages/certbot/_internal/auth_handler.py", line 212, in _poll_authorizations
+    raise errors.AuthorizationError('Some challenges have failed.')
+certbot.errors.AuthorizationError: Some challenges have failed.
+
+2025-11-12 06:57:23,463:DEBUG:certbot._internal.error_handler:Calling registered functions
+2025-11-12 06:57:23,464:INFO:certbot._internal.auth_handler:Cleaning up challenges
+2025-11-12 06:57:24,695:DEBUG:certbot._internal.log:Exiting abnormally:
+Traceback (most recent call last):
+  File "/usr/bin/certbot", line 33, in <module>
+    sys.exit(load_entry_point('certbot==2.9.0', 'console_scripts', 'certbot')())
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/certbot/main.py", line 19, in main
+    return internal_main.main(cli_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/certbot/_internal/main.py", line 1894, in main
+    return config.func(config, plugins)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/certbot/_internal/main.py", line 1450, in run
+    new_lineage = _get_and_save_cert(le_client, config, domains,
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/certbot/_internal/main.py", line 143, in _get_and_save_cert
+    lineage = le_client.obtain_and_enroll_certificate(domains, certname)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/certbot/_internal/client.py", line 517, in obtain_and_enroll_certificate
+    cert, chain, key, _ = self.obtain_certificate(domains)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/certbot/_internal/client.py", line 428, in obtain_certificate
+    orderr = self._get_order_and_authorizations(csr.data, self.config.allow_subset_of_names)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/certbot/_internal/client.py", line 496, in _get_order_and_authorizations
+    authzr = self.auth_handler.handle_authorizations(orderr, self.config, best_effort)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/certbot/_internal/auth_handler.py", line 108, in handle_authorizations
+    self._poll_authorizations(authzrs, max_retries, max_time_mins, best_effort)
+  File "/usr/lib/python3/dist-packages/certbot/_internal/auth_handler.py", line 212, in _poll_authorizations
+    raise errors.AuthorizationError('Some challenges have failed.')
+certbot.errors.AuthorizationError: Some challenges have failed.
+2025-11-12 06:57:24,715:ERROR:certbot._internal.log:Some challenges have failed.
+2025-11-12 06:57:25,350:DEBUG:certbot._internal.main:certbot version: 2.9.0
+2025-11-12 06:57:25,350:DEBUG:certbot._internal.main:Location of certbot entry point: /usr/bin/certbot
+2025-11-12 06:57:25,350:DEBUG:certbot._internal.main:Arguments: []
+2025-11-12 06:57:25,350:DEBUG:certbot._internal.main:Discovered plugins: PluginsRegistry(PluginEntryPoint#manual,PluginEntryPoint#nginx,PluginEntryPoint#null,PluginEntryPoint#standalone,PluginEntryPoint#webroot)
+2025-11-12 06:57:25,358:DEBUG:certbot._internal.log:Root logging level set at 30
+2025-11-12 06:57:25,359:DEBUG:certbot._internal.display.obj:Notifying user: No certificates found.
+HTTP/1.1 200 OK
+Server: nginx
+Date: Wed, 12 Nov 2025 13:10:25 GMT
+Content-Type: application/octet-stream
+Content-Length: 0
+Connection: keep-alive
+
+xui        46888  0.0  0.0  37052   936 ?        Ss   06:36   0:00 nginx: master process /home/xui/bin/nginx/sbin/nginx
+xui        46889  0.0  0.0 306100  8232 ?        Sl   06:36   0:00 nginx: worker process
+xui        46890  0.0  0.0 306100  8232 ?        Sl   06:36   0:00 nginx: worker process
+xui        46891  0.0  0.0 306100  7464 ?        Sl   06:36   0:00 nginx: worker process
+xui        46892  0.0  0.0 306100  8232 ?        Sl   06:36   0:00 nginx: worker process
+xui        46893  0.0  0.0 306100  8232 ?        Sl   06:36   0:00 nginx: worker process
+xui        46894  0.0  0.0 306100  7848 ?        Sl   06:36   0:00 nginx: worker process
+xui        46895  0.0  0.0 306100  8232 ?        Sl   06:36   0:00 nginx: worker process
+xui        46896  0.0  0.0 306100  8232 ?        Sl   06:36   0:00 nginx: worker process
+xui        46898  0.0  0.0 306100  8232 ?        Sl   06:36   0:00 nginx: worker process
+xui        46899  0.0  0.0 306100  8232 ?        Sl   06:36   0:00 nginx: worker process
+xui        46900  0.0  0.0 306100  8232 ?        Sl   06:36   0:00 nginx: worker process
+xui        46901  0.0  0.0 306100  8616 ?        Sl   06:36   0:00 nginx: worker process
+xui        46902  0.0  0.0 306100  7848 ?        Sl   06:36   0:00 nginx: worker process
+xui        46903  0.0  0.0 306100  8232 ?        Sl   06:36   0:00 nginx: worker process
+xui        46904  0.0  0.0 306100  8232 ?        Sl   06:36   0:00 nginx: worker process
+xui        46905  0.0  0.0 306100  8616 ?        Sl   06:36   0:00 nginx: worker process
+xui        46906  0.0  0.0 306100  8232 ?        Sl   06:36   0:00 nginx: worker process
+xui        46907  0.0  0.0 306100  8232 ?        Sl   06:36   0:00 nginx: worker process
+xui        46911  0.0  0.0 306100  8232 ?        Sl   06:36   0:00 nginx: worker process
+xui        46918  0.0  0.0 306100  8616 ?        Sl   06:36   0:00 nginx: worker process
+xui        46924  0.0  0.0 306100  7464 ?        Sl   06:36   0:00 nginx: worker process
+xui        46931  0.0  0.0 306100  8232 ?        Sl   06:36   0:00 nginx: worker process
+xui        46943  0.0  0.0 306100  8232 ?        Sl   06:36   0:00 nginx: worker process
+xui        46964  0.0  0.0 306100  7464 ?        Sl   06:36   0:00 nginx: worker process
+xui        46989  0.0  0.0 306100  8232 ?        Sl   06:36   0:00 nginx: worker process
+xui        47025  0.0  0.0 306100  8232 ?        Sl   06:36   0:00 nginx: worker process
+xui        47072  0.0  0.0 306100  8232 ?        Sl   06:36   0:00 nginx: worker process
+xui        47133  0.0  0.0 306100  8616 ?        Sl   06:36   0:00 nginx: worker process
+xui        47194  0.0  0.0 306100  8616 ?        Sl   06:36   0:00 nginx: worker process
+xui        47243  0.0  0.0 306100  8232 ?        Sl   06:36   0:00 nginx: worker process
+xui        47275  0.0  0.0 306100  7848 ?        Sl   06:36   0:00 nginx: worker process
+xui        47301  0.0  0.0 306100  7848 ?        Sl   06:36   0:00 nginx: worker process
+xui        47333  0.0  0.0 306100  8616 ?        Sl   06:36   0:00 nginx: worker process
+xui        47358  0.0  0.0 306100  8616 ?        Sl   06:36   0:00 nginx: worker process
+xui        47383  0.0  0.0 306100  8616 ?        Sl   06:36   0:00 nginx: worker process
+xui        47406  0.0  0.0 306100  8616 ?        Sl   06:36   0:00 nginx: worker process
+xui        47425  0.0  0.0 306100  8616 ?        Sl   06:36   0:00 nginx: worker process
+xui        47456  0.0  0.0 306100  7464 ?        Sl   06:36   0:00 nginx: worker process
+xui        47480  0.0  0.0 306100  7848 ?        Sl   06:36   0:00 nginx: worker process
+xui        47507  0.0  0.0 306100  7848 ?        Sl   06:36   0:00 nginx: worker process
+xui        47524  0.0  0.0 306100  7848 ?        Sl   06:36   0:00 nginx: worker process
+xui        47555  0.0  0.0 306100  8616 ?        Sl   06:36   0:00 nginx: worker process
+xui        47604  0.0  0.0 306100  8616 ?        Sl   06:36   0:00 nginx: worker process
+xui        47661  0.0  0.0 306100  8616 ?        Sl   06:36   0:00 nginx: worker process
+xui        47738  0.0  0.0 306100  8616 ?        Sl   06:36   0:00 nginx: worker process
+xui        47840  0.0  0.0 306100  8616 ?        Sl   06:36   0:00 nginx: worker process
+xui        47923  0.0  0.0 306100  8232 ?        Sl   06:36   0:00 nginx: worker process
+xui        48002  0.0  0.0 306100  7848 ?        Sl   06:36   0:00 nginx: worker process
+xui        48352  0.0  0.0  13604  1000 ?        Ss   06:36   0:00 nginx: master process /home/xui/bin/nginx_rtmp/sbin/nginx_rtmp
+xui        48377  0.0  0.0  20380  8296 ?        S    06:36   0:00 nginx: worker process
+xui        48381  0.0  0.0  20380  8296 ?        S    06:36   0:00 nginx: worker process
+xui        48386  0.0  0.0  20380  7912 ?        S    06:36   0:00 nginx: worker process
+xui        48391  0.0  0.0  20380  8296 ?        S    06:36   0:00 nginx: worker process
+xui        48397  0.0  0.0  20380  8296 ?        S    06:36   0:00 nginx: worker process
+xui        48404  0.0  0.0  20380  8296 ?        S    06:36   0:00 nginx: worker process
+xui        48409  0.0  0.0  20380  8296 ?        S    06:36   0:00 nginx: worker process
+xui        48417  0.0  0.0  20380  8296 ?        S    06:36   0:00 nginx: worker process
+xui        48425  0.0  0.0  20380  7912 ?        S    06:36   0:00 nginx: worker process
+xui        48434  0.0  0.0  20380  8296 ?        S    06:36   0:00 nginx: worker process
+xui        48443  0.0  0.0  20380  8296 ?        S    06:36   0:00 nginx: worker process
+xui        48451  0.0  0.0  20380  8296 ?        S    06:36   0:00 nginx: worker process
+xui        48457  0.0  0.0  20380  8296 ?        S    06:36   0:00 nginx: worker process
+xui        48463  0.0  0.0  20380  7912 ?        S    06:36   0:00 nginx: worker process
+xui        48492  0.0  0.0  20380  8296 ?        S    06:36   0:00 nginx: worker process
+xui        48493  0.0  0.0  20380  8296 ?        S    06:36   0:00 nginx: worker process
+xui        48494  0.0  0.0  20380  8296 ?        S    06:36   0:00 nginx: worker process
+xui        48495  0.0  0.0  20380  8296 ?        S    06:36   0:00 nginx: worker process
+xui        48496  0.0  0.0  20380  8296 ?        S    06:36   0:00 nginx: worker process
+xui        48497  0.0  0.0  20380  7528 ?        S    06:36   0:00 nginx: worker process
+xui        48498  0.0  0.0  20380  7528 ?        S    06:36   0:00 nginx: worker process
+xui        48499  0.0  0.0  20380  7912 ?        S    06:36   0:00 nginx: worker process
+xui        48500  0.0  0.0  20380  8296 ?        S    06:36   0:00 nginx: worker process
+xui        48501  0.0  0.0  20380  8296 ?        S    06:36   0:00 nginx: worker process
+xui        48502  0.0  0.0  20380  8296 ?        S    06:36   0:00 nginx: worker process
+xui        48503  0.0  0.0  20380  7912 ?        S    06:36   0:00 nginx: worker process
+xui        48504  0.0  0.0  20380  7912 ?        S    06:36   0:00 nginx: worker process
+xui        48505  0.0  0.0  20380  8296 ?        S    06:36   0:00 nginx: worker process
+xui        48506  0.0  0.0  20380  8296 ?        S    06:36   0:00 nginx: worker process
+xui        48507  0.0  0.0  20380  8296 ?        S    06:36   0:00 nginx: worker process
+xui        48508  0.0  0.0  20380  8296 ?        S    06:36   0:00 nginx: worker process
+xui        48509  0.0  0.0  20380  8296 ?        S    06:36   0:00 nginx: worker process
+xui        48510  0.0  0.0  20380  7912 ?        S    06:36   0:00 nginx: worker process
+xui        48511  0.0  0.0  20380  8296 ?        S    06:36   0:00 nginx: worker process
+xui        48512  0.0  0.0  20380  8296 ?        S    06:36   0:00 nginx: worker process
+xui        48513  0.0  0.0  20380  8296 ?        S    06:36   0:00 nginx: worker process
+xui        48514  0.0  0.0  20380  8296 ?        S    06:36   0:00 nginx: worker process
+xui        48515  0.0  0.0  20380  8680 ?        S    06:36   0:00 nginx: worker process
+xui        48516  0.0  0.0  20380  8296 ?        S    06:36   0:00 nginx: worker process
+xui        48517  0.0  0.0  20380  8296 ?        S    06:36   0:00 nginx: worker process
+xui        48518  0.0  0.0  20380  8296 ?        S    06:36   0:00 nginx: worker process
+xui        48519  0.0  0.0  20380  8680 ?        S    06:36   0:00 nginx: worker process
+xui        48520  0.0  0.0  20380  8296 ?        S    06:36   0:00 nginx: worker process
+xui        48521  0.0  0.0  20380  7528 ?        S    06:36   0:00 nginx: worker process
+xui        48522  0.0  0.0  20380  8296 ?        S    06:36   0:00 nginx: worker process
+xui        48523  0.0  0.0  20380  8296 ?        S    06:36   0:00 nginx: worker process
+xui        48524  0.0  0.0  20380  8296 ?        S    06:36   0:00 nginx: worker process
+xui        48525  0.0  0.0  20380  8680 ?        S    06:36   0:00 nginx: worker process
+root       82951  0.0  0.0  11916  4380 ?        Ss   06:57   0:00 nginx: master process /usr/sbin/nginx -g daemon on; master_process on;
+www-data   83572  0.0  0.0  13324  4092 ?        S    06:57   0:00 nginx: worker process
+www-data   83574  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83575  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83576  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83577  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83578  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83579  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83580  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83582  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83583  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83585  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83586  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83588  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83590  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83591  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83592  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83594  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83596  0.0  0.0  13324  4092 ?        S    06:57   0:00 nginx: worker process
+www-data   83597  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83598  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83599  0.0  0.0  13324  4092 ?        S    06:57   0:00 nginx: worker process
+www-data   83600  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83602  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83603  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83605  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83606  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83608  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83611  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83612  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83613  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83614  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83615  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83616  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83617  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83618  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83620  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83622  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83625  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83626  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83627  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83628  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83629  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83630  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83631  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83632  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83633  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83634  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+www-data   83635  0.0  0.0  13324  4476 ?        S    06:57   0:00 nginx: worker process
+root      104701  0.0  0.0  11780  1920 pts/10   S+   07:10   0:00 grep --color=auto nginx
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+server {
+    listen 80;
+    server_name play.teleunotv.cr;
+    
+    location / {
+        proxy_pass http://127.0.0.1:5000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+---
+server {
+    listen 80;
+    server_name app.teleunotv.cr;
+    
+    location / {
+        proxy_pass http://127.0.0.1:81;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+HTTP/1.1 200 OK
+Server: nginx/1.24.0 (Ubuntu)
+Date: Wed, 12 Nov 2025 13:10:25 GMT
+Content-Type: text/html; charset=UTF-8
+Content-Length: 2301
+Connection: keep-alive
+X-Powered-By: Express
+Accept-Ranges: bytes
+Cache-Control: public, max-age=0
+Last-Modified: Wed, 12 Nov 2025 04:24:12 GMT
+ETag: W/"8fd-19a764e949e"
+
+---
+HTTP/1.1 301 Moved Permanently
+Cache-Control: private
+Location: https://app.teleunotv.cr:443/
+Content-Length: 0
+Date: Wed, 12 Nov 2025 13:10:26 GMT
+Content-Type: text/html; charset=UTF-8
+
+root@cableuno:/home/cableuno# ^C
+root@cableuno:/home/cableuno# 
+
