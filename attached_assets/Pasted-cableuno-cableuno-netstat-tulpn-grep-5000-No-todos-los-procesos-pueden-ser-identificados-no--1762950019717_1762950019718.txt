@@ -1,0 +1,318 @@
+cableuno@cableuno:~$ netstat -tulpn | grep 5000
+(No todos los procesos pueden ser identificados, no hay información de propiedad del proceso
+ no se mostrarán, necesita ser superusuario para verlos todos.)
+tcp        0      0 0.0.0.0:5000            0.0.0.0:*               ESCUCHAR    -                   
+cableuno@cableuno:~$ sudo su
+[sudo] contraseña para cableuno: 
+root@cableuno:/home/cableuno# netstat -tulpn | grep 5000
+tcp        0      0 0.0.0.0:5000            0.0.0.0:*               ESCUCHAR    55572/node /var/www 
+root@cableuno:/home/cableuno# cat /home/xui/bin/nginx/conf/nginx.conf
+user xui;
+worker_processes  auto;
+worker_rlimit_nofile 300000;
+
+events {
+    worker_connections  16000;
+    use epoll;
+    accept_mutex on;
+    multi_accept on;
+}
+
+thread_pool pool_xui threads=32 max_queue=0;
+
+http {
+    include mime.types;
+    default_type  application/octet-stream;
+    sendfile on;
+    tcp_nopush on;
+    tcp_nodelay on;
+    reset_timedout_connection on;
+    include gzip.conf;
+    fastcgi_read_timeout 200;
+    access_log off;
+    error_log /dev/null;
+    keepalive_timeout 10;
+    include balance.conf;
+    send_timeout 20m;    
+    sendfile_max_chunk 512k;
+    lingering_close off;
+    aio threads=pool_xui;
+    client_body_timeout 13s;
+    client_header_timeout 13s;
+    client_max_body_size 8m;
+    proxy_buffer_size 16k;
+    proxy_busy_buffers_size 24k;
+    proxy_buffers 64 4k;
+    proxy_max_temp_file_size 0;
+    real_ip_header X-Forwarded-For;
+    include realip_cdn.conf;
+    include realip_cloudflare.conf;
+    include realip_xui.conf;
+    include limit.conf;
+    limit_req_zone $binary_remote_addr zone=one:30m rate=20r/s;
+    server {
+        include ports/*.conf;
+        include codes/*.conf;
+        include ssl.conf;
+        include custom.conf;
+        index index.php index.html index.htm;
+        try_files $uri $uri.html $uri/ @extensionless-php;
+        root /home/xui/www/;
+        server_tokens off;
+        chunked_transfer_encoding off;
+        resolver 1.1.1.1 1.0.0.1 valid=300s;
+        resolver_timeout 5s;
+        absolute_redirect off;
+
+        if ($request_method !~ ^(GET|POST)$) {
+            return 200;
+        }
+
+        rewrite_log on;
+        rewrite ^/play/(.*)/(.*)$ /stream/auth.php?token=$1&extension=$2 break;
+        rewrite ^/play/(.*)$ /stream/auth.php?token=$1 break;
+        rewrite ^/key/(.*)$ /stream/key.php?token=$1 break;
+        rewrite ^/movie/(.*)/(.*)/(.*)$ /stream/auth.php?username=$1&password=$2&stream=$3&type=movie break;
+        rewrite ^/movie/(.*)/(.*)$ /stream/auth.php?token=$1&stream=$2&type=movie break;
+        rewrite ^/series/(.*)/(.*)/(.*)$ /stream/auth.php?username=$1&password=$2&stream=$3&type=series break;
+        rewrite ^/series/(.*)/(.*)$ /stream/auth.php?token=$1&stream=$2&type=series break;
+        rewrite ^/subtitle/(.*)/(.*)/(.*)/(.*)$ /stream/auth.php?username=$1&password=$2&stream=$4&sid=$3&type=subtitle break;
+        rewrite ^/subtitle/(.*)/(.*)/(.*)$ /stream/auth.php?username=$1&password=$2&stream=$3&type=subtitle break;
+        rewrite ^/hls/(.*)$ /stream/segment.php?token=$1 break;
+        rewrite ^/tsauth/(.*)$ /stream/timeshift.php?token=$1 break;
+        rewrite ^/thauth/(.*)$ /stream/thumb.php?token=$1 break;
+        rewrite ^/auth/(.*)$ /stream/live.php?token=$1 break;
+        rewrite ^/vauth/(.*)$ /stream/vod.php?token=$1 break;
+        rewrite ^/subauth/(.*)$ /stream/subtitle.php?token=$1 break;
+        rewrite ^/timeshift/(.*)/(.*)/(.*)/(.*)/(.*)\.(.*)$ /stream/auth.php?username=$1&password=$2&stream=$5&extension=$6&duration=$3&start=$4&type=timeshift break;
+        rewrite ^/timeshift/(.*)/(.*)/(.*)/(.*)\.(.*)$ /stream/auth.php?token=$1&stream=$4&extension=$5&duration=$2&start=$3&type=timeshift break;
+        rewrite ^/thumb/(.*)/(.*)/(\d+)$ /stream/auth.php?username=$1&password=$2&stream=$3&type=thumb break;
+        rewrite ^/thumb/(.*)/(\d+)$ /stream/auth.php?token=$1&stream=$2&type=thumb break;
+        rewrite ^/playlist/(.*)/(.*)/(.*)$ /playlist.php?username=$1&password=$2&type=$3 break;
+        rewrite ^/playlist/(.*)/(.*)$ /playlist.php?username=$1&password=$2 break;
+        rewrite ^/player_api/(.*)/(.*)/(.*)$ /player_api.php?username=$1&password=$2&action=$3 break;
+        rewrite ^/player_api/(.*)/(.*)$ /player_api.php?username=$1&password=$2 break;
+        rewrite ^/epg/(.*)/(.*)/gz$ /epg.php?username=$1&password=$2&gzip=1 break;
+        rewrite ^/epg/(.*)/(.*)$ /epg.php?username=$1&password=$2 break;
+        rewrite ^/live/(.*)/(.*)/(\d+)\.(.*)$ /stream/auth.php?username=$1&password=$2&stream=$3&extension=$4&type=live break;
+        rewrite ^/live/(.*)/(.*)/(\d+)$ /stream/auth.php?username=$1&password=$2&stream=$3&extension=ts&type=live break;
+        rewrite ^/live/(.*)/(\d+)\.(.*)$ /stream/auth.php?token=$1&stream=$2&extension=$3&type=live break;
+        rewrite ^/live/(.*)/(\d+)$ /stream/auth.php?token=$1&stream=$2&extension=ts&type=live break;
+        rewrite ^/probe/(.*)$ /probe.php?data=$1 break;
+        rewrite ^/(.*)/(.*)/(\d+)\.(.*)$ /stream/auth.php?username=$1&password=$2&stream=$3&extension=$4&type=live break;
+        rewrite ^/(.*)/(.*)/(\d+)$ /stream/auth.php?username=$1&password=$2&stream=$3&extension=ts&type=live break;
+
+        location = /xmltv.php {
+            rewrite ^ /epg.php last;
+        }
+        
+        location = /get.php {
+            rewrite ^ /playlist.php last;
+        }
+        
+        location = /panel_api.php {
+            rewrite ^ /player_api.php last;
+        }
+        
+        location = /streaming/live.php {
+            return 302 /stream/auth.php?type=live&$args;
+        }
+        
+        location = /streaming/rtmp.php {
+            return 302 /stream/rtmp.php?$args;
+        }
+        
+        location = /streaming/timeshift.php {
+            return 302 /stream/auth.php?type=timeshift&$args;
+        }
+        
+        location = /streaming/vod.php {
+            return 302 /stream/auth.php?type=movie&$args;
+        }
+
+        location = /server/load.php {
+            return 302 /c/portal.php?$args;
+        }
+
+        location ^~ /images/index.html {
+            return 404;
+        }
+        
+        location ^~ /images/admin/index.html {
+            return 404;
+        }
+        
+        location ^~ /images/enigma2/index.html {
+            return 404;
+        }
+
+        location ^~ /images/ {
+            # Stop executing
+        }
+        
+        location ~ ^/status$ {
+            allow 127.0.0.1;
+            deny all;
+            fastcgi_index index.php;
+            fastcgi_pass php;
+            include fastcgi_params;
+            fastcgi_buffering on;
+            fastcgi_buffers 96 32k;
+            fastcgi_buffer_size 32k;
+            fastcgi_max_temp_file_size 0;
+            fastcgi_keep_conn on;
+            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+            fastcgi_param SCRIPT_NAME $fastcgi_script_name;
+        }
+        
+        location /nginx_status {
+            allow 127.0.0.1;
+            deny all;
+            stub_status on;
+        }
+
+        location ~ \.php$ {
+            limit_req zone=one burst=8;
+            include limit_queue.conf;
+            try_files $uri =404;
+            fastcgi_index index.php;
+            fastcgi_pass php;
+            include fastcgi_params;
+            fastcgi_buffering on;
+            fastcgi_buffers 128 32k;
+            fastcgi_buffer_size 32k;
+            fastcgi_busy_buffers_size 128k;
+            fastcgi_max_temp_file_size 0;
+            fastcgi_keep_conn on;
+            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+            fastcgi_param SCRIPT_NAME $fastcgi_script_name;
+        }
+        
+        location @extensionless-php {
+            rewrite ^(.*)$ $1.php last;
+        }
+    }
+}root@cableuno:/home/cableuno# ^C
+root@cableuno:/home/cableuno# sudo apt update
+sudo apt install -y certbot
+Des:1 http://security.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+Ign:2 http://nimblestreamer.com/ubuntu jammy/ InRelease                        
+Obj:3 http://nimblestreamer.com/ubuntu jammy/ Release                          
+Obj:4 https://deb.nodesource.com/node_20.x nodistro InRelease                  
+Obj:6 http://cr.archive.ubuntu.com/ubuntu noble InRelease        
+Des:7 http://cr.archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+Des:8 http://cr.archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+Des:9 http://security.ubuntu.com/ubuntu noble-security/main amd64 Components [21,5 kB]
+Des:10 http://security.ubuntu.com/ubuntu noble-security/restricted amd64 Components [212 B]
+Des:11 http://security.ubuntu.com/ubuntu noble-security/universe amd64 Components [52,2 kB]
+Des:12 http://security.ubuntu.com/ubuntu noble-security/multiverse amd64 Components [212 B]
+Des:13 http://cr.archive.ubuntu.com/ubuntu noble-updates/main amd64 Components [175 kB]
+Des:14 http://cr.archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Components [212 B]
+Des:15 http://cr.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Components [377 kB]
+Des:16 http://cr.archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 Components [940 B]
+Des:17 http://cr.archive.ubuntu.com/ubuntu noble-backports/main amd64 Components [7 124 B]
+Des:18 http://cr.archive.ubuntu.com/ubuntu noble-backports/restricted amd64 Components [216 B]
+Des:19 http://cr.archive.ubuntu.com/ubuntu noble-backports/universe amd64 Components [11,0 kB]
+Des:20 http://cr.archive.ubuntu.com/ubuntu noble-backports/multiverse amd64 Components [212 B]
+Descargados 1 025 kB en 2s (520 kB/s)                                     
+Leyendo lista de paquetes... Hecho
+Creando árbol de dependencias... Hecho
+Leyendo la información de estado... Hecho
+Se pueden actualizar 8 paquetes. Ejecute «apt list --upgradable» para verlos.
+Leyendo lista de paquetes... Hecho
+Creando árbol de dependencias... Hecho
+Leyendo la información de estado... Hecho
+certbot ya está en su versión más reciente (2.9.0-1).
+Los paquetes indicados a continuación se instalaron de forma automática y ya no son necesarios.
+  libgl1-amber-dri libglapi-mesa libzip5 mailcap
+Utilice «sudo apt autoremove» para eliminarlos.
+0 actualizados, 0 nuevos se instalarán, 0 para eliminar y 8 no actualizados.
+root@cableuno:/home/cableuno# # Crear configuración para play.teleunotv.cr (Cable Uno Play)
+sudo tee /home/xui/bin/nginx/conf/play.teleunotv.conf > /dev/null << 'EOL'
+server {
+    listen 80;
+    server_name play.teleunotv.cr;
+    
+    location /.well-known/acme-challenge/ {
+        root /home/xui/www;
+    }
+    
+    location / {
+        proxy_pass http://127.0.0.1:5000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+EOL
+
+EOL }   rewrite ^(.*)$ $1.php last;LENAME $document_root$fastcgi_script_name;
+root@cableuno:/home/cableuno# # Agregar includes al nginx.conf
+sudo sed -i '/include custom.conf;/a\        include play.teleunotv.conf;\n        include app.teleunotv.conf;' /home/xui/bin/nginx/conf/nginx.conf
+
+# Verificar
+grep -A 3 "include custom.conf" /home/xui/bin/nginx/conf/nginx.conf
+        include custom.conf;
+        include play.teleunotv.conf;
+        include app.teleunotv.conf;
+        index index.php index.html index.htm;
+root@cableuno:/home/cableuno# # Verificar configuración
+sudo /home/xui/bin/nginx/sbin/nginx -t
+
+# Reiniciar
+sudo killall -HUP nginx
+Violación de segmento
+root@cableuno:/home/cableuno# sudo /home/xui/bin/nginx/sbin/nginx -t
+Violación de segmento
+root@cableuno:/home/cableuno# # Eliminar archivos de configuración que agregué
+sudo rm -f /home/xui/bin/nginx/conf/play.teleunotv.conf
+sudo rm -f /home/xui/bin/nginx/conf/app.teleunotv.conf
+sudo rm -f /home/xui/bin/nginx/conf/cable-uno-play.conf
+root@cableuno:/home/cableuno# # Ver si hay backup
+ls -la /home/xui/bin/nginx/conf/*.bak
+ls -la /home/xui/bin/nginx/conf/nginx.conf*
+
+# Ver qué modifiqué
+grep -n "play.teleunotv" /home/xui/bin/nginx/conf/nginx.conf
+grep -n "app.teleunotv" /home/xui/bin/nginx/conf/nginx.conf
+ls: no se puede acceder a '/home/xui/bin/nginx/conf/*.bak': No existe el archivo o el directorio
+-r-xr-x--- 1 xui xui 7415 nov 12 06:10 /home/xui/bin/nginx/conf/nginx.conf
+49:        include play.teleunotv.conf;
+50:        include app.teleunotv.conf;
+root@cableuno:/home/cableuno# # Eliminar las líneas include que agregué
+sudo sed -i '/include play.teleunotv.conf;/d' /home/xui/bin/nginx/conf/nginx.conf
+sudo sed -i '/include app.teleunotv.conf;/d' /home/xui/bin/nginx/conf/nginx.conf 
+sudo sed -i '/include cable-uno-play.conf;/d' /home/xui/bin/nginx/conf/nginx.conf
+root@cableuno:/home/cableuno# sudo /home/xui/bin/nginx/sbin/nginx -t
+Violación de segmento
+root@cableuno:/home/cableuno# ^C
+root@cableuno:/home/cableuno# # Ver el nginx.conf limpio
+grep -n "include" /home/xui/bin/nginx/conf/nginx.conf | head -20
+
+# Asegurar que no hay includes rotos
+cat /home/xui/bin/nginx/conf/nginx.conf | grep -A 2 "include custom.conf"
+15:    include mime.types;
+21:    include gzip.conf;
+26:    include balance.conf;
+39:    include realip_cdn.conf;
+40:    include realip_cloudflare.conf;
+41:    include realip_xui.conf;
+42:    include limit.conf;
+45:        include ports/*.conf;
+46:        include codes/*.conf;
+47:        include ssl.conf;
+48:        include custom.conf;
+149:            include fastcgi_params;
+167:            include limit_queue.conf;
+171:            include fastcgi_params;
+        include custom.conf;
+        index index.php index.html index.htm;
+        try_files $uri $uri.html $uri/ @extensionless-php;
+root@cableuno:/home/cableuno# sudo /home/xui/bin/nginx/sbin/nginx -t
+Violación de segmento
+root@cableuno:/home/cableuno# 
