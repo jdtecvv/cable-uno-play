@@ -1,0 +1,36 @@
+root@cableuno:/var/www/cable-uno-play# pm2 delete cable-uno-play
+[PM2] Applying action deleteProcessId on app [cable-uno-play](ids: [ 0 ])
+[PM2] [cable-uno-play](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@cableuno:/var/www/cable-uno-play# cd /var/www/cable-uno-play
+pm2 start dist/index.js --name cable-uno-play --env production --update-env
+[PM2] Starting /var/www/cable-uno-play/dist/index.js in fork_mode (1 instance)
+[PM2] Done.
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ cable-uno-play     │ fork     │ 0    │ online    │ 0%       │ 18.0mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@cableuno:/var/www/cable-uno-play# pm2 save
+[PM2] Saving current process list...
+[PM2] Successfully saved in /root/.pm2/dump.pm2
+root@cableuno:/var/www/cable-uno-play# pm2 logs cable-uno-play --lines 20
+[TAILING] Tailing last 20 lines for [cable-uno-play] process (change the value with --lines option)
+/root/.pm2/logs/cable-uno-play-out.log last 20 lines:
+/root/.pm2/logs/cable-uno-play-error.log last 20 lines:
+0|cable-un | Error: DATABASE_URL must be set. Did you forget to provision a database?
+0|cable-un |     at file:///var/www/cable-uno-play/dist/index.js:329:9
+0|cable-un |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-un |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-un | Error: DATABASE_URL must be set. Did you forget to provision a database?
+0|cable-un |     at file:///var/www/cable-uno-play/dist/index.js:329:9
+0|cable-un |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-un |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-un | Error: DATABASE_URL must be set. Did you forget to provision a database?
+0|cable-un |     at file:///var/www/cable-uno-play/dist/index.js:329:9
+0|cable-un |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-un |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+
+
