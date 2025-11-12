@@ -1,0 +1,244 @@
+Last login: Sat Sep  6 22:54:08 on ttys000
+josevalerinvillegas@MacBook-Pro-de-Jose ~ % diskutil list
+/dev/disk0 (internal, physical):
+   #:                       TYPE NAME                    SIZE       IDENTIFIER
+   0:      GUID_partition_scheme                        *2.0 TB     disk0
+   1:                        EFI EFI                     314.6 MB   disk0s1
+   2:                 Apple_APFS Container disk1         2.0 TB     disk0s2
+
+/dev/disk1 (synthesized):
+   #:                       TYPE NAME                    SIZE       IDENTIFIER
+   0:      APFS Container Scheme -                      +2.0 TB     disk1
+                                 Physical Store disk0s2
+   1:                APFS Volume JDVV_MAC - Datos        1.5 TB     disk1s1
+   2:                APFS Volume JDVV_MAC                11.3 GB    disk1s2
+   3:              APFS Snapshot com.apple.os.update-... 11.3 GB    disk1s2s1
+   4:                APFS Volume Preboot                 2.5 GB     disk1s3
+   5:                APFS Volume Recovery                1.3 GB     disk1s4
+   6:                APFS Volume VM                      20.5 KB    disk1s5
+
+/dev/disk2 (external, physical):
+   #:                       TYPE NAME                    SIZE       IDENTIFIER
+   0:     FDisk_partition_scheme                        *31.0 GB    disk2
+   1:                 DOS_FAT_32 NO NAME                 31.0 GB    disk2s1
+
+/dev/disk3 (disk image):
+   #:                       TYPE NAME                    SIZE       IDENTIFIER
+   0:                            CCCOMA_X64FRE_ES-ES... +6.2 GB     disk3
+
+josevalerinvillegas@MacBook-Pro-de-Jose ~ % /dev/disk2   
+zsh: permission denied: /dev/disk2
+josevalerinvillegas@MacBook-Pro-de-Jose ~ % 
+  [Restaurado: 12 nov 2025, 07:16:46]
+Last login: Fri Oct 31 20:25:34 on console
+josevalerinvillegas@MacBook-Pro-de-Jose ~ % # Verificar acceso desde internet
+curl -I http://play.teleunotv.cr
+curl -I http://app.teleunotv.cr
+
+# Verificar que los DNS apunten a tu IP pública
+nslookup play.teleunotv.cr
+nslookup app.teleunotv.cr
+zsh: command not found: #
+HTTP/1.1 200 OK
+Server: nginx/1.24.0 (Ubuntu)
+Date: Wed, 12 Nov 2025 13:17:02 GMT
+Content-Type: text/html; charset=UTF-8
+Content-Length: 2301
+Connection: keep-alive
+X-Powered-By: Express
+Accept-Ranges: bytes
+Cache-Control: public, max-age=0
+Last-Modified: Wed, 12 Nov 2025 04:24:12 GMT
+ETag: W/"8fd-19a764e949e"
+
+HTTP/1.1 200 OK
+Server: nginx/1.24.0 (Ubuntu)
+Date: Wed, 12 Nov 2025 13:17:02 GMT
+Content-Type: application/octet-stream
+Content-Length: 0
+Connection: keep-alive
+
+zsh: command not found: #
+Server:		8.8.8.8
+Address:	8.8.8.8#53
+
+Non-authoritative answer:
+Name:	play.teleunotv.cr
+Address: 190.61.110.177
+
+Server:		8.8.8.8
+Address:	8.8.8.8#53
+
+Non-authoritative answer:
+Name:	app.teleunotv.cr
+Address: 190.61.110.177
+
+josevalerinvillegas@MacBook-Pro-de-Jose ~ % # Opción 2: Paso a paso
+npm install @capacitor/ios
+npm run build
+npx cap add ios
+npx cap sync ios
+npx cap open ios
+zsh: command not found: #
+
+added 3 packages in 3s
+npm notice
+npm notice New patch version of npm available! 11.6.1 -> 11.6.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.6.2
+npm notice To update run: npm install -g npm@11.6.2
+npm notice
+^[[Anpm error Missing script: "build"
+npm error
+npm error To see a list of scripts, run:
+npm error   npm run
+npm error A complete log of this run can be found in: /Users/josevalerinvillegas/.npm/_logs/2025-11-12T13_44_14_038Z-debug-0.log
+npm error could not determine executable to run
+npm error A complete log of this run can be found in: /Users/josevalerinvillegas/.npm/_logs/2025-11-12T13_44_14_714Z-debug-0.log
+npm error could not determine executable to run
+npm error A complete log of this run can be found in: /Users/josevalerinvillegas/.npm/_logs/2025-11-12T13_44_15_559Z-debug-0.log
+npm error could not determine executable to run
+npm error A complete log of this run can be found in: /Users/josevalerinvillegas/.npm/_logs/2025-11-12T13_44_16_208Z-debug-0.log
+josevalerinvillegas@MacBook-Pro-de-Jose ~ % # Opción 2: Paso a paso
+npm install @capacitor/ios
+npm run build
+npx cap add ios
+npx cap sync ios
+npx cap open ios
+zsh: command not found: #
+
+up to date, audited 4 packages in 890ms
+
+found 0 vulnerabilities
+npm error Missing script: "build"
+npm error
+npm error To see a list of scripts, run:
+npm error   npm run
+npm error A complete log of this run can be found in: /Users/josevalerinvillegas/.npm/_logs/2025-11-12T13_47_32_050Z-debug-0.log
+npm error could not determine executable to run
+npm error A complete log of this run can be found in: /Users/josevalerinvillegas/.npm/_logs/2025-11-12T13_47_32_356Z-debug-0.log
+npm error could not determine executable to run
+npm error A complete log of this run can be found in: /Users/josevalerinvillegas/.npm/_logs/2025-11-12T13_47_33_018Z-debug-0.log
+npm error could not determine executable to run
+npm error A complete log of this run can be found in: /Users/josevalerinvillegas/.npm/_logs/2025-11-12T13_47_33_665Z-debug-0.log
+josevalerinvillegas@MacBook-Pro-de-Jose ~ % ./compilar-ios.sh 
+zsh: no such file or directory: ./compilar-ios.sh
+josevalerinvillegas@MacBook-Pro-de-Jose ~ % >....                               
+  }
+};
+
+export default config;
+EOF
+
+# 3. Instalar dependencias
+npm install
+
+# 4. Instalar Capacitor iOS
+npm install @capacitor/ios
+
+# 5. Build
+npm run build
+
+# 6. Agregar plataforma iOS
+npx cap add ios
+
+# 7. Sincronizar
+npx cap sync ios
+
+# 8. Abrir Xcode
+npx cap open ios
+zsh: command not found: #
+Cloning into 'cable-uno-play'...
+remote: Enumerating objects: 406, done.
+remote: Counting objects: 100% (406/406), done.
+remote: Compressing objects: 100% (229/229), done.
+remote: Total 406 (delta 139), reused 406 (delta 139), pack-reused 0 (from 0)
+Receiving objects: 100% (406/406), 915.58 KiB | 2.94 MiB/s, done.
+Resolving deltas: 100% (139/139), done.
+zsh: command not found: #
+zsh: command not found: #
+npm warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead
+npm warn deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.is
+npm warn deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.is
+
+added 708 packages, and audited 709 packages in 19s
+
+74 packages are looking for funding
+  run `npm fund` for details
+
+8 vulnerabilities (3 low, 5 moderate)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+zsh: command not found: #
+
+added 1 package, and audited 710 packages in 2s
+
+74 packages are looking for funding
+  run `npm fund` for details
+
+8 vulnerabilities (3 low, 5 moderate)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+zsh: command not found: #
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.18 building for production...
+transforming (3) src/main.tsxBrowserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 1666 modules transformed.
+../dist/public/index.html                   2.30 kB │ gzip:   0.92 kB
+../dist/public/assets/index-COk0nSel.css   65.88 kB │ gzip:  11.51 kB
+../dist/public/assets/index-DJGhKvi_.js   761.51 kB │ gzip: 237.92 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 6.27s
+
+  dist/index.js  38.8kb
+
+⚡ Done in 13ms
+zsh: command not found: #
+✔ Adding native Xcode project in ios in 31.79ms
+✔ add in 32.59ms
+✔ Copying web assets from public to ios/App/App/public in 11.79ms
+✔ Creating capacitor.config.json in ios/App/App in 1.26ms
+✔ copy ios in 130.26ms
+✔ Updating iOS plugins in 20.33ms
+⠹ update ios [warn] Skipping pod install because CocoaPods is not installed
+✔ Updating iOS native dependencies with pod install in 14.59s
+✔ update ios in 14.74s
+[success] ios platform added!
+Follow the Developer Workflow guide to get building:
+https://capacitorjs.com/docs/basics/workflow
+
+Thank you for helping improve Capacitor by sharing anonymous usage data! 💖
+Information about the data we collect is available on our website: https://capacitorjs.com/docs/next/cli/telemetry
+You can disable telemetry at any time by using the npx cap telemetry off commandzsh: command not found: #
+✔ Copying web assets from public to ios/App/App/public in 10.94ms
+✔ Creating capacitor.config.json in ios/App/App in 1.09ms
+✔ copy ios in 125.21ms
+✔ Updating iOS plugins in 20.65ms
+⠙ update ios [warn] Skipping pod install because CocoaPods is not installed
+✔ Updating iOS native dependencies with pod install in 2.76s
+✔ update ios in 2.92s
+[info] Sync finished in 3.645s
+zsh: command not found: #
+✔ Opening the Xcode workspace... in 3.01s
+josevalerinvillegas@MacBook-Pro-de-Jose cable-uno-play % 
+josevalerinvillegas@MacBook-Pro-de-Jose cable-uno-play % 
