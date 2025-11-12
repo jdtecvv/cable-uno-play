@@ -1,0 +1,127 @@
+root@cableuno:/home/cableuno# sudo netstat -tulpn | grep :80
+tcp       23      0 0.0.0.0:8081            0.0.0.0:*               ESCUCHAR    1799/nimble         
+tcp        0      0 0.0.0.0:80              0.0.0.0:*               ESCUCHAR    2232/nginx: master  
+root@cableuno:/home/cableuno# sudo netstat -tulpn | grep LISTEN
+root@cableuno:/home/cableuno# which nginx
+nginx -v
+No se ha encontrado la orden «nginx», pero se puede instalar con:
+apt install nginx
+root@cableuno:/home/cableuno# nginx -v
+No se ha encontrado la orden «nginx», pero se puede instalar con:
+apt install nginx
+root@cableuno:/home/cableuno# ps aux | grep -i xui
+root      1805  0.0  0.0  12872  3072 ?        Ss   18:35   0:00 /bin/bash /home/xui/service start
+xui       1954  0.4  0.0 801988 116456 ?       Ssl  18:35   0:58 /home/xui/bin/redis/redis-server *:6379
+xui       2232  0.0  0.0  37048  1128 ?        Ss   18:35   0:00 nginx: master process /home/xui/bin/nginx/sbin/nginx
+xui       2234  0.0  0.0 306096  9192 ?        Sl   18:35   0:01 nginx: worker process
+xui       2235  0.0  0.0 306096  8808 ?        Sl   18:35   0:01 nginx: worker process
+xui       2236  0.0  0.0 306096  8808 ?        Sl   18:35   0:01 nginx: worker process
+xui       2237  0.0  0.0 306096  8808 ?        Sl   18:35   0:01 nginx: worker process
+xui       2238  0.0  0.0 306096  8808 ?        Sl   18:35   0:01 nginx: worker process
+xui       2239  0.0  0.0 306096  8808 ?        Sl   18:35   0:01 nginx: worker process
+xui       2240  0.0  0.0 306096  8808 ?        Sl   18:35   0:01 nginx: worker process
+xui       2241  0.0  0.0 306096  8808 ?        Sl   18:35   0:01 nginx: worker process
+xui       2243  0.0  0.0 306096  8808 ?        Sl   18:35   0:01 nginx: worker process
+xui       2244  0.0  0.0 306184  8808 ?        Sl   18:35   0:01 nginx: worker process
+xui       2245  0.0  0.0 306096  8808 ?        Sl   18:35   0:01 nginx: worker process
+xui       2246  0.0  0.0 306096  8808 ?        Sl   18:35   0:01 nginx: worker process
+xui       2247  0.0  0.0 306096  8808 ?        Sl   18:35   0:01 nginx: worker process
+xui       2249  0.0  0.0 306096  8808 ?        Sl   18:35   0:01 nginx: worker process
+xui       2250  0.0  0.0 306096  8808 ?        Sl   18:35   0:01 nginx: worker process
+xui       2251  0.0  0.0 306096  8808 ?        Sl   18:35   0:01 nginx: worker process
+xui       2253  0.0  0.0 306096  8808 ?        Sl   18:35   0:01 nginx: worker process
+xui       2254  0.0  0.0 306096  8808 ?        Sl   18:35   0:01 nginx: worker process
+xui       2255  0.0  0.0 306096  8808 ?        Sl   18:35   0:01 nginx: worker process
+xui       2256  0.0  0.0 306096  8808 ?        Sl   18:35   0:01 nginx: worker process
+xui       2257  0.0  0.0 306096  8808 ?        Sl   18:35   0:01 nginx: worker process
+xui       2258  0.0  0.0 306096  8808 ?        Sl   18:35   0:01 nginx: worker process
+xui       2260  0.0  0.0 306096  9192 ?        Sl   18:35   0:01 nginx: worker process
+xui       2261  0.0  0.0 306096  8808 ?        Sl   18:35   0:01 nginx: worker process
+xui       2262  0.0  0.0 306096  9192 ?        Sl   18:35   0:01 nginx: worker process
+xui       2263  0.0  0.0 306096  9192 ?        Sl   18:35   0:01 nginx: worker process
+xui       2264  0.0  0.0 306096  8808 ?        Sl   18:35   0:01 nginx: worker process
+xui       2265  0.0  0.0 306096  9192 ?        Sl   18:35   0:01 nginx: worker process
+xui       2270  0.0  0.0 306096  9192 ?        Sl   18:35   0:01 nginx: worker process
+xui       2288  0.0  0.0 306096  9192 ?        Sl   18:35   0:01 nginx: worker process
+xui       2321  0.0  0.0 306096  9192 ?        Sl   18:35   0:01 nginx: worker process
+xui       2354  0.0  0.0 306096  9192 ?        Sl   18:35   0:01 nginx: worker process
+xui       2402  0.0  0.0 306096  9192 ?        Sl   18:35   0:01 nginx: worker process
+xui       2464  0.0  0.0 306096  8424 ?        Sl   18:35   0:01 nginx: worker process
+xui       2516  0.0  0.0 306096  9192 ?        Sl   18:35   0:01 nginx: worker process
+xui       2572  0.0  0.0 306096  9192 ?        Sl   18:35   0:01 nginx: worker process
+xui       2636  0.0  0.0 306096  9192 ?        Sl   18:35   0:01 nginx: worker process
+xui       2698  0.0  0.0 306096  9192 ?        Sl   18:35   0:01 nginx: worker process
+xui       2767  0.0  0.0 306096  9192 ?        Sl   18:35   0:01 nginx: worker process
+xui       2820  0.0  0.0 306096  9192 ?        Sl   18:35   0:01 nginx: worker process
+xui       2868  0.0  0.0 306096  9192 ?        Sl   18:35   0:01 nginx: worker process
+xui       2910  0.0  0.0 306096  9192 ?        Sl   18:35   0:01 nginx: worker process
+xui       2950  0.0  0.0 306096  9192 ?        Sl   18:35   0:01 nginx: worker process
+xui       2983  0.0  0.0 306096  9192 ?        Sl   18:35   0:01 nginx: worker process
+xui       3016  0.0  0.0 306096  9192 ?        Sl   18:35   0:01 nginx: worker process
+xui       3067  0.0  0.0 306096  9192 ?        Sl   18:35   0:01 nginx: worker process
+xui       3132  0.0  0.0 306096  9192 ?        Sl   18:35   0:01 nginx: worker process
+xui       3207  0.0  0.0 306096  9192 ?        Sl   18:35   0:01 nginx: worker process
+xui       3888  0.0  0.0  13604   876 ?        Ss   18:35   0:00 nginx: master process /home/xui/bin/nginx_rtmp/sbin/nginx_rtmp
+xui       3889  0.0  0.0  20380  8172 ?        S    18:35   0:00 nginx: worker process
+xui       3890  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3891  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3892  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3893  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3894  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3895  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3896  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3897  0.0  0.0  20380  8556 ?        S    18:35   0:01 nginx: worker process
+xui       3898  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3899  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3900  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3901  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3903  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3904  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3905  0.0  0.0  20380  8556 ?        S    18:35   0:01 nginx: worker process
+xui       3906  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3907  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3908  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3909  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3910  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3911  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3912  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3913  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3914  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3915  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3916  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3917  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3918  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3919  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3920  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3921  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3922  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3923  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3924  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3925  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3926  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3927  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3928  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3929  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3930  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3931  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3932  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3933  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3934  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3935  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3936  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       3937  0.0  0.0  20380  8172 ?        S    18:35   0:01 nginx: worker process
+xui       4019  0.0  0.0 637516  7776 ?        Ss   18:35   0:00 php-fpm: master process (/home/xui/bin/php/etc/1.conf)
+xui       4024  0.0  0.0 637516  7640 ?        Ss   18:35   0:00 php-fpm: master process (/home/xui/bin/php/etc/2.conf)
+xui       4027  0.0  0.0 637516  7672 ?        Ss   18:35   0:00 php-fpm: master process (/home/xui/bin/php/etc/3.conf)
+xui       4031  0.0  0.0 637516  7776 ?        Ss   18:35   0:00 php-fpm: master process (/home/xui/bin/php/etc/4.conf)
+root      4040  0.0  0.0  22740  7296 ?        S    18:35   0:00 sudo -u xui /home/xui/bin/php/bin/php /home/xui/includes/cli/signals.php
+root      4041  0.0  0.0  22736  7296 ?        S    18:35   0:00 sudo -u xui /home/xui/bin/php/bin/php /home/xui/includes/cli/watchdog.php
+root      4042  0.0  0.0  22740  7296 ?        S    18:35   0:00 sudo -u xui /home/xui/bin/php/bin/php /home/xui/includes/cli/queue.php
+root      4043  0.0  0.0  22732  7296 ?        S    18:35   0:00 sudo -u xui /home/xui/bin/php/bin/php /home/xui/includes/cli/cache_handler.php
+xui       4045  0.0  0.0 635132 34628 ?        S    18:35   0:03 /home/xui/bin/php/bin/php /home/xui/includes/cli/cache_handler.php
+xui       4046  0.4  0.0 635132 39068 ?        S    18:35   1:02 /home/xui/bin/php/bin/php /home/xui/includes/cli/watchdog.php
+xui       4047  0.0  0.0 635132 35276 ?        S    18:35   0:08 /home/xui/bin/php/bin/php /home/xui/includes/cli/queue.php
+xui       4048  0.1  0.0 635132 35152 ?        S    18:35   0:22 /home/xui/bin/php/bin/php /home/xui/includes/cli/signals.php
+xui       6716  0.0  0.0  15476 11520 ?        S    18:37   0:02 /home/xui/bin/network
+root     22157  0.0  0.0  11780  2304 pts/1    S+   22:35   0:00 grep --color=auto -i xui
+root@cableuno:/home/cableuno# 
