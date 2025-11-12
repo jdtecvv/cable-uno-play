@@ -1,0 +1,128 @@
+Last login: Wed Nov 12 09:15:53 on ttys001
+josevalerinvillegas@MacBook-Pro-de-Jose ~ % /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+==> Checking for `sudo` access (which may request your password)...
+Password:
+==> This script will install:
+/usr/local/bin/brew
+/usr/local/share/doc/homebrew
+/usr/local/share/man/man1/brew.1
+/usr/local/share/zsh/site-functions/_brew
+/usr/local/etc/bash_completion.d/brew
+/usr/local/Homebrew
+==> The following existing directories will be made group writable:
+/usr/local/bin
+/usr/local/include
+/usr/local/lib
+/usr/local/sbin
+/usr/local/share
+/usr/local/share/doc
+/usr/local/share/man
+/usr/local/share/man/man1
+==> The following existing directories will have their owner set to josevalerinvillegas:
+/usr/local/bin
+/usr/local/include
+/usr/local/lib
+/usr/local/sbin
+/usr/local/share
+/usr/local/share/doc
+/usr/local/share/man
+/usr/local/share/man/man1
+==> The following existing directories will have their group set to admin:
+/usr/local/bin
+/usr/local/include
+/usr/local/lib
+/usr/local/sbin
+/usr/local/share
+/usr/local/share/doc
+/usr/local/share/man
+/usr/local/share/man/man1
+==> The following new directories will be created:
+/usr/local/etc
+/usr/local/var
+/usr/local/opt
+/usr/local/var/homebrew
+/usr/local/var/homebrew/linked
+/usr/local/Cellar
+/usr/local/Caskroom
+/usr/local/Frameworks
+
+Press RETURN/ENTER to continue or any other key to abort:
+==> /usr/bin/sudo /bin/chmod u+rwx /usr/local/bin /usr/local/include /usr/local/lib /usr/local/sbin /usr/local/share /usr/local/share/doc /usr/local/share/man /usr/local/share/man/man1
+==> /usr/bin/sudo /bin/chmod g+rwx /usr/local/bin /usr/local/include /usr/local/lib /usr/local/sbin /usr/local/share /usr/local/share/doc /usr/local/share/man /usr/local/share/man/man1
+==> /usr/bin/sudo /usr/sbin/chown josevalerinvillegas /usr/local/bin /usr/local/include /usr/local/lib /usr/local/sbin /usr/local/share /usr/local/share/doc /usr/local/share/man /usr/local/share/man/man1
+==> /usr/bin/sudo /usr/bin/chgrp admin /usr/local/bin /usr/local/include /usr/local/lib /usr/local/sbin /usr/local/share /usr/local/share/doc /usr/local/share/man /usr/local/share/man/man1
+==> /usr/bin/sudo /bin/mkdir -p /usr/local/etc /usr/local/var /usr/local/opt /usr/local/var/homebrew /usr/local/var/homebrew/linked /usr/local/Cellar /usr/local/Caskroom /usr/local/Frameworks
+==> /usr/bin/sudo /bin/chmod ug=rwx /usr/local/etc /usr/local/var /usr/local/opt /usr/local/var/homebrew /usr/local/var/homebrew/linked /usr/local/Cellar /usr/local/Caskroom /usr/local/Frameworks
+==> /usr/bin/sudo /usr/sbin/chown josevalerinvillegas /usr/local/etc /usr/local/var /usr/local/opt /usr/local/var/homebrew /usr/local/var/homebrew/linked /usr/local/Cellar /usr/local/Caskroom /usr/local/Frameworks
+==> /usr/bin/sudo /usr/bin/chgrp admin /usr/local/etc /usr/local/var /usr/local/opt /usr/local/var/homebrew /usr/local/var/homebrew/linked /usr/local/Cellar /usr/local/Caskroom /usr/local/Frameworks
+==> /usr/bin/sudo /bin/mkdir -p /usr/local/Homebrew
+==> /usr/bin/sudo /usr/sbin/chown -R josevalerinvillegas:admin /usr/local/Homebrew
+==> Downloading and installing Homebrew...
+remote: Enumerating objects: 314651, done.
+remote: Counting objects: 100% (207/207), done.
+remote: Compressing objects: 100% (106/106), done.
+remote: Total 314651 (delta 129), reused 145 (delta 101), pack-reused 314444 (from 2)
+remote: Enumerating objects: 55, done.
+remote: Counting objects: 100% (33/33), done.
+remote: Total 55 (delta 33), reused 33 (delta 33), pack-reused 22 (from 1)
+==> Updating Homebrew...
+==> Downloading https://ghcr.io/v2/homebrew/portable-ruby/portable-ruby/blobs/sha256:0c78b38f22fb9b42df6918db00e6f5a80d5b35164f910ffe4c89159326ae98cf
+######################################################################### 100.0%
+==> Pouring portable-ruby-3.4.5.el_capitan.bottle.tar.gz
+Error: Failed to link all completions, docs and manpages:
+  Permission denied @ rb_file_s_symlink - (../../../Homebrew/completions/zsh/_brew, /usr/local/share/zsh/site-functions/_brew)
+Failed during: /usr/local/bin/brew update --force --quiet
+josevalerinvillegas@MacBook-Pro-de-Jose ~ % # 1. Arreglar permisos de /usr/local 
+sudo chown -R $(whoami) /usr/local/*
+
+# 2. Completar la instalación de Homebrew
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# 3. Activar Homebrew (para Mac Intel, usa /usr/local)
+echo 'eval "$(/usr/local/bin/brew shellenv)"' >> ~/.zprofile
+eval "$(/usr/local/bin/brew shellenv)"
+
+# 4. Verificar que funciona
+brew --version
+zsh: command not found: #
+Password:
+zsh: command not found: #
+==> Checking for `sudo` access (which may request your password)...
+==> This script will install:
+/usr/local/bin/brew
+/usr/local/share/doc/homebrew
+/usr/local/share/man/man1/brew.1
+/usr/local/share/zsh/site-functions/_brew
+/usr/local/etc/bash_completion.d/brew
+/usr/local/Homebrew
+
+Press RETURN/ENTER to continue or any other key to abort:
+==> /usr/bin/sudo /usr/sbin/chown -R josevalerinvillegas:admin /usr/local/Homebrew
+==> Downloading and installing Homebrew...
+remote: Enumerating objects: 9, done.
+remote: Counting objects: 100% (8/8), done.
+remote: Compressing objects: 100% (3/3), done.
+remote: Total 9 (delta 6), reused 7 (delta 5), pack-reused 1 (from 1)
+==> Updating Homebrew...
+==> Installation successful!
+
+==> Homebrew has enabled anonymous aggregate formulae and cask analytics.
+Read the analytics documentation (and how to opt-out) here:
+  https://docs.brew.sh/Analytics
+No analytics data has been sent yet (nor will any be during this install run).
+
+==> Homebrew is run entirely by unpaid volunteers. Please consider donating:
+  https://github.com/Homebrew/brew#donations
+
+==> Next steps:
+- Run these commands in your terminal to add Homebrew to your PATH:
+    echo >> /Users/josevalerinvillegas/.zprofile
+    echo 'eval "$(/usr/local/bin/brew shellenv)"' >> /Users/josevalerinvillegas/.zprofile
+    eval "$(/usr/local/bin/brew shellenv)"
+- Run brew help to get started
+- Further documentation:
+    https://docs.brew.sh
+
+zsh: number expected
+zsh: command not found: #
+Homebrew 5.0.0
