@@ -22,7 +22,22 @@ The application uses Cable Uno's corporate colors (red, white, black, gray) and 
 ### Feature Specifications
 - **Metadata Management**: Optional metadata, basic identification for channels, auto-generated names ("Canal N") for missing information, and support for direct URLs in M3U files.
 - **Security**: Credentials for the simple mode are stored in localStorage (for personal use only). Credentials are sent via HTTPS headers (`X-Stream-Auth`), Base64 encoded, and converted by the proxy to `Authorization: Basic`.
-- **Deployment**: An automated `install-server.sh` script handles full Linux server setup including Node.js, PostgreSQL, Nginx, PM2, SSL/HTTPS with Let's Encrypt, UFW firewall, and daily backups.
+- **Deployment**: An automated `install-server-xui-compatible.sh` script handles full Linux server setup including Node.js, PostgreSQL, Nginx, PM2, SSL/HTTPS with Let's Encrypt, and daily backups.
+
+### Production Server Configuration
+- **Server**: Ubuntu Linux running on 190.61.110.177
+- **XUI.one Panel**: Custom Nginx at `/home/xui/bin/nginx` listening on ports 81 (HTTP) and 444 (HTTPS)
+- **System Nginx**: Reverse proxy on ports 80/443 for SSL termination and routing
+- **PM2 Process**: Cable Uno Play runs on port 5000 with DATABASE_URL passed explicitly
+- **SSL Certificates**: Let's Encrypt certificates managed by Certbot with auto-renewal
+- **Domain Configuration**:
+  - `play.teleunotv.cr` → Cable Uno Play (port 5000) with full SSL
+  - `app.teleunotv.cr` → XUI.one (port 81) with auto-redirect to `/5pUNs3U2/login`
+- **Critical Notes**:
+  - NEVER modify XUI's nginx.conf directly - causes segmentation faults
+  - PM2 requires explicit DATABASE_URL: `DATABASE_URL="..." pm2 start`
+  - DNS managed through Wix.com for teleunotv.cr domain
+  - System Nginx acts as SSL terminator and reverse proxy to both XUI and Cable Uno Play
 
 ### Database Schema
 - **Playlists**: `id`, `name`, `url` (M3U file), `username` (optional), `password` (optional), `isActive`, `createdAt`, `updatedAt`.
