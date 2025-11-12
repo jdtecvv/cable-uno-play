@@ -1,0 +1,81 @@
+root@cableuno:/home/cableuno# # 1. Verificar que el firewall permita puerto 80 y 443
+sudo ufw status
+
+# 2. Verificar que los DNS apunten correctamente
+nslookup play.teleunotv.cr
+nslookup app.teleunotv.cr
+
+# 3. Probar acceso desde internet (desde tu Mac)
+# En tu Mac, ejecuta:
+curl -I http://play.teleunotv.cr
+curl -I http://app.teleunotv.cr
+sudo: ufw: orden no encontrada
+Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+Name:	play.teleunotv.cr
+Address: 190.61.110.177
+
+Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+Name:	app.teleunotv.cr
+Address: 34.111.179.208
+
+HTTP/1.1 200 OK
+Server: nginx/1.24.0 (Ubuntu)
+Date: Wed, 12 Nov 2025 13:15:43 GMT
+Content-Type: text/html; charset=UTF-8
+Content-Length: 2301
+Connection: keep-alive
+X-Powered-By: Express
+Accept-Ranges: bytes
+Cache-Control: public, max-age=0
+Last-Modified: Wed, 12 Nov 2025 04:24:12 GMT
+ETag: W/"8fd-19a764e949e"
+
+HTTP/1.1 301 Moved Permanently
+Cache-Control: private
+Location: https://app.teleunotv.cr:443/
+Content-Length: 0
+Date: Wed, 12 Nov 2025 13:15:44 GMT
+Content-Type: text/html; charset=UTF-8
+
+root@cableuno:/home/cableuno# # 1. Verificar firewall
+sudo ufw status
+
+# 2. Si está activo, permitir puertos 80 y 443
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+sudo ufw reload
+
+# 3. Verificar DNS desde el servidor
+nslookup play.teleunotv.cr
+nslookup app.teleunotv.cr
+
+# 4. Ver qué puertos están escuchando
+sudo netstat -tlnp | grep -E ':(80|443|81|5000) '
+sudo: ufw: orden no encontrada
+sudo: ufw: orden no encontrada
+sudo: ufw: orden no encontrada
+sudo: ufw: orden no encontrada
+Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+Name:	play.teleunotv.cr
+Address: 190.61.110.177
+
+Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+Name:	app.teleunotv.cr
+Address: 34.111.179.208
+
+tcp        0      0 0.0.0.0:5000            0.0.0.0:*               ESCUCHAR    55572/node /var/www 
+tcp        0      0 0.0.0.0:81              0.0.0.0:*               ESCUCHAR    46888/nginx: master 
+tcp        0      0 0.0.0.0:80              0.0.0.0:*               ESCUCHAR    106470/nginx: maste 
+root@cableuno:/home/cableuno# 
