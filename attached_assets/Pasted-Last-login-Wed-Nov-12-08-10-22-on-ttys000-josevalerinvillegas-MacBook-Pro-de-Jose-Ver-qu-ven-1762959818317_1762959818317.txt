@@ -1,0 +1,35 @@
+Last login: Wed Nov 12 08:10:22 on ttys000
+josevalerinvillegas@MacBook-Pro-de-Jose ~ % # Ver qué ventanas de Xcode están abiertas
+ps aux | grep Xcode
+
+# Cerrar TODO
+killall Xcode
+
+# Verificar que existen los archivos necesarios
+cd ~/Desktop/cable-uno-play/ios/App
+ls -la | grep -E "xcworkspace|xcodeproj"
+
+# Mostrar el contenido completo
+ls -la
+zsh: command not found: #
+josevalerinvillegas 25693   1,7  0,0 34252196    804 s001  S+    9:03a. m.   0:00.01 grep Xcode
+josevalerinvillegas 25653   0,0  0,0 34619340   5924   ??  Ss    8:59a. m.   0:00.03 /Applications/Xcode.app/Contents/SharedFrameworks/DVTSourceControl.framework/Versions/A/XPCServices/com.apple.dt.Xcode.sourcecontrol.WorkingCopyScanner.xpc/Contents/MacOS/com.apple.dt.Xcode.sourcecontrol.WorkingCopyScanner
+josevalerinvillegas 25650   0,0  0,0 34759712  21824   ??  Ss    8:59a. m.   0:00.38 /Applications/Xcode.app/Contents/SharedFrameworks/SourceKit.framework/Versions/A/XPCServices/com.apple.dt.SKAgent.xpc/Contents/MacOS/com.apple.dt.SKAgent
+josevalerinvillegas 25647   0,0  0,0 34495716   5752   ??  Ss    8:59a. m.   0:00.04 /Applications/Xcode.app/Contents/SharedFrameworks/DVTSourceControl.framework/Versions/A/XPCServices/com.apple.dt.Xcode.sourcecontrol.SSHHelper.xpc/Contents/MacOS/com.apple.dt.Xcode.sourcecontrol.SSHHelper
+josevalerinvillegas 25646   0,0  0,0 34210688   7980   ??  Ss    8:59a. m.   0:00.06 /Applications/Xcode.app/Contents/PlugIns/GPUDebugger.ideplugin/Contents/Frameworks/GPUToolsTransportAgents.framework/Versions/A/XPCServices/GPUToolsAgentService.xpc/Contents/MacOS/GPUToolsAgentService
+josevalerinvillegas 25645   0,0  0,0 34172324   3668   ??  Ss    8:59a. m.   0:00.03 /Applications/Xcode.app/Contents/PlugIns/GPUDebugger.ideplugin/Contents/Frameworks/GPUToolsTransportAgents.framework/Versions/A/XPCServices/GPUToolsCompatService.xpc/Contents/MacOS/GPUToolsCompatService
+josevalerinvillegas 25643   0,0  0,0 34168132   2548   ??  Ss    8:59a. m.   0:00.02 /Applications/Xcode.app/Contents/SharedFrameworks/DVTFoundation.framework/Versions/A/XPCServices/com.apple.dt.Xcode.DeveloperSystemPolicyService.xpc/Contents/MacOS/com.apple.dt.Xcode.DeveloperSystemPolicyService
+josevalerinvillegas 25640   0,0  0,5 42067568 355264   ??  S     8:59a. m.   0:24.43 /Applications/Xcode.app/Contents/MacOS/Xcode
+zsh: command not found: #
+zsh: command not found: #
+drwxr-xr-x@ 5 josevalerinvillegas  staff   160 12 nov.  07:57 App.xcodeproj
+drwxr-xr-x@ 4 josevalerinvillegas  staff   128 12 nov.  07:49 App.xcworkspace
+zsh: command not found: #
+total 24
+drwxr-xr-x@ 7 josevalerinvillegas  staff   224 12 nov.  07:57 .
+drwxr-xr-x  5 josevalerinvillegas  staff   160 12 nov.  07:49 ..
+-rw-r--r--@ 1 josevalerinvillegas  staff  6148 12 nov.  07:57 .DS_Store
+drwxr-xr-x  9 josevalerinvillegas  staff   288 12 nov.  07:49 App
+drwxr-xr-x@ 5 josevalerinvillegas  staff   160 12 nov.  07:57 App.xcodeproj
+drwxr-xr-x@ 4 josevalerinvillegas  staff   128 12 nov.  07:49 App.xcworkspace
+-rw-r--r--  1 josevalerinvillegas  staff   622 
