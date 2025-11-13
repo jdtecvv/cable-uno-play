@@ -172,17 +172,20 @@ export default function SimplePlayer() {
     <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black">
       {/* Header fijo */}
       <div className="sticky top-0 z-40 bg-black/95 backdrop-blur-lg border-b border-red-900/20">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+        <div className="max-w-7xl mx-auto px-6 py-6">
           <div className="flex items-center justify-between">
-            {/* Logo centrado con nombre debajo */}
-            <div className="flex-1 flex flex-col items-center gap-2">
+            {/* Logo centrado GRANDE con texto Cable Uno Play */}
+            <div className="flex-1 flex flex-col items-center gap-3">
               <img
                 src="/images/cable-uno-logo.png"
-                alt="Cable Uno Play"
-                className="h-14 w-auto"
+                alt="Cable Uno"
+                className="h-20 w-auto"
               />
+              <h1 className="text-2xl font-bold text-white tracking-wide" style={{ fontFamily: 'Inter, system-ui, sans-serif', letterSpacing: '0.05em' }}>
+                CABLE UNO PLAY
+              </h1>
               {playlistName && (
-                <p className="text-sm font-medium text-white">
+                <p className="text-sm font-medium text-gray-300">
                   {playlistName}
                 </p>
               )}
@@ -190,7 +193,7 @@ export default function SimplePlayer() {
             
             {/* Botones a la derecha */}
             {channels.length > 0 && (
-              <div className="absolute right-4 flex items-center gap-2">
+              <div className="absolute right-6 flex items-center gap-2">
                 <Badge variant="outline" className="border-red-600/50 text-red-500">
                   {channels.length} canales
                 </Badge>

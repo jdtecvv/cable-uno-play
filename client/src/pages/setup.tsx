@@ -151,17 +151,20 @@ export default function Setup() {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-4 bg-gradient-to-b from-gray-900 to-red-900">
-      <div className="mb-8">
+      <div className="mb-8 text-center">
         <img
           src="/images/cable-uno-logo.png"
-          alt="Cable Uno Play"
-          className="w-64 h-auto shadow-xl"
+          alt="Cable Uno"
+          className="w-72 h-auto mx-auto mb-4 shadow-xl"
         />
+        <h1 className="text-3xl font-bold text-white tracking-wide" style={{ fontFamily: 'Inter, system-ui, sans-serif', letterSpacing: '0.05em' }}>
+          CABLE UNO PLAY
+        </h1>
       </div>
       
       <Card className="w-full max-w-md mx-auto bg-black bg-opacity-70 border-red-600">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-white">Bienvenido a Cable Uno Play</CardTitle>
+          <CardTitle className="text-2xl font-bold text-white">Bienvenido</CardTitle>
           <CardDescription className="text-gray-300">
             Configura tu servicio IPTV para comenzar
           </CardDescription>
