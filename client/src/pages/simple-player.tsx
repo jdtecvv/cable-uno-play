@@ -175,17 +175,16 @@ export default function SimplePlayer() {
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-red-600 to-red-800 rounded-lg flex items-center justify-center">
-                <TvIcon className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-white">Cable Uno Play</h1>
-                {playlistName ? (
-                  <p className="text-xs text-red-500 font-medium">{playlistName}</p>
-                ) : (
-                  <p className="text-xs text-gray-400">Modo Simple</p>
-                )}
-              </div>
+              <img
+                src="/images/cable-uno-logo.png"
+                alt="Cable Uno Play"
+                className="h-12 w-auto"
+              />
+              {playlistName && (
+                <Badge variant="outline" className="border-red-600/50 text-red-500">
+                  {playlistName}
+                </Badge>
+              )}
             </div>
             {channels.length > 0 && (
               <div className="flex items-center gap-2">
