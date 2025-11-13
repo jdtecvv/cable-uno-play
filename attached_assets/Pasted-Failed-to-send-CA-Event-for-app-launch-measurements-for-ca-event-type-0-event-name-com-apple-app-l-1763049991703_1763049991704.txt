@@ -1,0 +1,30 @@
+Failed to send CA Event for app launch measurements for ca_event_type: 0 event_name: com.apple.app_launch_measurement.FirstFramePresentationMetric
+-[RTIInputSystemClient remoteTextInputSessionWithID:performInputOperation:]  Can only perform input operation for an active session. sessionID = 30EAFCB2-C40E-47CB-A4AF-72501E654D05
+Unable to simultaneously satisfy constraints.
+	Probably at least one of the constraints in the following list is one you don't want. 
+	Try this: 
+		(1) look at each constraint and try to figure out which you don't expect; 
+		(2) find the code that added the unwanted constraint or constraints and fix it. 
+(
+    "<NSLayoutConstraint:0x60000214e760 V:|-(7)-[TUIKeyboardContentView:0x103419990]   (active, names: '|':TUIKeyplaneView:0x1034173d0 )>",
+    "<NSLayoutConstraint:0x60000214e300 V:[TUIKeyboardContentView:0x103419990]-(12)-|   (active, names: '|':TUIKeyplaneView:0x1034173d0 )>",
+    "<NSLayoutConstraint:0x600002154140 V:|-(0)-[TUIKeyplaneView:0x1034173d0]   (active, names: UIKeyboardLayoutStar Prev...:0x104845800, '|':UIKeyboardLayoutStar Prev...:0x104845800 )>",
+    "<NSLayoutConstraint:0x600002154190 V:[TUIKeyplaneView:0x1034173d0]-(0)-|   (active, names: UIKeyboardLayoutStar Prev...:0x104845800, '|':UIKeyboardLayoutStar Prev...:0x104845800 )>",
+    "<NSLayoutConstraint:0x600002154230 V:|-(0)-[UIKeyboardLayoutStar Prev...]   (active, names: UIKeyboardLayoutStar Prev...:0x104845800, '|':UIKeyboardImpl:0x10780b150 )>",
+    "<NSLayoutConstraint:0x6000021542d0 V:[UIKeyboardLayoutStar Prev...]-(0)-|   (active, names: UIKeyboardLayoutStar Prev...:0x104845800, '|':UIKeyboardImpl:0x10780b150 )>",
+    "<NSLayoutConstraint:0x6000021562b0 '_UITemporaryLayoutHeight' UIKeyboardImpl:0x10780b150.height == 241   (active)>",
+    "<NSLayoutConstraint:0x60000214e490 'TUIKeyplane.height' TUIKeyboardContentView:0x103419990.height == 224   (active)>"
+)
+
+Will attempt to recover by breaking constraint 
+<NSLayoutConstraint:0x60000214e490 'TUIKeyplane.height' TUIKeyboardContentView:0x103419990.height == 224   (active)>
+
+Make a symbolic breakpoint at UIViewAlertForUnsatisfiableConstraints to catch this in the debugger.
+The methods in the UIConstraintBasedLayoutDebugging category on UIView listed in <UIKitCore/UIView.h> may also be helpful.
+-[RTIInputSystemClient remoteTextInputSessionWithID:textSuggestionsChanged:]  Can only set suggestions for an active session. sessionID = 30EAFCB2-C40E-47CB-A4AF-72501E654D05
+Networking process (0x138060190) took 1.361688 seconds to launch
+WebContent process (0x138104100) took 1.269837 seconds to launch
+GPU process (0x1381341e0) took 1.226562 seconds to launch
+Failed to send CA Event for app launch measurements for ca_event_type: 1 event_name: com.apple.app_launch_measurement.ExtendedLaunchMetrics
+WebContent[12419] Unable to hide query parameters from script (missing data)
+-[RTIInputSystemClient remoteTextInputSessionWithID:textSuggestionsChanged:]  Can only set suggestions for an active session. sessionID = 30EAFCB2-C40E-47CB-A4AF-72501E654D05
