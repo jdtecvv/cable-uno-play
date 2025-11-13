@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { parseM3U } from "@/lib/utils/m3u-parser";
 import VideoPlayer from "@/components/player/video-player";
-import { PlayIcon, XIcon } from "lucide-react";
+import { PlayIcon, TvIcon, SearchIcon, Trash2Icon, DownloadIcon, GridIcon, ListIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface SimpleChannel {
@@ -24,6 +25,8 @@ export default function SimplePlayer() {
   const [currentChannel, setCurrentChannel] = useState<SimpleChannel | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const { toast } = useToast();
 
   // Cargar canales guardados al inicio
@@ -108,9 +111,14 @@ export default function SimplePlayer() {
     }
   };
 
-  const filteredChannels = channels.filter(ch =>
-    ch.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Obtener categorías únicas
+  const categories = ["all", ...Array.from(new Set(channels.map(ch => ch.group).filter(Boolean)))];
+  
+  const filteredChannels = channels.filter(ch => {
+    const matchesSearch = ch.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory === "all" || ch.group === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
 
   if (currentChannel) {
     return (
@@ -139,24 +147,45 @@ export default function SimplePlayer() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-red-950 to-black p-4">
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-8 pt-8">
-          <img 
-            src="/images/cable-uno-logo.png" 
-            alt="Cable Uno" 
-            className="h-16 mx-auto mb-4"
-            onError={(e) => {
-              e.currentTarget.style.display = 'none';
-            }}
-          />
-          <h1 className="text-4xl font-bold text-white mb-2">Cable Uno Play</h1>
-          <p className="text-gray-300">Reproductor Simple - Sin Base de Datos</p>
+    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black">
+      {/* Header fijo */}
+      <div className="sticky top-0 z-40 bg-black/95 backdrop-blur-lg border-b border-red-900/20">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-red-600 to-red-800 rounded-lg flex items-center justify-center">
+                <TvIcon className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-white">Cable Uno Play</h1>
+                <p className="text-xs text-gray-400">Modo Simple</p>
+              </div>
+            </div>
+            {channels.length > 0 && (
+              <Badge variant="outline" className="border-red-600/50 text-red-500">
+                {channels.length} canales
+              </Badge>
+            )}
+          </div>
         </div>
+      </div>
 
-        <Card className="bg-gray-900/80 border-red-800 mb-6">
+      <div className="max-w-7xl mx-auto px-4 py-6">{channels.length === 0 && (
+          <div className="text-center py-16">
+            <div className="w-20 h-20 bg-gradient-to-br from-red-600 to-red-800 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
+              <TvIcon className="w-10 h-10 text-white" />
+            </div>
+            <h2 className="text-2xl font-bold text-white mb-2">Bienvenido a Cable Uno Play</h2>
+            <p className="text-gray-400 mb-8">Carga tu lista M3U para comenzar a ver televisión</p>
+          </div>
+        )}
+
+        <Card className="bg-gradient-to-br from-gray-900/90 to-gray-950/90 border-red-900/30 backdrop-blur-sm shadow-2xl mb-6">
           <CardHeader>
-            <CardTitle className="text-white">Cargar Lista M3U</CardTitle>
+            <div className="flex items-center gap-2">
+              <DownloadIcon className="w-5 h-5 text-red-500" />
+              <CardTitle className="text-white">Cargar Lista M3U</CardTitle>
+            </div>
             <CardDescription className="text-gray-400">
               Ingresa la URL de tu archivo M3U8 para cargar canales
             </CardDescription>
@@ -169,12 +198,13 @@ export default function SimplePlayer() {
                   placeholder="http://ejemplo.com/lista.m3u8"
                   value={m3uUrl}
                   onChange={(e) => setM3uUrl(e.target.value)}
-                  className="bg-gray-800 border-gray-700 text-white"
+                  className="bg-gray-950/80 border-gray-800 text-white focus:border-red-600 transition-colors"
+                  onKeyPress={(e) => e.key === 'Enter' && loadM3U()}
                 />
                 <Button
                   onClick={loadM3U}
                   disabled={isLoading}
-                  className="bg-red-600 hover:bg-red-700 text-white whitespace-nowrap"
+                  className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white whitespace-nowrap shadow-lg shadow-red-900/50 transition-all"
                 >
                   {isLoading ? "Cargando..." : "Cargar"}
                 </Button>
@@ -182,9 +212,9 @@ export default function SimplePlayer() {
                   <Button
                     onClick={clearChannels}
                     variant="outline"
-                    className="border-gray-700 text-gray-300 hover:bg-gray-800 whitespace-nowrap"
+                    className="border-gray-700 text-gray-300 hover:bg-red-950/30 hover:border-red-800 whitespace-nowrap transition-all"
                   >
-                    Limpiar
+                    <Trash2Icon className="w-4 h-4" />
                   </Button>
                 )}
               </div>
@@ -195,19 +225,19 @@ export default function SimplePlayer() {
                   placeholder="Usuario (opcional)"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="bg-gray-800 border-gray-700 text-white"
+                  className="bg-gray-950/80 border-gray-800 text-white focus:border-red-600 transition-colors"
                 />
                 <Input
                   type="password"
                   placeholder="Contraseña (opcional)"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="bg-gray-800 border-gray-700 text-white"
+                  className="bg-gray-950/80 border-gray-800 text-white focus:border-red-600 transition-colors"
                 />
               </div>
               
               <p className="text-gray-500 text-xs">
-                Solo ingresa usuario y contraseña si tu proveedor IPTV lo requiere
+                Solo ingresa credenciales si tu proveedor IPTV lo requiere
               </p>
             </div>
           </CardContent>
@@ -215,52 +245,140 @@ export default function SimplePlayer() {
 
         {channels.length > 0 && (
           <>
-            <div className="mb-4">
-              <Input
-                type="text"
-                placeholder="Buscar canal..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="bg-gray-800 border-gray-700 text-white"
-              />
+            {/* Barra de búsqueda y filtros */}
+            <div className="mb-6 space-y-4">
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                  <Input
+                    type="text"
+                    placeholder="Buscar canal..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="bg-gray-950/80 border-gray-800 text-white pl-10 focus:border-red-600 transition-colors"
+                  />
+                </div>
+                <div className="flex gap-1 bg-gray-950/80 border border-gray-800 rounded-lg p-1">
+                  <Button
+                    variant={viewMode === "grid" ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => setViewMode("grid")}
+                    className={viewMode === "grid" ? "bg-red-600 hover:bg-red-700" : "text-gray-400 hover:text-white"}
+                  >
+                    <GridIcon className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant={viewMode === "list" ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => setViewMode("list")}
+                    className={viewMode === "list" ? "bg-red-600 hover:bg-red-700" : "text-gray-400 hover:text-white"}
+                  >
+                    <ListIcon className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+
+              {/* Filtro de categorías */}
+              {categories.length > 1 && (
+                <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-700">
+                  {categories.map((cat) => (
+                    <Badge
+                      key={cat || "all"}
+                      variant={selectedCategory === cat ? "default" : "outline"}
+                      className={`cursor-pointer whitespace-nowrap transition-all ${
+                        selectedCategory === cat
+                          ? "bg-gradient-to-r from-red-600 to-red-700 border-red-600 shadow-lg shadow-red-900/50"
+                          : "border-gray-700 text-gray-400 hover:border-red-600 hover:text-red-500"
+                      }`}
+                      onClick={() => setSelectedCategory(cat || "all")}
+                    >
+                      {cat === "all" ? "Todos" : cat || "Sin categoría"}
+                    </Badge>
+                  ))}
+                </div>
+              )}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div className={viewMode === "grid" 
+              ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4" 
+              : "space-y-2"
+            }>
               {filteredChannels.map((channel, index) => (
-                <Card
-                  key={index}
-                  className="bg-gray-900/80 border-gray-800 hover:border-red-600 transition-all cursor-pointer group"
-                  onClick={() => setCurrentChannel(channel)}
-                >
-                  <CardContent className="p-4">
-                    <div className="flex items-center gap-3">
-                      {channel.logo ? (
-                        <img
-                          src={channel.logo}
-                          alt={channel.name}
-                          className="w-12 h-12 object-contain rounded"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                          }}
-                        />
-                      ) : (
-                        <div className="w-12 h-12 bg-red-600/20 rounded flex items-center justify-center">
-                          <PlayIcon className="w-6 h-6 text-red-600" />
+                viewMode === "grid" ? (
+                  <Card
+                    key={index}
+                    className="bg-gradient-to-br from-gray-900/80 to-gray-950/80 border-gray-800 hover:border-red-600 hover:shadow-xl hover:shadow-red-900/20 transition-all duration-300 cursor-pointer group overflow-hidden"
+                    onClick={() => setCurrentChannel(channel)}
+                  >
+                    <CardContent className="p-0">
+                      <div className="aspect-video bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center relative overflow-hidden">
+                        {channel.logo ? (
+                          <img
+                            src={channel.logo}
+                            alt={channel.name}
+                            className="w-full h-full object-contain p-4 group-hover:scale-110 transition-transform duration-300"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
+                        ) : (
+                          <div className="w-16 h-16 bg-gradient-to-br from-red-600 to-red-800 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                            <TvIcon className="w-8 h-8 text-white" />
+                          </div>
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                          <PlayIcon className="w-12 h-12 text-white" />
                         </div>
-                      )}
-                      <div className="flex-1 min-w-0">
-                        <h3 className="text-white font-semibold truncate group-hover:text-red-500">
+                      </div>
+                      <div className="p-3">
+                        <h3 className="text-white font-semibold truncate group-hover:text-red-500 transition-colors text-sm">
                           {channel.name}
                         </h3>
                         {channel.group && (
-                          <p className="text-gray-500 text-sm truncate">
+                          <p className="text-gray-500 text-xs truncate mt-1">
                             {channel.group}
                           </p>
                         )}
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <Card
+                    key={index}
+                    className="bg-gradient-to-r from-gray-900/80 to-gray-950/80 border-gray-800 hover:border-red-600 hover:shadow-lg hover:shadow-red-900/20 transition-all cursor-pointer group"
+                    onClick={() => setCurrentChannel(channel)}
+                  >
+                    <CardContent className="p-4">
+                      <div className="flex items-center gap-4">
+                        {channel.logo ? (
+                          <img
+                            src={channel.logo}
+                            alt={channel.name}
+                            className="w-14 h-14 object-contain rounded-lg"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
+                        ) : (
+                          <div className="w-14 h-14 bg-gradient-to-br from-red-600 to-red-800 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <TvIcon className="w-7 h-7 text-white" />
+                          </div>
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-white font-semibold truncate group-hover:text-red-500 transition-colors">
+                            {channel.name}
+                          </h3>
+                          {channel.group && (
+                            <p className="text-gray-500 text-sm truncate">
+                              {channel.group}
+                            </p>
+                          )}
+                        </div>
+                        <PlayIcon className="w-6 h-6 text-gray-600 group-hover:text-red-500 transition-colors flex-shrink-0" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                )
               ))}
             </div>
 
@@ -272,16 +390,6 @@ export default function SimplePlayer() {
           </>
         )}
 
-        {channels.length === 0 && !isLoading && (
-          <div className="text-center py-12">
-            <p className="text-gray-400 mb-4">
-              No hay canales cargados. Ingresa una URL de M3U arriba para comenzar.
-            </p>
-            <p className="text-gray-500 text-sm">
-              Ejemplo: http://ejemplo.com/lista.m3u8
-            </p>
-          </div>
-        )}
       </div>
     </div>
   );

@@ -8,17 +8,31 @@ I prefer iterative development with clear, concise summaries of changes. Please 
 
 ## System Architecture
 ### UI/UX Decisions
-The application uses Cable Uno's corporate colors (red, white, black, gray) and is designed to be responsive across TV, tablets, mobile, and web. The interface is in Spanish. A "Simple Player" mode is available for immediate use without backend configuration, storing channels in localStorage. Progressive Web App (PWA) features are implemented for mobile installation, including `manifest.json` with corporate colors, a Service Worker for offline functionality, and optimized meta tags for Android/iOS.
+The application uses Cable Uno's corporate colors (red #DC2626, white, black, gray) and features a modern, professional interface designed to be responsive across TV, tablets, mobile, and web. The interface is in Spanish. 
+
+**Simple Player Mode** provides immediate use without backend configuration:
+- **Sticky Header**: Fixed navigation bar with Cable Uno branding and channel count badge
+- **Modern Card Design**: Gradient backgrounds with smooth animations and hover effects
+- **Dual View Modes**: Grid view (with aspect-ratio cards showing logos) and List view for different preferences
+- **Category Filtering**: Dynamic category badges extracted from M3U groups with visual feedback
+- **Advanced Search**: Icon-enhanced search bar with real-time filtering
+- **Visual Feedback**: Smooth transitions, hover animations (scale, shadow, color changes), and loading states
+- **Professional Welcome Screen**: Animated icon and clear call-to-action for first-time users
+- **Enhanced Cards**: Gradient overlays on hover showing play button, optimized logo display
+- **localStorage Persistence**: Channels saved locally for offline access
+
+Progressive Web App (PWA) features are implemented for mobile installation, including `manifest.json` with corporate colors, a Service Worker for offline functionality, and optimized meta tags for Android/iOS.
 
 ### Technical Implementations
-- **Frontend**: React with Vite, Wouter for routing, Tailwind CSS + shadcn/ui for styling, HLS.js for video streaming, and Zod for form validation.
+- **Frontend**: React with Vite, Wouter for routing, Tailwind CSS + shadcn/ui (Badge, Card, Button, Input components) for styling, HLS.js for video streaming, Lucide React for icons (TvIcon, PlayIcon, SearchIcon, etc.), and Zod for form validation. Custom animations using Tailwind transitions and transforms.
 - **Backend**: Express.js with TypeScript, Drizzle ORM for database interaction, and PostgreSQL (Neon) as the database. Shared Zod schemas are used for validation across frontend and backend.
 - **Streaming**: Supports HTTP and HTTPS protocols, HLS streaming (M3U8) via HLS.js, and all known audio/video formats.
 - **M3U Parser**: Optimized to handle M3U files with or without `#EXTM3U` headers, direct URLs without `#EXTINF`, incomplete metadata, and automatic naming for channels without information.
 - **Proxy System**: A server-side proxy (`/api/proxy/stream` and `/api/proxy/m3u`) converts HTTP streams to HTTPS to prevent mixed content errors and handles CORS issues. It supports range requests and proper header management.
 - **Authentication**: Optional user and password for playlists. The parser extracts credentials from URLs, and the proxy converts them to `Authorization: Basic` for the IPTV server, sending them via `X-Stream-Auth` header.
 - **Mobile Compilation**: Capacitor is configured for building native Android APKs and iOS apps. Automated scripts (`compilar.sh`, `compilar.bat`, `compilar-ios.sh`, `config-dev-ios.sh`, `config-prod-ios.sh`) and GitHub Actions workflows are provided for local and automated compilation. iOS requires macOS with Xcode and Apple Developer Account ($99/year) for App Store distribution.
-- **iOS Development**: Two-mode configuration system for iOS development. Development mode (`config-dev-ios.sh`) configures Capacitor to connect to Mac's local IP for Simulator testing. Production mode (`config-prod-ios.sh`) removes server URL to allow dynamic HTTP/HTTPS URLs based on user input. Info.plist configured with `NSAllowsArbitraryLoads` to support both HTTP (internal network) and HTTPS (internet) connections simultaneously.
+- **iOS Development**: Two-mode configuration system for iOS development. Development mode (`config-dev-ios.sh`) configures Capacitor to connect to localhost:3000 for Simulator testing. Production mode (`config-prod-ios.sh`) removes server URL to allow dynamic HTTP/HTTPS URLs based on user input. Info.plist configured with `NSAllowsArbitraryLoads` to support both HTTP (internal network) and HTTPS (internet) connections simultaneously.
+- **macOS Development**: Requires Node.js v20 LTS (v24 has ENOTSUP socket errors). Server runs on port 3000 (instead of 5000 due to port conflicts). Database is optional for Simple Player mode - app works completely offline with localStorage.
 
 ### Feature Specifications
 - **Metadata Management**: Optional metadata, basic identification for channels, auto-generated names ("Canal N") for missing information, and support for direct URLs in M3U files.
