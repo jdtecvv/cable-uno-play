@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { parseM3U } from "@/lib/utils/m3u-parser";
 import VideoPlayer from "@/components/player/video-player";
-import { PlayIcon, TvIcon, SearchIcon, Trash2Icon, DownloadIcon, GridIcon, ListIcon } from "lucide-react";
+import { PlayIcon, TvIcon, SearchIcon, Trash2Icon, DownloadIcon, GridIcon, ListIcon, XIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface SimpleChannel {
@@ -21,23 +21,31 @@ export default function SimplePlayer() {
   const [m3uUrl, setM3uUrl] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [playlistName, setPlaylistName] = useState("");
   const [channels, setChannels] = useState<SimpleChannel[]>([]);
   const [currentChannel, setCurrentChannel] = useState<SimpleChannel | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [showLoadForm, setShowLoadForm] = useState(false);
   const { toast } = useToast();
 
   // Cargar canales guardados al inicio
   useEffect(() => {
     const savedChannels = localStorage.getItem('simple-channels');
+    const savedPlaylistName = localStorage.getItem('simple-playlist-name');
     if (savedChannels) {
       try {
         setChannels(JSON.parse(savedChannels));
+        if (savedPlaylistName) {
+          setPlaylistName(savedPlaylistName);
+        }
       } catch (e) {
         console.error("Error loading saved channels:", e);
       }
+    } else {
+      setShowLoadForm(true);
     }
   }, []);
 
@@ -46,9 +54,12 @@ export default function SimplePlayer() {
     setM3uUrl("");
     setUsername("");
     setPassword("");
+    setPlaylistName("");
+    setShowLoadForm(true);
     localStorage.removeItem('simple-channels');
+    localStorage.removeItem('simple-playlist-name');
     toast({
-      title: "Limpiado",
+      title: "Lista eliminada",
       description: "Todos los canales han sido eliminados",
     });
   };
@@ -58,6 +69,15 @@ export default function SimplePlayer() {
       toast({
         title: "Error",
         description: "Por favor ingresa una URL de M3U",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!playlistName.trim()) {
+      toast({
+        title: "Error",
+        description: "Por favor ingresa un nombre para la lista",
         variant: "destructive",
       });
       return;
@@ -94,10 +114,12 @@ export default function SimplePlayer() {
 
       setChannels(simpleChannels);
       localStorage.setItem('simple-channels', JSON.stringify(simpleChannels));
+      localStorage.setItem('simple-playlist-name', playlistName);
+      setShowLoadForm(false);
 
       toast({
         title: "¡Éxito!",
-        description: `${simpleChannels.length} canales cargados`,
+        description: `${simpleChannels.length} canales cargados de "${playlistName}"`,
       });
     } catch (error) {
       console.error("Error loading M3U:", error);
@@ -158,90 +180,138 @@ export default function SimplePlayer() {
               </div>
               <div>
                 <h1 className="text-xl font-bold text-white">Cable Uno Play</h1>
-                <p className="text-xs text-gray-400">Modo Simple</p>
+                {playlistName ? (
+                  <p className="text-xs text-red-500 font-medium">{playlistName}</p>
+                ) : (
+                  <p className="text-xs text-gray-400">Modo Simple</p>
+                )}
               </div>
             </div>
             {channels.length > 0 && (
-              <Badge variant="outline" className="border-red-600/50 text-red-500">
-                {channels.length} canales
-              </Badge>
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="border-red-600/50 text-red-500">
+                  {channels.length} canales
+                </Badge>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowLoadForm(true)}
+                  className="border-gray-700 text-gray-300 hover:bg-red-950/30 hover:border-red-800"
+                >
+                  Cargar otra lista
+                </Button>
+              </div>
             )}
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-6">{channels.length === 0 && (
+      <div className="max-w-7xl mx-auto px-4 py-6">{channels.length === 0 && !showLoadForm && (
           <div className="text-center py-16">
             <div className="w-20 h-20 bg-gradient-to-br from-red-600 to-red-800 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
               <TvIcon className="w-10 h-10 text-white" />
             </div>
             <h2 className="text-2xl font-bold text-white mb-2">Bienvenido a Cable Uno Play</h2>
             <p className="text-gray-400 mb-8">Carga tu lista M3U para comenzar a ver televisión</p>
+            <Button
+              onClick={() => setShowLoadForm(true)}
+              className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white shadow-lg shadow-red-900/50"
+            >
+              <DownloadIcon className="w-4 h-4 mr-2" />
+              Cargar Lista M3U
+            </Button>
           </div>
         )}
 
-        <Card className="bg-gradient-to-br from-gray-900/90 to-gray-950/90 border-red-900/30 backdrop-blur-sm shadow-2xl mb-6">
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <DownloadIcon className="w-5 h-5 text-red-500" />
-              <CardTitle className="text-white">Cargar Lista M3U</CardTitle>
-            </div>
-            <CardDescription className="text-gray-400">
-              Ingresa la URL de tu archivo M3U8 para cargar canales
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              <div className="flex gap-2">
-                <Input
-                  type="text"
-                  placeholder="http://ejemplo.com/lista.m3u8"
-                  value={m3uUrl}
-                  onChange={(e) => setM3uUrl(e.target.value)}
-                  className="bg-gray-950/80 border-gray-800 text-white focus:border-red-600 transition-colors"
-                  onKeyPress={(e) => e.key === 'Enter' && loadM3U()}
-                />
-                <Button
-                  onClick={loadM3U}
-                  disabled={isLoading}
-                  className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white whitespace-nowrap shadow-lg shadow-red-900/50 transition-all"
-                >
-                  {isLoading ? "Cargando..." : "Cargar"}
-                </Button>
+        {showLoadForm && (
+          <Card className="bg-gradient-to-br from-gray-900/90 to-gray-950/90 border-red-900/30 backdrop-blur-sm shadow-2xl mb-6">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <DownloadIcon className="w-5 h-5 text-red-500" />
+                  <CardTitle className="text-white">
+                    {channels.length > 0 ? "Cargar Nueva Lista" : "Cargar Lista M3U"}
+                  </CardTitle>
+                </div>
                 {channels.length > 0 && (
                   <Button
-                    onClick={clearChannels}
-                    variant="outline"
-                    className="border-gray-700 text-gray-300 hover:bg-red-950/30 hover:border-red-800 whitespace-nowrap transition-all"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowLoadForm(false)}
+                    className="text-gray-400 hover:text-white"
                   >
-                    <Trash2Icon className="w-4 h-4" />
+                    <XIcon className="w-4 h-4" />
                   </Button>
                 )}
               </div>
-              
-              <div className="grid grid-cols-2 gap-2">
+              <CardDescription className="text-gray-400">
+                {channels.length > 0 
+                  ? "Esto reemplazará la lista actual" 
+                  : "Ingresa la información de tu lista IPTV"}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
                 <Input
                   type="text"
-                  placeholder="Usuario (opcional)"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Nombre de la lista (ej: Mi IPTV Casa)"
+                  value={playlistName}
+                  onChange={(e) => setPlaylistName(e.target.value)}
                   className="bg-gray-950/80 border-gray-800 text-white focus:border-red-600 transition-colors"
                 />
+                
                 <Input
-                  type="password"
-                  placeholder="Contraseña (opcional)"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  type="text"
+                  placeholder="URL del archivo M3U8"
+                  value={m3uUrl}
+                  onChange={(e) => setM3uUrl(e.target.value)}
                   className="bg-gray-950/80 border-gray-800 text-white focus:border-red-600 transition-colors"
                 />
+                
+                <div className="grid grid-cols-2 gap-2">
+                  <Input
+                    type="text"
+                    placeholder="Usuario (opcional)"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    className="bg-gray-950/80 border-gray-800 text-white focus:border-red-600 transition-colors"
+                  />
+                  <Input
+                    type="password"
+                    placeholder="Contraseña (opcional)"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="bg-gray-950/80 border-gray-800 text-white focus:border-red-600 transition-colors"
+                  />
+                </div>
+                
+                <div className="flex gap-2">
+                  <Button
+                    onClick={loadM3U}
+                    disabled={isLoading}
+                    className="flex-1 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white shadow-lg shadow-red-900/50 transition-all"
+                  >
+                    {isLoading ? "Cargando..." : "Cargar Lista"}
+                  </Button>
+                  {channels.length > 0 && (
+                    <Button
+                      onClick={clearChannels}
+                      variant="outline"
+                      className="border-gray-700 text-gray-300 hover:bg-red-950/30 hover:border-red-800 transition-all"
+                    >
+                      <Trash2Icon className="w-4 h-4 mr-2" />
+                      Eliminar actual
+                    </Button>
+                  )}
+                </div>
+                
+                <p className="text-gray-500 text-xs">
+                  Solo ingresa credenciales si tu proveedor IPTV lo requiere
+                </p>
               </div>
-              
-              <p className="text-gray-500 text-xs">
-                Solo ingresa credenciales si tu proveedor IPTV lo requiere
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        )}
 
         {channels.length > 0 && (
           <>
