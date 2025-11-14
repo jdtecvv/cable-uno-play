@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { parseM3U } from "@/lib/utils/m3u-parser";
 import VideoPlayer from "@/components/player/video-player";
 import { PlayIcon, TvIcon, SearchIcon, Trash2Icon, DownloadIcon, GridIcon, ListIcon, XIcon, Settings2Icon } from "lucide-react";
@@ -215,11 +216,18 @@ export default function SimplePlayer() {
                 {/* Toggle de Transcodificación */}
                 <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-900/50 border border-gray-800">
                   <Settings2Icon className="w-4 h-4 text-gray-400" />
-                  <span className="text-xs text-gray-400">Transcodificar</span>
+                  <Label 
+                    htmlFor="transcoding-toggle"
+                    className="text-xs text-gray-400 cursor-pointer"
+                  >
+                    Transcodificar
+                  </Label>
                   <Switch
+                    id="transcoding-toggle"
                     checked={useTranscoding}
                     onCheckedChange={toggleTranscoding}
                     className="data-[state=checked]:bg-red-600"
+                    aria-label="Activar transcodificación de audio para canales con códec HEAD"
                   />
                 </div>
                 
