@@ -1,0 +1,89 @@
+Last login: Thu Nov 13 18:22:02 on ttys000
+josevalerinvillegas@MacBook-Pro-de-Jose ~ % ssh cableuno@190.61.110.177 -p 2121
+cd /var/www/cable-uno-play
+git pull origin main
+npm run build
+pm2 restart cable-uno-play
+cableuno@190.61.110.177's password: 
+Welcome to Ubuntu 24.04.3 LTS (GNU/Linux 6.8.0-87-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+El mantenimiento de seguridad expandido para Applications está desactivado
+
+Se pueden aplicar 0 actualizaciones de forma inmediata.
+
+Active ESM Apps para recibir futuras actualizaciones de seguridad adicionales.
+Vea https://ubuntu.com/esm o ejecute «sudo pro status»
+
+Last login: Thu Nov 13 18:24:21 2025 from 192.168.77.1
+cableuno@cableuno:~$ sudo su
+[sudo] contraseña para cableuno: 
+root@cableuno:/home/cableuno#                                
+cd /var/www/cable-uno-play
+git pull origin main
+npm run build
+pm2 restart cable-uno-play
+remote: Enumerating objects: 66, done.
+remote: Counting objects: 100% (66/66), done.
+remote: Compressing objects: 100% (13/13), done.
+remote: Total 53 (delta 47), reused 46 (delta 40), pack-reused 0 (from 0)
+Desempaquetando objetos: 100% (53/53), 180.15 KiB | 778.00 KiB/s, listo.
+Desde https://github.com/jdtecvv/cable-uno-play
+ * branch            main       -> FETCH_HEAD
+   3584673..a857b5e  main       -> origin/main
+Actualizando 3584673..a857b5e
+Fast-forward
+ .replit                                                                                             |   4 --
+ attached_assets/Captura de pantalla 2025-11-13 a la(s) 19.34.44_1763084792534.png                   | Bin 0 -> 172921 bytes
+ attached_assets/Captura de pantalla 2025-11-13 a la(s) 19.34.44_1763084792535.png                   | Bin 0 -> 172921 bytes
+ ...onfig-js-not-found-PM2-Saving-current-process-list-PM2-Successfu-1763084215599_1763084215599.txt | 148 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ ...est-configurado-echo-DATABASE-URL-Si-no-est-configurado-necesita-1763084036067_1763084036068.txt |  61 +++++++++++++++++++++
+ ...18-59-dist-public-images-cable-uno-logo-png-root-cableuno-var-ww-1763082948416_1763082948416.txt |  52 ++++++++++++++++++
+ ...m2-logs-cable-uno-play-error-log-last-20-lines-0-cable-un-errno--1763084511401_1763084511401.txt |  93 +++++++++++++++++++++++++++++++
+ ...cable-uno-play-1-Limpiar-cach-de-Nginx-rm-rf-var-cache-nginx-2-V-1763084295929_1763084295929.txt |  64 ++++++++++++++++++++++
+ client/src/components/player/video-player.tsx                                                       |   9 +--
+ client/src/pages/home.tsx                                                                           |  14 ++++-
+ client/src/pages/simple-player.tsx                                                                  |  20 ++++++-
+ server/routes.ts                                                                                    |  92 +++++++++++++++++++++++++++++++
+ 12 files changed, 546 insertions(+), 11 deletions(-)
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-13 a la(s) 19.34.44_1763084792534.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-13 a la(s) 19.34.44_1763084792535.png
+ create mode 100644 attached_assets/Pasted--PM2-ERROR-File-ecosystem-config-js-not-found-PM2-Saving-current-process-list-PM2-Successfu-1763084215599_1763084215599.txt
+ create mode 100644 attached_assets/Pasted--Verificar-que-DATABASE-URL-est-configurado-echo-DATABASE-URL-Si-no-est-configurado-necesita-1763084036067_1763084036068.txt
+ create mode 100644 attached_assets/Pasted--rw-r-r-1-root-root-397K-nov-13-18-59-dist-public-images-cable-uno-logo-png-root-cableuno-var-ww-1763082948416_1763082948416.txt
+ create mode 100644 attached_assets/Pasted-ith-lines-option-root-pm2-logs-cable-uno-play-error-log-last-20-lines-0-cable-un-errno--1763084511401_1763084511401.txt
+ create mode 100644 attached_assets/Pasted-root-cableuno-var-www-cable-uno-play-1-Limpiar-cach-de-Nginx-rm-rf-var-cache-nginx-2-V-1763084295929_1763084295929.txt
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.18 building for production...
+transforming (5) ../node_modules/@tanstack/react-query/build/modern/index.jsBrowserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 2057 modules transformed.
+../dist/public/index.html                     2.30 kB │ gzip:   0.92 kB
+../dist/public/assets/index-C85qp07k.css     70.98 kB │ gzip:  12.00 kB
+../dist/public/assets/index-pYJmDZwP.js   1,036.86 kB │ gzip: 316.98 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 12.51s
+
+  dist/index.js  41.6kb
+
+⚡ Done in 54ms
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [cable-uno-play](ids: [ 0 ])
+[PM2] [cable-uno-play](0) ✓
+┌────┬───────────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name              │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ cable-uno-play    │ default     │ 1.0.0   │ fork    │ 41415    │ 0s     │ 1    │ online    │ 0%       │ 18.8mb   │ root     │ disabled │
+└────┴───────────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+root@cableuno:/var/www/cable-uno-play# 
