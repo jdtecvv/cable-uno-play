@@ -1,0 +1,110 @@
+Last login: Fri Nov 14 08:14:42 on ttys003
+josevalerinvillegas@MacBook-Pro-de-Jose ~ % cd ~/Desktop/cable-uno-play
+git stash
+git pull origin main
+Saved working directory and index state WIP on main: c4dbf48 Update development server port for iOS application
+From https://github.com/jdtecvv/cable-uno-play
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+josevalerinvillegas@MacBook-Pro-de-Jose cable-uno-play % ./config-dev-ios.sh
+🔧 Configurando Cable Uno Play para desarrollo iOS...
+
+✅ IP local detectada: 192.168.90.32
+
+✅ capacitor.config.ts configurado para desarrollo
+   URL del servidor: http://192.168.90.32:3000
+
+📦 Compilando frontend...
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.18 building for production...
+transforming (1) index.htmlBrowserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 2057 modules transformed.
+../dist/public/index.html                     2.30 kB │ gzip:   0.92 kB
+../dist/public/assets/index-C85qp07k.css     70.98 kB │ gzip:  12.00 kB
+../dist/public/assets/index-bhyjXHqS.js   1,038.08 kB │ gzip: 317.32 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 7.89s
+
+  dist/index.js  47.3kb
+
+⚡ Done in 24ms
+
+📱 Sincronizando con iOS...
+✔ Copying web assets from public to ios/App/App/public in 40.29ms
+✔ Creating capacitor.config.json in ios/App/App in 3.07ms
+✔ copy ios in 149.67ms
+✔ Updating iOS plugins in 20.77ms
+✔ Updating iOS native dependencies with pod install in 5.39s
+✔ update ios in 5.54s
+[info] Sync finished in 6.401s
+
+✅ ¡Configuración completada!
+
+📋 Próximos pasos:
+   1. En OTRA terminal, inicia el servidor: npm run dev
+   2. Espera a ver: [express] serving on port 3000
+   3. Abre Xcode: open ios/App/App.xcworkspace
+   4. En Xcode: Product → Clean Build Folder (Shift + Cmd + K)
+   5. Click ▶️ Play para ejecutar en el Simulator
+
+ℹ️  El servidor correrá SIN base de datos (solo Simple Player)
+⚠️  IMPORTANTE: Antes de compilar para producción, ejecuta ./config-prod-ios.sh
+
+josevalerinvillegas@MacBook-Pro-de-Jose cable-uno-play % cd ~/Desktop/cable-uno-play
+PORT=3000 npm run dev
+
+> rest-express@1.0.0 dev
+> tsx server/index.ts
+
+⚠️  Running in development mode WITHOUT database (Simple Player only)
+   Only /api/proxy/* endpoints will work
+   To use full features, set DATABASE_URL environment variable
+🚀 Registering API routes with prefix: /api
+📡 Registering route: GET /api/proxy/stream
+8:24:29 AM [express] serving on port 5000
+josevalerinvillegas@MacBook-Pro-de-Jose cable-uno-play % # Detén el servidor (Ctrl+C)
+
+# Exporta la variable primero
+export PORT=3000
+
+# Luego ejecuta npm run dev
+npm run dev
+zsh: unknown file attribute: C
+zsh: command not found: #
+zsh: command not found: #
+
+> rest-express@1.0.0 dev
+> tsx server/index.ts
+
+⚠️  Running in development mode WITHOUT database (Simple Player only)
+   Only /api/proxy/* endpoints will work
+   To use full features, set DATABASE_URL environment variable
+🚀 Registering API routes with prefix: /api
+📡 Registering route: GET /api/proxy/stream
+8:26:07 AM [express] serving on port 5000
+josevalerinvillegas@MacBook-Pro-de-Jose cable-uno-play % # Detén el servidor (Ctrl+C)
+
+# Usa esta sintaxis
+NODE_ENV=development PORT=3000 npm run dev
+zsh: unknown file attribute: C
+zsh: command not found: #
+
+> rest-express@1.0.0 dev
+> tsx server/index.ts
+
+⚠️  Running in development mode WITHOUT database (Simple Player only)
+   Only /api/proxy/* endpoints will work
+   To use full features, set DATABASE_URL environment variable
+🚀 Registering API routes with prefix: /api
+📡 Registering route: GET /api/proxy/stream
+8:26:48 AM [express] serving on port 5000
+

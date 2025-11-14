@@ -17,9 +17,8 @@ fi
 
 echo "✅ IP local detectada: $IP"
 
-# Usar puerto de variable de entorno PORT (default: 3000 para Mac)
-# En Mac usamos 3000 porque 5000 suele estar ocupado
-PORT="${PORT:-3000}"
+# Puerto fijo 5000 (funciona en Mac y Linux)
+PORT="5000"
 echo "✅ Puerto configurado: $PORT"
 echo ""
 
@@ -74,8 +73,8 @@ echo ""
 echo "✅ ¡Configuración completada!"
 echo ""
 echo "📋 Próximos pasos:"
-echo "   1. En OTRA terminal, inicia el servidor: PORT=${PORT} npm run dev"
-echo "   2. Espera a ver: [express] serving on port ${PORT}"
+echo "   1. En OTRA terminal, inicia el servidor: npm run dev"
+echo "   2. Espera a ver: [express] serving on port 5000"
 echo "   3. Abre Xcode: open ios/App/App.xcworkspace"
 echo "   4. En Xcode: Product → Clean Build Folder (Shift + Cmd + K)"
 echo "   5. Click ▶️ Play para ejecutar en el Simulator"
