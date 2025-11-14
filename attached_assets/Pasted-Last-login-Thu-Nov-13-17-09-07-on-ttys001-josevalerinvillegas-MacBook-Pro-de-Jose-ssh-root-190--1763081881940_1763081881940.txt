@@ -1,0 +1,447 @@
+Last login: Thu Nov 13 17:09:07 on ttys001
+josevalerinvillegas@MacBook-Pro-de-Jose ~ % ssh root@190.61.110.177 -p 2121
+The authenticity of host '[190.61.110.177]:2121 ([190.61.110.177]:2121)' can't be established.
+ED25519 key fingerprint is SHA256:M33pQmtbCgjdI5a2ykqokpdwmU7DTYsSm0/fka/TISE.
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '[190.61.110.177]:2121' (ED25519) to the list of known hosts.
+root@190.61.110.177's password: 
+Permission denied, please try again.
+root@190.61.110.177's password: 
+Permission denied, please try again.
+root@190.61.110.177's password: 
+root@190.61.110.177: Permission denied (publickey,password).
+josevalerinvillegas@MacBook-Pro-de-Jose ~ % ssh cableuno@190.61.110.177 -p 2121
+cableuno@190.61.110.177's password: 
+
+Permission denied, please try again.
+cableuno@190.61.110.177's password: 
+Welcome to Ubuntu 24.04.3 LTS (GNU/Linux 6.8.0-87-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+El mantenimiento de seguridad expandido para Applications está desactivado
+
+Se pueden aplicar 0 actualizaciones de forma inmediata.
+
+Active ESM Apps para recibir futuras actualizaciones de seguridad adicionales.
+Vea https://ubuntu.com/esm o ejecute «sudo pro status»
+
+Last login: Sat Jun 14 19:35:33 2025 from 192.168.77.1
+cableuno@cableuno:~$ sudo su
+[sudo] contraseña para cableuno: 
+root@cableuno:/home/cableuno# find / -name "cable-uno-play" -type d 2>/dev/null | grep -v node_modules | head -5
+/var/www/cable-uno-play
+root@cableuno:/home/cableuno# cd /var/www/cable-uno-play
+root@cableuno:/var/www/cable-uno-play# git status
+En la rama main
+Tu rama está actualizada con 'origin/main'.
+
+Archivos sin seguimiento:
+  (usa "git add <archivo>..." para incluirlo a lo que será confirmado)
+	.env
+	update.sh
+
+no hay nada agregado al commit pero hay archivos sin seguimiento presentes (usa "git add" para hacerles seguimiento)
+root@cableuno:/var/www/cable-uno-play# git pull origin main
+Desde https://github.com/jdtecvv/cable-uno-play
+ * branch            main       -> FETCH_HEAD
+Ya está actualizado.
+root@cableuno:/var/www/cable-uno-play# # 1. Actualizar código desde GitHub
+git pull origin main
+
+# 2. Instalar dependencias (si hay nuevas)
+npm install
+
+# 3. Reiniciar aplicación
+pm2 restart cable-uno-play
+
+# 4. Ver logs para verificar
+pm2 logs cable-uno-play --lines 20
+Desde https://github.com/jdtecvv/cable-uno-play
+ * branch            main       -> FETCH_HEAD
+Ya está actualizado.
+
+up to date, audited 578 packages in 4s
+
+74 packages are looking for funding
+  run `npm fund` for details
+
+8 vulnerabilities (3 low, 5 moderate)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [cable-uno-play](ids: [ 0 ])
+[PM2] [cable-uno-play](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ cable-uno-play     │ fork     │ 1    │ online    │ 0%       │ 18.0mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+[TAILING] Tailing last 20 lines for [cable-uno-play] process (change the value with --lines option)
+/root/.pm2/logs/cable-uno-play-error.log last 20 lines:
+0|cable-un |     errno: -111,
+0|cable-un |     code: 'ECONNREFUSED',
+0|cable-un |     syscall: 'connect',
+0|cable-un |     address: '190.61.110.177',
+0|cable-un |     port: 2728
+0|cable-un |   }
+0|cable-un | }
+0|cable-un | Stream proxy error: TypeError: fetch failed
+0|cable-un |     at node:internal/deps/undici/undici:13510:13
+0|cable-un |     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+0|cable-un |     at async file:///var/www/cable-uno-play/dist/index.js:550:24 {
+0|cable-un |   [cause]: Error: connect ECONNREFUSED 190.61.110.177:2728
+0|cable-un |       at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16) {
+0|cable-un |     errno: -111,
+0|cable-un |     code: 'ECONNREFUSED',
+0|cable-un |     syscall: 'connect',
+0|cable-un |     address: '190.61.110.177',
+0|cable-un |     port: 2728
+0|cable-un |   }
+0|cable-un | }
+
+/root/.pm2/logs/cable-uno-play-out.log last 20 lines:
+0|cable-un | 2:25:35 PM [express] GET /api/proxy/stream 200 in 3ms
+0|cable-un | 2:25:36 PM [express] GET /api/proxy/stream 200 in 4ms
+0|cable-un | 2:25:37 PM [express] GET /api/proxy/stream 200 in 3ms
+0|cable-un | 2:25:37 PM [express] GET /api/proxy/stream 200 in 39ms
+0|cable-un | 2:25:38 PM [express] GET /api/proxy/stream 200 in 4ms
+0|cable-un | 2:25:38 PM [express] GET /api/proxy/stream 200 in 41ms
+0|cable-un | 2:25:38 PM [express] GET /api/proxy/stream 200 in 5ms
+0|cable-un | 2:25:38 PM [express] GET /api/proxy/stream 200 in 39ms
+0|cable-un | 2:25:38 PM [express] GET /api/proxy/stream 200 in 49ms
+0|cable-un | 2:25:39 PM [express] GET /api/proxy/stream 200 in 45ms
+0|cable-un | 2:25:41 PM [express] GET /api/proxy/stream 200 in 3ms
+0|cable-un | 2:25:41 PM [express] GET /api/proxy/stream 200 in 48ms
+0|cable-un | 2:25:41 PM [express] GET /api/proxy/stream 200 in 3ms
+0|cable-un | 2:25:41 PM [express] GET /api/proxy/stream 200 in 41ms
+0|cable-un | 2:25:42 PM [express] GET /api/proxy/stream 200 in 43ms
+0|cable-un | 2:25:44 PM [express] GET /api/proxy/stream 200 in 4ms
+0|cable-un | 2:25:44 PM [express] GET /api/proxy/stream 200 in 48ms
+0|cable-un | 2:25:44 PM [express] GET /api/proxy/stream 200 in 3ms
+0|cable-un | 2:25:44 PM [express] GET /api/proxy/stream 200 in 35ms
+0|cable-un | 2:25:45 PM [express] GET /api/proxy/stream 200 in 45ms
+
+0|cable-uno-play  | 6:43:10 PM [express] serving on port 5000
+
+
+
+
+^C
+root@cableuno:/var/www/cable-uno-play# # 1. Ver tamaño del logo (debe ser 397K)
+ls -lh client/public/images/cable-uno-logo.png
+
+# 2. Ver última modificación de páginas
+ls -lh client/src/pages/simple-player.tsx client/src/pages/setup.tsx
+
+# 3. Ver PWA
+ls -lh client/public/manifest.json client/public/service-worker.js
+
+# 4. Ver documentación nueva
+ls -lh ACTUALIZAR_TODO.md INSTRUCCIONES_SIMPLES.md PASOS_SERVIDOR.md
+
+# 5. Ver primer commit del repositorio actual
+git log -1 --oneline
+-rw-r--r-- 1 root root 397K nov 11 22:16 client/public/images/cable-uno-logo.png
+-rw-r--r-- 1 root root  14K nov 11 22:16 client/src/pages/setup.tsx
+-rw-r--r-- 1 root root 9,7K nov 11 22:16 client/src/pages/simple-player.tsx
+-rw-r--r-- 1 root root  999 nov 11 22:16 client/public/manifest.json
+-rw-r--r-- 1 root root 2,1K nov 11 22:16 client/public/service-worker.js
+ls: no se puede acceder a 'ACTUALIZAR_TODO.md': No existe el archivo o el directorio
+ls: no se puede acceder a 'INSTRUCCIONES_SIMPLES.md': No existe el archivo o el directorio
+ls: no se puede acceder a 'PASOS_SERVIDOR.md': No existe el archivo o el directorio
+20540e9 (HEAD -> main, origin/main, origin/HEAD) Saved progress at the end of the loop
+root@cableuno:/var/www/cable-uno-play# # 1. Actualizar desde GitHub
+git pull origin main
+
+# 2. Verificar que llegaron los archivos
+ls -lh ACTUALIZAR_TODO.md INSTRUCCIONES_SIMPLES.md PASOS_SERVIDOR.md
+
+# 3. Ver cuántos archivos de documentación hay ahora
+ls -lh *.md | wc -l
+remote: Enumerating objects: 305, done.
+remote: Counting objects: 100% (107/107), done.
+remote: Total 305 (delta 107), reused 107 (delta 107), pack-reused 198 (from 1)
+Recibiendo objetos: 100% (305/305), 51.53 MiB | 19.06 MiB/s, listo.
+Resolviendo deltas: 100% (226/226), completado con 13 objetos locales.
+Desde https://github.com/jdtecvv/cable-uno-play
+ * branch            main       -> FETCH_HEAD
+   20540e9..83f8e22  main       -> origin/main
+Actualizando 20540e9..83f8e22
+Fast-forward
+ .replit                                            |    9 +
+ ACTUALIZAR_TODO.md                                 |  252 ++++
+ COMPILAR_IOS.md                                    |  445 +++++++
+ CONFIGURAR_HTTP_IOS.md                             |  131 ++
+ DESARROLLO_LOCAL_MAC.md                            |  229 ++++
+ DESARROLLO_VS_PRODUCCION_iOS.md                    |  206 +++
+ INSTRUCCIONES_SIMPLES.md                           |  152 +++
+ LISTA_CAMBIOS_COMPLETOS.md                         |   70 +
+ PASOS_SERVIDOR.md                                  |  142 ++
+ .../715J8rOjYfS._SL1500__1763062477312.jpg         |  Bin 0 -> 113073 bytes
+ .../715J8rOjYfS._SL1500__1763062477313.jpg         |  Bin 0 -> 113073 bytes
+ ...2025-11-11 a la(s) 22.40.21 2_1762922443810.png |  Bin 0 -> 2130642 bytes
+ ...25-11-11 a la(s) 22.43.02 (2)_1762922592564.png |  Bin 0 -> 1850825 bytes
+ ...25-11-12 a la(s) 06.39.03 (2)_1762951159115.png |  Bin 0 -> 3910485 bytes
+ ...a 2025-11-12 a la(s) 06.39.03_1762951159114.png |  Bin 0 -> 1091049 bytes
+ ...a 2025-11-12 a la(s) 07.51.25_1762955499013.png |  Bin 0 -> 1464139 bytes
+ ...a 2025-11-12 a la(s) 08.00.03_1762956037260.png |  Bin 0 -> 5263508 bytes
+ ...a 2025-11-12 a la(s) 09.01.35_1762959713001.png |  Bin 0 -> 1455476 bytes
+ ...a 2025-11-12 a la(s) 09.05.02_1762959969380.png |  Bin 0 -> 89243 bytes
+ ...a 2025-11-12 a la(s) 09.13.25_1762960469307.png |  Bin 0 -> 1743821 bytes
+ ...a 2025-11-12 a la(s) 09.41.53_1762962128205.png |  Bin 0 -> 5146719 bytes
+ ...a 2025-11-12 a la(s) 10.06.56_1762963633820.png |  Bin 0 -> 3799212 bytes
+ ...a 2025-11-12 a la(s) 10.06.56_1762963749507.png |  Bin 0 -> 248997 bytes
+ ...a 2025-11-12 a la(s) 10.14.32_1762964197382.png |  Bin 0 -> 6328378 bytes
+ ...2025-11-13 a la(s) 13.45.10 2_1763063115831.png |  Bin 0 -> 2072926 bytes
+ ...a 2025-11-13 a la(s) 13.45.10_1763063115831.png |  Bin 0 -> 3071840 bytes
+ ...d--ESCOC-ESCOD--1762952911387_1762952911388.txt | 1389 ++++++++++++++++++++
+ ...n-NSCocoaErrorD-1762963154405_1762963154406.txt |   13 +
+ ...-in-the-future--1762962852806_1762962852807.txt |  268 ++++
+ ...-in-the-future--1762964964334_1762964964335.txt |  131 ++
+ ...-in-the-future--1763047602960_1763047602961.txt |   33 +
+ ...com-apple-app-l-1763049991703_1763049991704.txt |   30 +
+ ...e-diskutil-list-1762955480393_1762955480393.txt |  244 ++++
+ ...Jose-Ver-qu-ven-1762959818317_1762959818317.txt |   35 +
+ ...ose-bin-bash-c--1762961375565_1762961375565.txt |  128 ++
+ ...entificados-no--1762949728185_1762949728186.txt |  294 +++++
+ ...entificados-no--1762950019717_1762950019718.txt |  318 +++++
+ ...-add-para-hacer-1763081079193_1763081079193.txt |   88 ++
+ ...2-status-2-Veri-1762951271690_1762951271690.txt |   55 +
+ ...sudo-ufw-status-1762953466300_1762953466300.txt |   81 ++
+ ...-flush-caches-s-1762953921843_1762953921843.txt |   65 +
+ ...-tail-50-var-lo-1762953170716_1762953170716.txt |  281 ++++
+ ...er-processes-au-1762924168746_1762924168747.txt |  187 +++
+ ...0-0-0-0-0-8081--1762922148554_1762922148555.txt |  127 ++
+ ...n-deleteProcess-1762923239912_1762923239912.txt |   36 +
+ ... Pro - 2025-11-12 at 15.02.28_1762981363085.png |  Bin 0 -> 2548296 bytes
+ attached_assets/cable_uno_logo_1763063045481.png   |  Bin 0 -> 406452 bytes
+ .../C1P_logo_app_icon_98c9db47.png                 |  Bin 0 -> 656955 bytes
+ .../Cable_Uno_CB1P_icon_cdb45fcb.png               |  Bin 0 -> 815341 bytes
+ .../Cable_Uno_Play_app_icon_838e5c97.png           |  Bin 0 -> 518721 bytes
+ .../Cable_Uno_Play_app_icon_8ffe3579.png           |  Bin 0 -> 666052 bytes
+ .../Cable_Uno_Play_border_cable_3836949f.png       |  Bin 0 -> 679817 bytes
+ .../Cable_Uno_logo_with_cable_trail_0810d4ce.png   |  Bin 0 -> 388312 bytes
+ .../Cable_Uno_spiral_design_c533e5f7.png           |  Bin 0 -> 818370 bytes
+ .../Cable_Uno_with_flowing_cable_09df2ff3.png      |  Bin 0 -> 674545 bytes
+ .../Cable_connecting_to_Play_icon_5a233042.png     |  Bin 0 -> 687671 bytes
+ .../Cable_forming_icon_perimeter_bbf22fdc.png      |  Bin 0 -> 976096 bytes
+ .../Cable_framing_square_icon_e9b8152d.png         |  Bin 0 -> 873013 bytes
+ .../Circular_Cable_Uno_icon_63a31c81.png           |  Bin 0 -> 913634 bytes
+ .../Coaxial_cable_CB1P_icon_968285e1.png           |  Bin 0 -> 842086 bytes
+ .../Dynamic_cable_to_play_connection_42693be8.png  |  Bin 0 -> 835049 bytes
+ .../Premium_diagonal_cable_icon_72d9c946.png       |  Bin 0 -> 840298 bytes
+ .../Spiral_cable_feeding_into_play_84a5759f.png    |  Bin 0 -> 874529 bytes
+ capacitor.config.ts                                |    5 +
+ client/public/C1P_logo_app_icon_98c9db47.png       |  Bin 0 -> 656955 bytes
+ client/public/Cable_Uno_CB1P_icon_cdb45fcb.png     |  Bin 0 -> 815341 bytes
+ client/public/Cable_Uno_Play_app_icon_838e5c97.png |  Bin 0 -> 518721 bytes
+ client/public/Cable_Uno_Play_app_icon_8ffe3579.png |  Bin 0 -> 666052 bytes
+ .../Cable_Uno_logo_with_cable_trail_0810d4ce.png   |  Bin 0 -> 388312 bytes
+ client/public/Cable_Uno_spiral_design_c533e5f7.png |  Bin 0 -> 818370 bytes
+ .../Cable_Uno_with_flowing_cable_09df2ff3.png      |  Bin 0 -> 674545 bytes
+ .../Cable_connecting_to_Play_icon_5a233042.png     |  Bin 0 -> 687671 bytes
+ client/public/Circular_Cable_Uno_icon_63a31c81.png |  Bin 0 -> 913634 bytes
+ client/public/Coaxial_cable_CB1P_icon_968285e1.png |  Bin 0 -> 842086 bytes
+ .../Dynamic_cable_to_play_connection_42693be8.png  |  Bin 0 -> 835049 bytes
+ .../Premium_diagonal_cable_icon_72d9c946.png       |  Bin 0 -> 840298 bytes
+ .../Spiral_cable_feeding_into_play_84a5759f.png    |  Bin 0 -> 874529 bytes
+ client/public/cable-uno-logo.png                   |  Bin 0 -> 406452 bytes
+ client/public/iconos.html                          |   99 ++
+ client/public/images/cable-uno-logo.png            |  Bin 405887 -> 406452 bytes
+ client/src/pages/setup.tsx                         |   11 +-
+ client/src/pages/simple-player.tsx                 |  401 ++++--
+ compilar-ios.sh                                    |  100 ++
+ config-dev-ios.sh                                  |   80 ++
+ config-prod-ios.sh                                 |   63 +
+ copiar-archivos.txt                                |   27 +
+ db/index.ts                                        |   26 +-
+ replit.md                                          |   38 +-
+ server/index.ts                                    |    4 +-
+ subir-a-servidor.sh                                |   82 ++
+ 90 files changed, 6251 insertions(+), 124 deletions(-)
+ create mode 100644 ACTUALIZAR_TODO.md
+ create mode 100644 COMPILAR_IOS.md
+ create mode 100644 CONFIGURAR_HTTP_IOS.md
+ create mode 100644 DESARROLLO_LOCAL_MAC.md
+ create mode 100644 DESARROLLO_VS_PRODUCCION_iOS.md
+ create mode 100644 INSTRUCCIONES_SIMPLES.md
+ create mode 100644 LISTA_CAMBIOS_COMPLETOS.md
+ create mode 100644 PASOS_SERVIDOR.md
+ create mode 100644 attached_assets/715J8rOjYfS._SL1500__1763062477312.jpg
+ create mode 100644 attached_assets/715J8rOjYfS._SL1500__1763062477313.jpg
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-11 a la(s) 22.40.21 2_1762922443810.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-11 a la(s) 22.43.02 (2)_1762922592564.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-12 a la(s) 06.39.03 (2)_1762951159115.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-12 a la(s) 06.39.03_1762951159114.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-12 a la(s) 07.51.25_1762955499013.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-12 a la(s) 08.00.03_1762956037260.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-12 a la(s) 09.01.35_1762959713001.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-12 a la(s) 09.05.02_1762959969380.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-12 a la(s) 09.13.25_1762960469307.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-12 a la(s) 09.41.53_1762962128205.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-12 a la(s) 10.06.56_1762963633820.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-12 a la(s) 10.06.56_1762963749507.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-12 a la(s) 10.14.32_1762964197382.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-13 a la(s) 13.45.10 2_1763063115831.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-13 a la(s) 13.45.10_1763063115831.png
+ create mode 100644 attached_assets/Pasted--ESCOC-ESCOD--1762952911387_1762952911388.txt
+ create mode 100644 attached_assets/Pasted--UIKBFeedbackGenerator-0x600003510790-Error-creating-CHHapticPattern-Error-Domain-NSCocoaErrorD-1762963154405_1762963154406.txt
+ create mode 100644 attached_assets/Pasted--UIScene-lifecycle-will-soon-be-required-Failure-to-adopt-will-result-in-an-assert-in-the-future--1762962852806_1762962852807.txt
+ create mode 100644 attached_assets/Pasted--UIScene-lifecycle-will-soon-be-required-Failure-to-adopt-will-result-in-an-assert-in-the-future--1762964964334_1762964964335.txt
+ create mode 100644 attached_assets/Pasted--UIScene-lifecycle-will-soon-be-required-Failure-to-adopt-will-result-in-an-assert-in-the-future--1763047602960_1763047602961.txt
+ create mode 100644 attached_assets/Pasted-Failed-to-send-CA-Event-for-app-launch-measurements-for-ca-event-type-0-event-name-com-apple-app-l-1763049991703_1763049991704.txt
+ create mode 100644 attached_assets/Pasted-Last-login-Sat-Sep-6-22-54-08-on-ttys000-josevalerinvillegas-MacBook-Pro-de-Jose-diskutil-list-1762955480393_1762955480393.txt
+ create mode 100644 attached_assets/Pasted-Last-login-Wed-Nov-12-08-10-22-on-ttys000-josevalerinvillegas-MacBook-Pro-de-Jose-Ver-qu-ven-1762959818317_1762959818317.txt
+ create mode 100644 attached_assets/Pasted-Last-login-Wed-Nov-12-09-15-53-on-ttys001-josevalerinvillegas-MacBook-Pro-de-Jose-bin-bash-c--1762961375565_1762961375565.txt
+ create mode 100644 attached_assets/Pasted-cableuno-cableuno-netstat-tulpn-grep-5000-No-todos-los-procesos-pueden-ser-identificados-no--1762949728185_1762949728186.txt
+ create mode 100644 attached_assets/Pasted-cableuno-cableuno-netstat-tulpn-grep-5000-No-todos-los-procesos-pueden-ser-identificados-no--1762950019717_1762950019718.txt
+ create mode 100644 attached_assets/Pasted-no-hay-nada-agregado-al-commit-pero-hay-archivos-sin-seguimiento-presentes-usa-git-add-para-hacer-1763081079193_1763081079193.txt
+ create mode 100644 attached_assets/Pasted-root-cableuno-home-cableuno-1-Verificar-que-Cable-Uno-Play-est-corriendo-pm2-status-2-Veri-1762951271690_1762951271690.txt
+ create mode 100644 attached_assets/Pasted-root-cableuno-home-cableuno-1-Verificar-que-el-firewall-permita-puerto-80-y-443-sudo-ufw-status-1762953466300_1762953466300.txt
+ create mode 100644 attached_assets/Pasted-root-cableuno-home-cableuno-Limpiar-cache-DNS-del-servidor-sudo-systemd-resolve-flush-caches-s-1762953921843_1762953921843.txt
+ create mode 100644 attached_assets/Pasted-root-cableuno-home-cableuno-PROBLEMA-1-Ver-errores-espec-ficos-de-Certbot-sudo-tail-50-var-lo-1762953170716_1762953170716.txt
+ create mode 100644 attached_assets/Pasted-root-cableuno-home-cableuno-cat-home-xui-bin-nginx-conf-nginx-conf-user-xui-worker-processes-au-1762924168746_1762924168747.txt
+ create mode 100644 attached_assets/Pasted-root-cableuno-home-cableuno-sudo-netstat-tulpn-grep-80-tcp-23-0-0-0-0-0-8081--1762922148554_1762922148555.txt
+ create mode 100644 attached_assets/Pasted-root-cableuno-var-www-cable-uno-play-pm2-delete-cable-uno-play-PM2-Applying-action-deleteProcess-1762923239912_1762923239912.txt
+ create mode 100644 attached_assets/Simulator Screenshot - iPhone 17 Pro - 2025-11-12 at 15.02.28_1762981363085.png
+ create mode 100644 attached_assets/cable_uno_logo_1763063045481.png
+ create mode 100644 attached_assets/generated_images/C1P_logo_app_icon_98c9db47.png
+ create mode 100644 attached_assets/generated_images/Cable_Uno_CB1P_icon_cdb45fcb.png
+ create mode 100644 attached_assets/generated_images/Cable_Uno_Play_app_icon_838e5c97.png
+ create mode 100644 attached_assets/generated_images/Cable_Uno_Play_app_icon_8ffe3579.png
+ create mode 100644 attached_assets/generated_images/Cable_Uno_Play_border_cable_3836949f.png
+ create mode 100644 attached_assets/generated_images/Cable_Uno_logo_with_cable_trail_0810d4ce.png
+ create mode 100644 attached_assets/generated_images/Cable_Uno_spiral_design_c533e5f7.png
+ create mode 100644 attached_assets/generated_images/Cable_Uno_with_flowing_cable_09df2ff3.png
+ create mode 100644 attached_assets/generated_images/Cable_connecting_to_Play_icon_5a233042.png
+ create mode 100644 attached_assets/generated_images/Cable_forming_icon_perimeter_bbf22fdc.png
+ create mode 100644 attached_assets/generated_images/Cable_framing_square_icon_e9b8152d.png
+ create mode 100644 attached_assets/generated_images/Circular_Cable_Uno_icon_63a31c81.png
+ create mode 100644 attached_assets/generated_images/Coaxial_cable_CB1P_icon_968285e1.png
+ create mode 100644 attached_assets/generated_images/Dynamic_cable_to_play_connection_42693be8.png
+ create mode 100644 attached_assets/generated_images/Premium_diagonal_cable_icon_72d9c946.png
+ create mode 100644 attached_assets/generated_images/Spiral_cable_feeding_into_play_84a5759f.png
+ create mode 100644 client/public/C1P_logo_app_icon_98c9db47.png
+ create mode 100644 client/public/Cable_Uno_CB1P_icon_cdb45fcb.png
+ create mode 100644 client/public/Cable_Uno_Play_app_icon_838e5c97.png
+ create mode 100644 client/public/Cable_Uno_Play_app_icon_8ffe3579.png
+ create mode 100644 client/public/Cable_Uno_logo_with_cable_trail_0810d4ce.png
+ create mode 100644 client/public/Cable_Uno_spiral_design_c533e5f7.png
+ create mode 100644 client/public/Cable_Uno_with_flowing_cable_09df2ff3.png
+ create mode 100644 client/public/Cable_connecting_to_Play_icon_5a233042.png
+ create mode 100644 client/public/Circular_Cable_Uno_icon_63a31c81.png
+ create mode 100644 client/public/Coaxial_cable_CB1P_icon_968285e1.png
+ create mode 100644 client/public/Dynamic_cable_to_play_connection_42693be8.png
+ create mode 100644 client/public/Premium_diagonal_cable_icon_72d9c946.png
+ create mode 100644 client/public/Spiral_cable_feeding_into_play_84a5759f.png
+ create mode 100644 client/public/cable-uno-logo.png
+ create mode 100644 client/public/iconos.html
+ create mode 100755 compilar-ios.sh
+ create mode 100755 config-dev-ios.sh
+ create mode 100755 config-prod-ios.sh
+ create mode 100644 copiar-archivos.txt
+ create mode 100755 subir-a-servidor.sh
+-rw-r--r-- 1 root root 5,8K nov 13 18:53 ACTUALIZAR_TODO.md
+-rw-r--r-- 1 root root 3,2K nov 13 18:53 INSTRUCCIONES_SIMPLES.md
+-rw-r--r-- 1 root root 3,1K nov 13 18:53 PASOS_SERVIDOR.md
+19
+root@cableuno:/var/www/cable-uno-play# # 1. Asegurarte que tienes lo último de GitHub
+cd /var/www/cable-uno-play
+git pull origin main
+
+# 2. COMPILAR el frontend (CRÍTICO)
+npm run build
+
+# 3. Reiniciar PM2
+pm2 restart cable-uno-play
+
+# 4. Ver estado
+pm2 status
+
+# 5. Verificar que el logo esté compilado
+ls -lh dist/public/images/cable-uno-logo.png
+Desde https://github.com/jdtecvv/cable-uno-play
+ * branch            main       -> FETCH_HEAD
+Ya está actualizado.
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.18 building for production...
+transforming (3) src/main.tsxBrowserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 1667 modules transformed.
+../dist/public/index.html                   2.30 kB │ gzip:   0.92 kB
+../dist/public/assets/index-C85qp07k.css   70.98 kB │ gzip:  12.00 kB
+../dist/public/assets/index-CHa5ROFB.js   769.87 kB │ gzip: 239.64 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 7.57s
+
+  dist/index.js  39.0kb
+
+⚡ Done in 17ms
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [cable-uno-play](ids: [ 0 ])
+[PM2] [cable-uno-play](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ cable-uno-play     │ fork     │ 2    │ online    │ 0%       │ 18.0mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ cable-uno-play     │ fork     │ 2    │ online    │ 100%     │ 66.3mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+-rw-r--r-- 1 root root 397K nov 13 18:55 dist/public/images/cable-uno-logo.png
+root@cableuno:/var/www/cable-uno-play# cd /var/www/cable-uno-play
+npm run build
+pm2 restart cable-uno-play
+ls -lh dist/public/images/cable-uno-logo.png
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.18 building for production...
+transforming (3) src/main.tsxBrowserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 1667 modules transformed.
+../dist/public/index.html                   2.30 kB │ gzip:   0.92 kB
+../dist/public/assets/index-C85qp07k.css   70.98 kB │ gzip:  12.00 kB
+../dist/public/assets/index-CHa5ROFB.js   769.87 kB │ gzip: 239.64 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 7.50s
+
+  dist/index.js  39.0kb
+
+⚡ Done in 15ms
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [cable-uno-play](ids: [ 0 ])
+[PM2] [cable-uno-play](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ cable-uno-play     │ fork     │ 3    │ online    │ 0%       │ 17.6mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+-rw-r--r-- 1 root root 397K nov 13 18:57 dist/public/images/cable-uno-logo.png
+root@cableuno:/var/www/cable-uno-play# 
