@@ -1,0 +1,27 @@
+# INSTRUCCIONES PARA ACTUALIZAR EL SERVIDOR SIN GIT
+
+## En el servidor (donde ya estás conectado):
+
+# 1. Crear respaldo por si acaso
+cp client/public/images/cable-uno-logo.png client/public/images/cable-uno-logo.png.backup
+cp client/src/pages/simple-player.tsx client/src/pages/simple-player.tsx.backup
+cp client/src/pages/setup.tsx client/src/pages/setup.tsx.backup
+
+# 2. Ahora necesitas los archivos actualizados de Replit
+# Como Replit no permite push automático, tienes que:
+
+OPCIÓN A - Usar la interfaz de Git de Replit:
+1. En Replit, panel izquierdo → ícono Git
+2. Commit & Push los cambios
+3. En el servidor: git pull origin main
+
+OPCIÓN B - Copiar manualmente:
+1. Descarga el proyecto de Replit como ZIP (menú ☰)
+2. Extrae los archivos en tu Mac
+3. Desde tu Mac, ejecuta:
+
+scp -P 2121 ~/Downloads/cable-uno-play/client/public/images/cable-uno-logo.png root@190.61.110.177:/var/www/cable-uno-play/client/public/images/
+
+scp -P 2121 ~/Downloads/cable-uno-play/client/src/pages/simple-player.tsx root@190.61.110.177:/var/www/cable-uno-play/client/src/pages/
+
+scp -P 2121 ~/Downloads/cable-uno-play/client/src/pages/setup.tsx root@190.61.110.177:/var/www/cable-uno-play/client/src/pages/
