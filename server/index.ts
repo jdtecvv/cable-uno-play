@@ -60,11 +60,12 @@ app.use((req, res, next) => {
   // This allows macOS development to use port 3000 if 5000 is occupied
   // Production (Linux) uses default 5000
   const port = process.env.PORT ? parseInt(process.env.PORT) : 5000;
-  // Use 127.0.0.1 for macOS compatibility with Node.js v24+
-  // iPhone Simulator can still access it via localhost
+  // Use 0.0.0.0 to allow access from network (needed for iOS Simulator)
+  // In development, this allows iPhone Simulator to connect via local IP
+  // In production, Nginx reverse proxy handles external access
   server.listen({
     port,
-    host: "127.0.0.1",
+    host: "0.0.0.0",
     reusePort: true,
   }, () => {
     log(`serving on port ${port}`);
