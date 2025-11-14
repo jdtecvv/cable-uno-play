@@ -226,7 +226,7 @@ npx cap sync android
 2. **Credenciales M3U**: Se almacenan en localStorage del navegador/app
 3. **CORS y Mixed Content**: El proxy del servidor maneja esto automáticamente
 4. **Puerto del servidor**: 
-   - Desarrollo en Mac: 3000 (porque 5000 está ocupado)
+   - Desarrollo en Mac: 5000
    - Producción en Linux: 5000
 
 ---

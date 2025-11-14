@@ -33,7 +33,7 @@ const config: CapacitorConfig = {
   appName: 'Cable Uno Play',
   webDir: 'dist/public',
   server: {
-    url: 'http://${IP}:3000',
+    url: 'http://${IP}:5000',
     androidScheme: 'https',
     iosScheme: 'https',
     cleartext: true
@@ -54,7 +54,7 @@ export default config;
 EOF
 
 echo "✅ capacitor.config.ts configurado para desarrollo"
-echo "   URL del servidor: http://${IP}:3000"
+echo "   URL del servidor: http://${IP}:5000"
 echo ""
 
 # Build y sync
@@ -70,7 +70,7 @@ echo "✅ ¡Configuración completada!"
 echo ""
 echo "📋 Próximos pasos:"
 echo "   1. En OTRA terminal, inicia el servidor: npm run dev"
-echo "   2. Espera a ver: [express] serving on port 3000"
+echo "   2. Espera a ver: [express] serving on port 5000"
 echo "   3. Abre Xcode: open ios/App/App.xcworkspace"
 echo "   4. En Xcode: Product → Clean Build Folder (Shift + Cmd + K)"
 echo "   5. Click ▶️ Play para ejecutar en el Simulator"
