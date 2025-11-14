@@ -1,0 +1,93 @@
+Last login: Fri Nov 14 08:54:32 on ttys005
+josevalerinvillegas@MacBook-Pro-de-Jose ~ % sudo lsof -ti:5000 | xargs kill -9
+Password:
+josevalerinvillegas@MacBook-Pro-de-Jose ~ % cd ~/Desktop/cable-uno-play
+git pull origin main
+From https://github.com/jdtecvv/cable-uno-play
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+josevalerinvillegas@MacBook-Pro-de-Jose cable-uno-play % ./config-dev-ios.sh
+🔧 Configurando Cable Uno Play para desarrollo iOS...
+
+✅ IP local detectada: 192.168.90.32
+✅ Puerto configurado: 5000
+
+✅ capacitor.config.ts configurado para desarrollo
+   URL del servidor: http://192.168.90.32:5000
+
+📦 Compilando frontend...
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.18 building for production...
+transforming (3) src/main.tsxBrowserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 2057 modules transformed.
+../dist/public/index.html                     2.30 kB │ gzip:   0.92 kB
+../dist/public/assets/index-C85qp07k.css     70.98 kB │ gzip:  12.00 kB
+../dist/public/assets/index-bhyjXHqS.js   1,038.08 kB │ gzip: 317.32 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 7.28s
+
+  dist/index.js  47.3kb
+
+⚡ Done in 11ms
+
+📱 Sincronizando con iOS...
+✔ Copying web assets from public to ios/App/App/public in 35.45ms
+✔ Creating capacitor.config.json in ios/App/App in 3.28ms
+✔ copy ios in 134.92ms
+✔ Updating iOS plugins in 20.74ms
+✔ Updating iOS native dependencies with pod install in 4.53s
+✔ update ios in 4.68s
+[info] Sync finished in 5.37s
+
+✅ ¡Configuración completada!
+
+📋 Próximos pasos:
+   1. En OTRA terminal, inicia el servidor: npm run dev
+   2. Espera a ver: [express] serving on port 5000
+   3. Abre Xcode: open ios/App/App.xcworkspace
+   4. En Xcode: Product → Clean Build Folder (Shift + Cmd + K)
+   5. Click ▶️ Play para ejecutar en el Simulator
+
+ℹ️  El servidor correrá SIN base de datos (solo Simple Player)
+⚠️  IMPORTANTE: Antes de compilar para producción, ejecuta ./config-prod-ios.sh
+
+josevalerinvillegas@MacBook-Pro-de-Jose cable-uno-play % npm run dev
+
+> rest-express@1.0.0 dev
+> tsx server/index.ts
+
+⚠️  Running in development mode WITHOUT database (Simple Player only)
+   Only /api/proxy/* endpoints will work
+   To use full features, set DATABASE_URL environment variable
+🚀 Registering API routes with prefix: /api
+📡 Registering route: GET /api/proxy/stream
+node:events:497
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use 0.0.0.0:5000
+    at Server.setupListenHandle [as _listen2] (node:net:1904:16)
+    at listenInCluster (node:net:1961:12)
+    at doListen (node:net:2135:7)
+    at process.processTicksAndRejections (node:internal/process/task_queues:83:21)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:1940:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 5000
+}
+
+Node.js v20.18.0
+josevalerinvillegas@MacBook-Pro-de-Jose cable-uno-play % 
