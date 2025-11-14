@@ -17,10 +17,22 @@ fi
 
 echo "✅ IP local detectada: $IP"
 
-# Puerto 3000 para desarrollo (5000 está ocupado por macOS ControlCenter)
-# En producción Linux, el servidor usa 5000 por defecto
-PORT="3000"
-echo "✅ Puerto configurado: $PORT"
+# Puerto 5000 (ESTÁNDAR para desarrollo y producción)
+PORT="5000"
+
+# Verificar si el puerto está ocupado
+if lsof -Pi :5000 -sTCP:LISTEN -t >/dev/null ; then
+    echo "❌ ERROR: El puerto 5000 está ocupado"
+    echo ""
+    echo "En macOS, ControlCenter suele ocupar este puerto."
+    echo "Para liberar el puerto 5000, ejecuta:"
+    echo ""
+    echo "  sudo lsof -ti:5000 | xargs kill -9"
+    echo ""
+    exit 1
+fi
+
+echo "✅ Puerto 5000 disponible"
 echo ""
 
 # Hacer backup del config original
@@ -74,13 +86,12 @@ echo ""
 echo "✅ ¡Configuración completada!"
 echo ""
 echo "📋 Próximos pasos:"
-echo "   1. En OTRA terminal, inicia el servidor: PORT=3000 npm run dev"
-echo "   2. Espera a ver: [express] serving on port 3000"
+echo "   1. En OTRA terminal, inicia el servidor: npm run dev"
+echo "   2. Espera a ver: [express] serving on port 5000"
 echo "   3. Abre Xcode: open ios/App/App.xcworkspace"
 echo "   4. En Xcode: Product → Clean Build Folder (Shift + Cmd + K)"
 echo "   5. Click ▶️ Play para ejecutar en el Simulator"
 echo ""
 echo "ℹ️  El servidor correrá SIN base de datos (solo Simple Player)"
 echo "⚠️  IMPORTANTE: Antes de compilar para producción, ejecuta ./config-prod-ios.sh"
-echo "💡 Nota: Usamos puerto 3000 porque macOS ControlCenter ocupa el 5000"
 echo ""
