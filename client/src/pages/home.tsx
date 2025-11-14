@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 import { API_ENDPOINTS } from "@/lib/constants";
 import FeaturedContent from "@/components/home/featured-content";
 import ContinueWatching from "@/components/home/continue-watching";
@@ -9,6 +10,7 @@ import { useKeyNavigation } from "@/hooks/use-key-navigation";
 
 export default function Home() {
   const queryClient = useQueryClient();
+  const [, navigate] = useLocation();
   
   // Pre-fetch channels and categories
   useEffect(() => {
@@ -18,10 +20,18 @@ export default function Home() {
   }, [queryClient]);
   
   // Fetch popular channels (currently just all channels, limited to 12)
-  const { data: channels = [], isLoading: channelsLoading } = useQuery({
+  const { data: channels = [], isLoading: channelsLoading, error } = useQuery({
     queryKey: [API_ENDPOINTS.CHANNELS],
     select: (data) => data.slice(0, 12), // Limit to 12 for display
   });
+  
+  // Si hay error de base de datos, redirigir a Simple Player
+  useEffect(() => {
+    if (error && !channelsLoading) {
+      console.log("Base de datos no disponible, redirigiendo a Simple Player...");
+      navigate("/simple");
+    }
+  }, [error, channelsLoading, navigate]);
   
   // Enable keyboard navigation
   useKeyNavigation({
