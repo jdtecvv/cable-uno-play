@@ -4,8 +4,29 @@ import * as storage from "./storage";
 import { ZodError } from "zod";
 import fs from "fs";
 import path from "path";
-import { spawn } from "child_process";
+import { spawn, spawnSync } from "child_process";
 import * as schema from "@shared/schema";
+import { randomUUID } from "crypto";
+import { promisify } from "util";
+
+const mkdtemp = promisify(fs.mkdtemp);
+const mkdir = promisify(fs.mkdir);
+const readdir = promisify(fs.readdir);
+const stat = promisify(fs.stat);
+
+// Transcoding session management
+interface TranscodingSession {
+  id: string;
+  tempDir: string;
+  ffmpegProcess: ReturnType<typeof spawn> | null;
+  streamUrl: string;
+  createdAt: number;
+  lastAccess: number;
+}
+
+const transcodingSessions = new Map<string, TranscodingSession>();
+const SESSION_TIMEOUT = 10 * 60 * 1000; // 10 minutes
+const MAX_CONCURRENT_SESSIONS = 5;
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Prefix for all API routes
@@ -26,6 +47,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
       message: error.message || "Internal server error" 
     });
   };
+
+  // Transcoding session helpers
+  const checkFFmpegAvailable = (): boolean => {
+    try {
+      const result = spawnSync('ffmpeg', ['-version']);
+      return result.status === 0;
+    } catch {
+      return false;
+    }
+  };
+
+  const cleanupSession = async (sessionId: string) => {
+    const session = transcodingSessions.get(sessionId);
+    if (!session) return;
+
+    // Kill FFmpeg process
+    if (session.ffmpegProcess) {
+      session.ffmpegProcess.kill('SIGKILL');
+    }
+
+    // Remove temp directory
+    try {
+      const files = await readdir(session.tempDir);
+      for (const file of files) {
+        await fs.promises.unlink(path.join(session.tempDir, file));
+      }
+      await fs.promises.rmdir(session.tempDir);
+    } catch (error) {
+      console.error(`Failed to cleanup session ${sessionId}:`, error);
+    }
+
+    transcodingSessions.delete(sessionId);
+    console.log(`Cleaned up session ${sessionId}`);
+  };
+
+  const cleanupStaleSessions = () => {
+    const now = Date.now();
+    for (const [sessionId, session] of Array.from(transcodingSessions.entries())) {
+      if (now - session.lastAccess > SESSION_TIMEOUT) {
+        console.log(`Session ${sessionId} timed out, cleaning up...`);
+        cleanupSession(sessionId);
+      }
+    }
+  };
+
+  // Run cleanup every minute
+  setInterval(cleanupStaleSessions, 60 * 1000);
 
   // Proxy endpoint to avoid CORS issues when loading M3U from external URLs
   app.post(`${apiPrefix}/proxy/m3u`, async (req, res) => {
@@ -59,16 +127,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Proxy endpoint with FFmpeg transcoding for incompatible audio formats
-  app.get(`${apiPrefix}/proxy/stream-transcode`, async (req, res) => {
+  // HLS Transcoding Session Routes
+  
+  // Create new transcoding session
+  app.post(`${apiPrefix}/proxy/stream-transcode/sessions`, async (req, res) => {
     try {
-      const url = req.query.url as string;
-      
-      if (!url) {
-        return res.status(400).json({ message: "URL parameter is required" });
+      // Check FFmpeg availability
+      if (!checkFFmpegAvailable()) {
+        return res.status(503).json({ message: "FFmpeg not available on server" });
       }
 
-      // Validate URL format
+      // Check concurrent session limit
+      if (transcodingSessions.size >= MAX_CONCURRENT_SESSIONS) {
+        return res.status(429).json({ message: "Too many concurrent transcoding sessions" });
+      }
+
+      const { url } = req.body;
+      
+      if (!url || typeof url !== 'string') {
+        return res.status(400).json({ message: "URL is required" });
+      }
+
       if (!url.startsWith('http://') && !url.startsWith('https://')) {
         return res.status(400).json({ message: "Invalid URL format" });
       }
@@ -77,7 +156,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const streamAuth = req.headers['x-stream-auth'] as string | undefined;
       let inputUrl = url;
       
-      // Add credentials to URL for FFmpeg (it doesn't support custom headers)
       if (streamAuth) {
         try {
           const decodedAuth = Buffer.from(streamAuth, 'base64').toString('utf-8');
@@ -93,60 +171,183 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
-      // FFmpeg command: transcode audio to AAC, copy video
+      // Create session
+      const sessionId = randomUUID();
+      const tempDir = await mkdtemp(path.join('/tmp', `hls-${sessionId}-`));
+
+      // FFmpeg command for low-latency HLS with HEAD audio downmix
       const ffmpegArgs = [
+        '-hide_banner',
+        '-loglevel', 'warning',
+        '-fflags', 'nobuffer',
+        '-threads', '0',
         '-i', inputUrl,
-        '-c:v', 'copy',          // Copy video without re-encoding
-        '-c:a', 'aac',           // Transcode audio to AAC
-        '-b:a', '192k',          // Audio bitrate: 192 kbps (high quality)
-        '-f', 'mpegts',          // Output format: MPEG-TS (streaming friendly)
-        '-avoid_negative_ts', 'make_zero',  // Handle timestamp issues
-        'pipe:1'                 // Output to stdout
+        '-map', '0:v:0',
+        '-map', '0:a:0',
+        '-c:v', 'copy',
+        '-c:a', 'aac',
+        '-b:a', '192k',
+        '-ac', '2',  // Downmix to stereo
+        '-af', 'aresample=async=1:min_hard_comp=0.100:first_pts=0',
+        '-profile:a', 'aac_low',
+        '-movflags', '+faststart',
+        '-flags', '+global_header',
+        '-max_delay', '500000',
+        '-hls_time', '2',
+        '-hls_list_size', '6',
+        '-hls_flags', 'delete_segments+append_list+omit_endlist',
+        '-hls_segment_type', 'mpegts',
+        '-hls_segment_filename', path.join(tempDir, 'seg_%05d.ts'),
+        path.join(tempDir, 'index.m3u8')
       ];
 
       const ffmpeg = spawn('ffmpeg', ffmpegArgs);
 
-      // Set response headers
-      res.setHeader('Content-Type', 'video/mp2t');
-      res.setHeader('Access-Control-Allow-Origin', '*');
-      res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-      res.setHeader('Cache-Control', 'no-cache');
+      // Store session
+      const session: TranscodingSession = {
+        id: sessionId,
+        tempDir,
+        ffmpegProcess: ffmpeg,
+        streamUrl: url,
+        createdAt: Date.now(),
+        lastAccess: Date.now()
+      };
+      transcodingSessions.set(sessionId, session);
 
-      // Pipe FFmpeg stdout to response
-      ffmpeg.stdout.pipe(res);
-
-      // Log FFmpeg errors
+      // Log FFmpeg output
       ffmpeg.stderr.on('data', (data) => {
-        console.error(`FFmpeg: ${data.toString()}`);
+        console.log(`FFmpeg [${sessionId}]: ${data.toString().trim()}`);
       });
 
-      // Handle FFmpeg process errors
       ffmpeg.on('error', (error) => {
-        console.error('FFmpeg spawn error:', error);
-        if (!res.headersSent) {
-          res.status(500).send('Transcoding failed');
-        }
+        console.error(`FFmpeg error [${sessionId}]:`, error);
+        cleanupSession(sessionId);
       });
 
       ffmpeg.on('exit', (code) => {
+        console.log(`FFmpeg exited [${sessionId}] with code ${code}`);
         if (code !== 0 && code !== null) {
-          console.error(`FFmpeg exited with code ${code}`);
-        }
-        if (!res.writableEnded) {
-          res.end();
+          cleanupSession(sessionId);
         }
       });
 
-      // Handle client disconnect
-      req.on('close', () => {
-        ffmpeg.kill('SIGKILL');
+      // Return playlist URL
+      const playlistUrl = `/api/proxy/stream-transcode/playlists/${sessionId}`;
+      
+      return res.status(201).json({ 
+        sessionId,
+        playlistUrl,
+        message: "Transcoding session created"
       });
 
     } catch (error) {
-      console.error("Transcode proxy error:", error);
-      if (!res.headersSent) {
-        res.status(500).send(error instanceof Error ? error.message : "Transcoding failed");
+      console.error("Session creation error:", error);
+      return res.status(500).json({ 
+        message: error instanceof Error ? error.message : "Failed to create session" 
+      });
+    }
+  });
+
+  // Serve HLS playlist
+  app.get(`${apiPrefix}/proxy/stream-transcode/playlists/:sessionId`, async (req, res) => {
+    try {
+      const { sessionId } = req.params;
+      const session = transcodingSessions.get(sessionId);
+
+      if (!session) {
+        return res.status(404).json({ message: "Session not found" });
       }
+
+      // Update last access
+      session.lastAccess = Date.now();
+
+      const playlistPath = path.join(session.tempDir, 'index.m3u8');
+
+      // Wait for playlist to be created (up to 10 seconds)
+      let retries = 20;
+      while (!fs.existsSync(playlistPath) && retries > 0) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+        retries--;
+      }
+
+      if (!fs.existsSync(playlistPath)) {
+        return res.status(503).json({ message: "Playlist not ready yet" });
+      }
+
+      res.setHeader('Content-Type', 'application/vnd.apple.mpegurl');
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Cache-Control', 'no-cache');
+
+      const playlist = await fs.promises.readFile(playlistPath, 'utf-8');
+      
+      // Rewrite segment URLs to point to our endpoint
+      const rewrittenPlaylist = playlist.replace(
+        /seg_(\d+)\.ts/g,
+        (match, num) => `/api/proxy/stream-transcode/segments/${sessionId}/seg_${num}.ts`
+      );
+
+      return res.send(rewrittenPlaylist);
+
+    } catch (error) {
+      console.error("Playlist serve error:", error);
+      return res.status(500).json({ 
+        message: error instanceof Error ? error.message : "Failed to serve playlist" 
+      });
+    }
+  });
+
+  // Serve HLS segments
+  app.get(`${apiPrefix}/proxy/stream-transcode/segments/:sessionId/:segmentName`, async (req, res) => {
+    try {
+      const { sessionId, segmentName } = req.params;
+      const session = transcodingSessions.get(sessionId);
+
+      if (!session) {
+        return res.status(404).json({ message: "Session not found" });
+      }
+
+      // Update last access
+      session.lastAccess = Date.now();
+
+      const segmentPath = path.join(session.tempDir, segmentName);
+
+      if (!fs.existsSync(segmentPath)) {
+        return res.status(404).json({ message: "Segment not found" });
+      }
+
+      res.setHeader('Content-Type', 'video/mp2t');
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Cache-Control', 'no-cache');
+
+      const segment = await fs.promises.readFile(segmentPath);
+      return res.send(segment);
+
+    } catch (error) {
+      console.error("Segment serve error:", error);
+      return res.status(500).json({ 
+        message: error instanceof Error ? error.message : "Failed to serve segment" 
+      });
+    }
+  });
+
+  // Delete session manually
+  app.delete(`${apiPrefix}/proxy/stream-transcode/sessions/:sessionId`, async (req, res) => {
+    try {
+      const { sessionId } = req.params;
+      const session = transcodingSessions.get(sessionId);
+
+      if (!session) {
+        return res.status(404).json({ message: "Session not found" });
+      }
+
+      await cleanupSession(sessionId);
+      return res.json({ message: "Session deleted" });
+
+    } catch (error) {
+      console.error("Session deletion error:", error);
+      return res.status(500).json({ 
+        message: error instanceof Error ? error.message : "Failed to delete session" 
+      });
     }
   });
 

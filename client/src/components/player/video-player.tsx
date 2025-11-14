@@ -50,6 +50,8 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
   ({ channel, onClose, autoplay = true, username, password, useTranscoding = false }, ref) => {
     const videoRef = useRef<HTMLVideoElement>(null);
     const playerContainerRef = useRef<HTMLDivElement>(null);
+    const hlsRef = useRef<Hls | null>(null);
+    const transcodingSessionIdRef = useRef<string | null>(null);
     const [hls, setHls] = useState<Hls | null>(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [isMuted, setIsMuted] = useState(false);
@@ -102,17 +104,76 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
       
       setIsBuffering(true);
       setError(null);
+      
+      let isMounted = true;
   
-      const setupHls = () => {
-        // Convert HTTP URLs to use proxy to avoid Mixed Content issues
-        const getProxiedUrl = (url: string): string => {
-          if (url.startsWith('http://')) {
-            // Use transcoding proxy for incompatible audio formats, otherwise use normal proxy
-            const proxyEndpoint = useTranscoding ? '/api/proxy/stream-transcode' : '/api/proxy/stream';
-            return `${proxyEndpoint}?url=${encodeURIComponent(url)}`;
+      const setupHls = async () => {
+        let streamUrl = channel.url;
+
+        // If transcoding enabled and HTTP stream, create transcoding session
+        if (useTranscoding && channel.url.startsWith('http://')) {
+          try {
+            const headers: Record<string, string> = {
+              'Content-Type': 'application/json',
+            };
+            
+            // Add auth header if credentials provided
+            if (username && password) {
+              const credentials = btoa(`${username}:${password}`);
+              headers['X-Stream-Auth'] = credentials;
+            }
+
+            // Don't abort - let request complete so we can cleanup the session
+            const response = await fetch('/api/proxy/stream-transcode/sessions', {
+              method: 'POST',
+              headers,
+              body: JSON.stringify({ url: channel.url }),
+            });
+
+            if (!response.ok) {
+              const error = await response.json();
+              throw new Error(error.message || 'Failed to create transcoding session');
+            }
+
+            const data = await response.json();
+
+            // Check if component is still mounted
+            if (!isMounted) {
+              // Component unmounted during fetch, clean up session immediately
+              if (data.sessionId) {
+                fetch(`/api/proxy/stream-transcode/sessions/${data.sessionId}`, {
+                  method: 'DELETE',
+                }).catch(err => console.error('Failed to cleanup orphaned session:', err));
+              }
+              return;
+            }
+
+            // Component still mounted, use the session
+            transcodingSessionIdRef.current = data.sessionId;
+            streamUrl = data.playlistUrl;
+            
+            console.log(`Transcoding session created: ${transcodingSessionIdRef.current}`);
+          } catch (error) {
+            console.error('Transcoding session error:', error);
+            
+            if (isMounted) {
+              toast({
+                title: "Error de transcodificación",
+                description: error instanceof Error ? error.message : "No se pudo iniciar transcodificación",
+                variant: "destructive",
+              });
+            }
+            
+            // Fallback to direct stream
+            streamUrl = channel.url;
           }
-          return url;
-        };
+        } else if (channel.url.startsWith('http://')) {
+          // Use normal proxy for HTTP streams
+          streamUrl = `/api/proxy/stream?url=${encodeURIComponent(channel.url)}`;
+        }
+        
+        // Check again before creating HLS instance
+        if (!isMounted) return;
 
         if (Hls.isSupported()) {
           const hlsInstance = new Hls({
@@ -147,9 +208,10 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
             },
           });
           
-          const streamUrl = getProxiedUrl(channel.url);
           hlsInstance.loadSource(streamUrl);
           hlsInstance.attachMedia(videoRef.current!);
+          
+          hlsRef.current = hlsInstance;
           
           hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
             if (autoplay) {
@@ -195,7 +257,6 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
           setHls(hlsInstance);
         } else if (videoRef.current?.canPlayType("application/vnd.apple.mpegurl")) {
           // For browsers that support HLS natively (Safari)
-          const streamUrl = getProxiedUrl(channel.url);
           videoRef.current.src = streamUrl;
           videoRef.current.addEventListener("loadedmetadata", () => {
             if (autoplay) {
@@ -227,15 +288,33 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
       
       // Clean up
       return () => {
-        if (hls) {
-          hls.destroy();
+        // Mark as unmounted to prevent async operations from proceeding
+        isMounted = false;
+        
+        // Destroy HLS.js instance
+        if (hlsRef.current) {
+          hlsRef.current.destroy();
+          hlsRef.current = null;
         }
         
         if (controlsTimerRef.current) {
           window.clearTimeout(controlsTimerRef.current);
         }
+
+        // Cleanup transcoding session if exists
+        // Note: If fetch is still pending, isMounted=false will trigger cleanup in setupHls
+        if (transcodingSessionIdRef.current) {
+          const sessionId = transcodingSessionIdRef.current;
+          transcodingSessionIdRef.current = null;
+          
+          fetch(`/api/proxy/stream-transcode/sessions/${sessionId}`, {
+            method: 'DELETE',
+          }).catch(error => {
+            console.error('Failed to cleanup transcoding session:', error);
+          });
+        }
       };
-    }, [channel?.url, autoplay, toast, username, password]);
+    }, [channel?.url, autoplay, toast, username, password, useTranscoding]);
 
     // Expose functions via ref
     useImperativeHandle(ref, () => ({
