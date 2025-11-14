@@ -1,0 +1,148 @@
+[PM2][ERROR] File ecosystem.config.js not found
+[PM2] Saving current process list...
+[PM2] Successfully saved in /root/.pm2/dump.pm2
+
+> rest-express@1.0.0 db:push
+> drizzle-kit push --force --config=./drizzle.config.ts
+
+Reading config file '/var/www/cable-uno-play/drizzle.config.ts'
+Using 'pg' driver for database querying
+[✓] Pulling schema from database...
+[i] No changes detected
+root@cableuno:/var/www/cable-uno-play# # 1. Encontrar tu DATABASE_URL actual
+cat .env | grep DATABASE_URL
+# O si está en otro lugar:
+cat /root/.env | grep DATABASE_URL
+# O verifica en los archivos de configuración de PostgreSQL
+
+# 2. Una vez que tengas el DATABASE_URL, inicia PM2 con la variable:
+DATABASE_URL="postgresql://usuario:password@localhost:5432/cable_uno_play" pm2 start dist/index.js --name cable-uno-play
+
+# 3. Guardar la configuración
+pm2 save
+
+# 4. Verificar que esté corriendo
+pm2 status
+pm2 logs cable-uno-play --lines 50
+DATABASE_URL=postgresql://cableuno:I@sd1844R0y@localhost:5432/cableuno_play
+cat: /root/.env: No existe el archivo o el directorio
+[PM2] Applying action restartProcessId on app [cable-uno-play](ids: [ 0 ])
+[PM2] [cable-uno-play](0) ✓
+[PM2] Process successfully started
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ cable-uno-play     │ fork     │ 5    │ online    │ 0%       │ 12.8mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+[PM2] Saving current process list...
+[PM2] Successfully saved in /root/.pm2/dump.pm2
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ cable-uno-play     │ fork     │ 5    │ online    │ 0%       │ 81.5mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+[TAILING] Tailing last 50 lines for [cable-uno-play] process (change the value with --lines option)
+/root/.pm2/logs/cable-uno-play-error.log last 50 lines:
+0|cable-un |     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+0|cable-un |     at async file:///var/www/cable-uno-play/dist/index.js:550:24 {
+0|cable-un |   [cause]: Error: connect ECONNREFUSED 190.61.110.177:2728
+0|cable-un |       at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16) {
+0|cable-un |     errno: -111,
+0|cable-un |     code: 'ECONNREFUSED',
+0|cable-un |     syscall: 'connect',
+0|cable-un |     address: '190.61.110.177',
+0|cable-un |     port: 2728
+0|cable-un |   }
+0|cable-un | }
+0|cable-un | Stream proxy error: TypeError: fetch failed
+0|cable-un |     at node:internal/deps/undici/undici:13510:13
+0|cable-un |     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+0|cable-un |     at async file:///var/www/cable-uno-play/dist/index.js:550:24 {
+0|cable-un |   [cause]: Error: connect ECONNREFUSED 190.61.110.177:2728
+0|cable-un |       at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16) {
+0|cable-un |     errno: -111,
+0|cable-un |     code: 'ECONNREFUSED',
+0|cable-un |     syscall: 'connect',
+0|cable-un |     address: '190.61.110.177',
+0|cable-un |     port: 2728
+0|cable-un |   }
+0|cable-un | }
+0|cable-un | Stream proxy error: TypeError: fetch failed
+0|cable-un |     at node:internal/deps/undici/undici:13510:13
+0|cable-un |     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+0|cable-un |     at async file:///var/www/cable-uno-play/dist/index.js:550:24 {
+0|cable-un |   [cause]: Error: connect ECONNREFUSED 190.61.110.177:2728
+0|cable-un |       at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16) {
+0|cable-un |     errno: -111,
+0|cable-un |     code: 'ECONNREFUSED',
+0|cable-un |     syscall: 'connect',
+0|cable-un |     address: '190.61.110.177',
+0|cable-un |     port: 2728
+0|cable-un |   }
+0|cable-un | }
+0|cable-un | Stream proxy error: TypeError: fetch failed
+0|cable-un |     at node:internal/deps/undici/undici:13510:13
+0|cable-un |     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+0|cable-un |     at async file:///var/www/cable-uno-play/dist/index.js:550:24 {
+0|cable-un |   [cause]: Error: connect ECONNREFUSED 190.61.110.177:2728
+0|cable-un |       at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16) {
+0|cable-un |     errno: -111,
+0|cable-un |     code: 'ECONNREFUSED',
+0|cable-un |     syscall: 'connect',
+0|cable-un |     address: '190.61.110.177',
+0|cable-un |     port: 2728
+0|cable-un |   }
+0|cable-un | }
+
+/root/.pm2/logs/cable-uno-play-out.log last 50 lines:
+0|cable-un | 2:25:19 PM [express] GET /api/proxy/stream 200 in 4ms
+0|cable-un | 2:25:19 PM [express] GET /api/proxy/stream 200 in 50ms
+0|cable-un | 2:25:22 PM [express] GET /api/proxy/stream 200 in 3ms
+0|cable-un | 2:25:24 PM [express] GET /api/proxy/stream 200 in 3ms
+0|cable-un | 2:25:25 PM [express] GET /api/proxy/stream 200 in 4ms
+0|cable-un | 2:25:27 PM [express] GET /api/proxy/stream 200 in 4ms
+0|cable-un | 2:25:27 PM [express] GET /api/proxy/stream 200 in 4ms
+0|cable-un | 2:25:27 PM [express] GET /api/proxy/stream 200 in 3ms
+0|cable-un | 2:25:27 PM [express] GET /api/proxy/stream 200 in 38ms
+0|cable-un | 2:25:27 PM [express] GET /api/proxy/stream 200 in 42ms
+0|cable-un | 2:25:28 PM [express] GET /api/proxy/stream 200 in 38ms
+0|cable-un | 2:25:28 PM [express] GET /api/proxy/stream 404 in 3ms
+0|cable-un | 2:25:29 PM [express] GET /api/proxy/stream 404 in 3ms
+0|cable-un | 2:25:30 PM [express] GET /api/proxy/stream 404 in 3ms
+0|cable-un | 2:25:31 PM [express] GET /api/proxy/stream 404 in 3ms
+0|cable-un | 2:25:31 PM [express] GET /api/proxy/stream 404 in 3ms
+0|cable-un | 2:25:31 PM [express] GET /api/proxy/stream 404 in 3ms
+0|cable-un | 2:25:33 PM [express] GET /api/proxy/stream 404 in 3ms
+0|cable-un | 2:25:33 PM [express] GET /api/proxy/stream 404 in 3ms
+0|cable-un | 2:25:33 PM [express] GET /api/proxy/stream 200 in 7ms
+0|cable-un | 2:25:34 PM [express] GET /api/proxy/stream 200 in 3ms
+0|cable-un | 2:25:35 PM [express] GET /api/proxy/stream 200 in 4ms
+0|cable-un | 2:25:35 PM [express] GET /api/proxy/stream 200 in 3ms
+0|cable-un | 2:25:35 PM [express] GET /api/proxy/stream 200 in 46ms
+0|cable-un | 2:25:35 PM [express] GET /api/proxy/stream 200 in 3ms
+0|cable-un | 2:25:36 PM [express] GET /api/proxy/stream 200 in 4ms
+0|cable-un | 2:25:37 PM [express] GET /api/proxy/stream 200 in 3ms
+0|cable-un | 2:25:37 PM [express] GET /api/proxy/stream 200 in 39ms
+0|cable-un | 2:25:38 PM [express] GET /api/proxy/stream 200 in 4ms
+0|cable-un | 2:25:38 PM [express] GET /api/proxy/stream 200 in 41ms
+0|cable-un | 2:25:38 PM [express] GET /api/proxy/stream 200 in 5ms
+0|cable-un | 2:25:38 PM [express] GET /api/proxy/stream 200 in 39ms
+0|cable-un | 2:25:38 PM [express] GET /api/proxy/stream 200 in 49ms
+0|cable-un | 2:25:39 PM [express] GET /api/proxy/stream 200 in 45ms
+0|cable-un | 2:25:41 PM [express] GET /api/proxy/stream 200 in 3ms
+0|cable-un | 2:25:41 PM [express] GET /api/proxy/stream 200 in 48ms
+0|cable-un | 2:25:41 PM [express] GET /api/proxy/stream 200 in 3ms
+0|cable-un | 2:25:41 PM [express] GET /api/proxy/stream 200 in 41ms
+0|cable-un | 2:25:42 PM [express] GET /api/proxy/stream 200 in 43ms
+0|cable-un | 2:25:44 PM [express] GET /api/proxy/stream 200 in 4ms
+0|cable-un | 2:25:44 PM [express] GET /api/proxy/stream 200 in 48ms
+0|cable-un | 2:25:44 PM [express] GET /api/proxy/stream 200 in 3ms
+0|cable-un | 2:25:44 PM [express] GET /api/proxy/stream 200 in 35ms
+0|cable-un | 2:25:45 PM [express] GET /api/proxy/stream 200 in 45ms
+0|cable-un | 6:43:10 PM [express] serving on port 5000
+0|cable-un | 6:55:48 PM [express] serving on port 5000
+0|cable-un | 6:57:33 PM [express] serving on port 5000
+0|cable-un | 6:59:35 PM [express] serving on port 5000
+0|cable-un | 7:15:17 PM [express] serving on port 5000
+0|cable-un | 7:36:33 PM [express] serving on port 5000
+
