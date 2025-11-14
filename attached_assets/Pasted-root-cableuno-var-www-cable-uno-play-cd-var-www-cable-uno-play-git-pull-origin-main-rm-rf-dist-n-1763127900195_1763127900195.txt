@@ -1,0 +1,119 @@
+root@cableuno:/var/www/cable-uno-play# cd /var/www/cable-uno-play
+git pull origin main
+rm -rf dist
+npm run build
+pm2 restart cable-uno-play
+pm2 logs cable-uno-play --lines 30
+remote: Enumerating objects: 15, done.
+remote: Counting objects: 100% (15/15), done.
+remote: Compressing objects: 100% (2/2), done.
+remote: Total 10 (delta 8), reused 10 (delta 8), pack-reused 0 (from 0)
+Desempaquetando objetos: 100% (10/10), 4.52 KiB | 256.00 KiB/s, listo.
+Desde https://github.com/jdtecvv/cable-uno-play
+ * branch            main       -> FETCH_HEAD
+   c2e4caa..9658682  main       -> origin/main
+Actualizando c2e4caa..9658682
+Fast-forward
+ .replit                                                                                             |   4 --
+ ...-2025-from-192-168-77-1-cableuno-cableuno-sudo-su-sudo-contrase--1763127446010_1763127446010.txt | 164 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ server/routes.ts                                                                                    |   4 ++
+ 3 files changed, 168 insertions(+), 4 deletions(-)
+ create mode 100644 attached_assets/Pasted-Last-login-Thu-Nov-13-20-06-49-2025-from-192-168-77-1-cableuno-cableuno-sudo-su-sudo-contrase--1763127446010_1763127446010.txt
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.18 building for production...
+transforming (3) src/main.tsxBrowserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 2057 modules transformed.
+../dist/public/index.html                     2.30 kB │ gzip:   0.92 kB
+../dist/public/assets/index-C85qp07k.css     70.98 kB │ gzip:  12.00 kB
+../dist/public/assets/index-bhyjXHqS.js   1,038.08 kB │ gzip: 317.32 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 8.89s
+
+  dist/index.js  47.3kb
+
+⚡ Done in 19ms
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [cable-uno-play](ids: [ 0 ])
+[PM2] [cable-uno-play](0) ✓
+┌────┬───────────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name              │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ cable-uno-play    │ default     │ 1.0.0   │ fork    │ 26259    │ 0s     │ 6    │ online    │ 0%       │ 18.0mb   │ root     │ disabled │
+└────┴───────────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+[TAILING] Tailing last 30 lines for [cable-uno-play] process (change the value with --lines option)
+/root/.pm2/logs/cable-uno-play-error.log last 30 lines:
+0|cable-un |       at TLSSocket.onConnectSecure (node:_tls_wrap:1687:27)
+0|cable-un |       at TLSSocket.emit (node:events:524:28)
+0|cable-un |       at TLSSocket._finishInit (node:_tls_wrap:1076:8)
+0|cable-un |       at ssl.onhandshakedone (node:_tls_wrap:862:12) {
+0|cable-un |     code: 'ERR_TLS_CERT_ALTNAME_INVALID',
+0|cable-un |     reason: "Host: localhost. is not in the cert's altnames: DNS:app.teleunotv.cr, DNS:play.teleunotv.cr",
+0|cable-un |     host: 'localhost',
+0|cable-un |     cert: {
+0|cable-un |       subject: [Object: null prototype],
+0|cable-un |       issuer: [Object: null prototype],
+0|cable-un |       subjectaltname: 'DNS:app.teleunotv.cr, DNS:play.teleunotv.cr',
+0|cable-un |       infoAccess: [Object: null prototype],
+0|cable-un |       ca: false,
+0|cable-un |       bits: 256,
+0|cable-un |       pubkey: <Buffer 04 92 4f 1f 2f 83 89 71 cc 5b 33 0c ea 84 92 ce cb ed 0f ce 8b 0d 27 30 85 bb 9a 96 e3 1d d5 67 98 3b 87 3d 04 69 e4 1e 8c be 8b 6c d4 2b 82 10 b3 0c ... 15 more bytes>,
+0|cable-un |       asn1Curve: 'prime256v1',
+0|cable-un |       nistCurve: 'P-256',
+0|cable-un |       valid_from: 'Nov 12 12:27:48 2025 GMT',
+0|cable-un |       valid_to: 'Feb 10 12:27:47 2026 GMT',
+0|cable-un |       fingerprint: 'A5:6C:1A:E0:66:FA:4C:95:CB:9F:50:9A:43:0D:4D:68:06:53:CE:6A',
+0|cable-un |       fingerprint256: 'B0:B1:79:91:EE:B4:FD:0F:59:58:86:2C:4B:94:5D:93:56:A5:CB:24:55:6E:4F:D7:0B:4A:8D:D7:E4:E1:B4:B9',
+0|cable-un |       fingerprint512: '9A:38:C9:A5:81:8A:CB:8C:06:F6:B1:67:CF:79:15:E5:F8:B4:5A:47:FF:DF:D0:D5:71:EB:04:CB:08:09:2B:DC:B0:6C:6F:77:FA:1E:1E:6D:F6:42:74:59:AB:9D:0D:E6:30:D1:8E:8C:B5:8A:C3:B4:CF:B0:5A:56:0D:B8:99:54',
+0|cable-un |       ext_key_usage: [Array],
+0|cable-un |       serialNumber: '067C27E83D9F625819769992E08BB386242B',
+0|cable-un |       raw: <Buffer 30 82 03 a1 30 82 03 26 a0 03 02 01 02 02 12 06 7c 27 e8 3d 9f 62 58 19 76 99 92 e0 8b b3 86 24 2b 30 0a 06 08 2a 86 48 ce 3d 04 03 03 30 32 31 0b 30 ... 883 more bytes>,
+0|cable-un |       issuerCertificate: [Object]
+0|cable-un |     }
+0|cable-un |   },
+0|cable-un |   [Symbol(kMessage)]: "Hostname/IP does not match certificate's altnames: Host: localhost. is not in the cert's altnames: DNS:app.teleunotv.cr, DNS:play.teleunotv.cr"
+0|cable-un | }
+
+/root/.pm2/logs/cable-uno-play-out.log last 30 lines:
+0|cable-un | 7:29:00 AM [express] GET /api/proxy/stream 404 in 3ms
+0|cable-un | 7:29:02 AM [express] GET /api/proxy/stream 404 in 3ms
+0|cable-un | 7:29:02 AM [express] GET /api/proxy/stream 404 in 2ms
+0|cable-un | 7:29:04 AM [express] GET /api/proxy/stream 404 in 3ms
+0|cable-un | 7:29:06 AM [express] GET /api/proxy/stream 404 in 3ms
+0|cable-un | 7:29:06 AM [express] GET /api/proxy/stream 404 in 3ms
+0|cable-un | 7:29:07 AM [express] GET /api/proxy/stream 404 in 3ms
+0|cable-un | 7:29:17 AM [express] GET /api/proxy/stream 404 in 3ms
+0|cable-un | 7:29:17 AM [express] GET /api/proxy/stream 404 in 2ms
+0|cable-un | 7:29:18 AM [express] GET /api/proxy/stream 404 in 3ms
+0|cable-un | 7:29:29 AM [express] GET /api/proxy/stream 404 in 4ms
+0|cable-un | 7:29:29 AM [express] GET /api/proxy/stream 404 in 3ms
+0|cable-un | 7:29:37 AM [express] GET /api/proxy/stream 404 in 4ms
+0|cable-un | 7:29:47 AM [express] GET /api/proxy/stream 404 in 5ms
+0|cable-un | 7:29:47 AM [express] GET /api/proxy/stream 404 in 3ms
+0|cable-un | 7:29:49 AM [express] GET /api/proxy/stream 404 in 4ms
+0|cable-un | 7:29:59 AM [express] GET /api/proxy/stream 404 in 3ms
+0|cable-un | 7:29:59 AM [express] GET /api/proxy/stream 404 in 3ms
+0|cable-un | 7:30:00 AM [express] GET /api/proxy/stream 404 in 3ms
+0|cable-un | 7:30:07 AM [express] GET /api/proxy/stream 404 in 4ms
+0|cable-un | 7:30:07 AM [express] GET /api/proxy/stream 404 in 3ms
+0|cable-un | 7:30:17 AM [express] GET /api/proxy/stream 404 in 4ms
+0|cable-un | 7:30:20 AM [express] GET /api/proxy/stream 404 in 3ms
+0|cable-un | 7:30:20 AM [express] GET /api/proxy/stream 404 in 2ms
+0|cable-un | 7:30:21 AM [express] GET /api/proxy/stream 404 in 3ms
+0|cable-un | 7:30:28 AM [express] GET /api/proxy/stream 404 in 4ms
+0|cable-un | 7:30:28 AM [express] GET /api/proxy/stream 404 in 2ms
+0|cable-un | 7:30:37 AM [express] GET /api/proxy/stream 404 in 4ms
+0|cable-un | 7:36:56 AM [express] serving on port 5000
+0|cable-un | 7:39:01 AM [express] serving on port 5000
+
+0|cable-uno-play  | 🚀 Registering API routes with prefix: /api
+0|cable-uno-play  | 📡 Registering route: GET /api/proxy/stream
+0|cable-uno-play  | 7:44:37 AM [express] serving on port 5000
