@@ -211,7 +211,18 @@ export default function SimplePlayer() {
             
             {/* Botones a la derecha */}
             {channels.length > 0 && (
-              <div className="absolute right-6 flex items-center gap-2">
+              <div className="absolute right-6 flex items-center gap-3">
+                {/* Toggle de Transcodificación */}
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-900/50 border border-gray-800">
+                  <Settings2Icon className="w-4 h-4 text-gray-400" />
+                  <span className="text-xs text-gray-400">Transcodificar</span>
+                  <Switch
+                    checked={useTranscoding}
+                    onCheckedChange={toggleTranscoding}
+                    className="data-[state=checked]:bg-red-600"
+                  />
+                </div>
+                
                 <Badge variant="outline" className="border-red-600/50 text-red-500">
                   {channels.length} canales
                 </Badge>
