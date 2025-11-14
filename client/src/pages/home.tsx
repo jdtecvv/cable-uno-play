@@ -20,9 +20,9 @@ export default function Home() {
   }, [queryClient]);
   
   // Fetch popular channels (currently just all channels, limited to 12)
-  const { data: channels = [], isLoading: channelsLoading, error } = useQuery({
+  const { data: channels = [], isLoading: channelsLoading, error } = useQuery<any[]>({
     queryKey: [API_ENDPOINTS.CHANNELS],
-    select: (data) => data.slice(0, 12), // Limit to 12 for display
+    select: (data: any[]) => data.slice(0, 12), // Limit to 12 for display
   });
   
   // Si hay error de base de datos, redirigir a Simple Player

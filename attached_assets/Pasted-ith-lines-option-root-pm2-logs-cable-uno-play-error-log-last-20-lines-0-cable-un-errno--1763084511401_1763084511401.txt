@@ -1,0 +1,93 @@
+ith --lines option)
+/root/.pm2/logs/cable-uno-play-error.log last 20 lines:
+0|cable-un |     errno: -111,
+0|cable-un |     code: 'ECONNREFUSED',
+0|cable-un |     syscall: 'connect',
+0|cable-un |     address: '190.61.110.177',
+0|cable-un |     port: 2728
+0|cable-un |   }
+0|cable-un | }
+0|cable-un | Stream proxy error: TypeError: fetch failed
+0|cable-un |     at node:internal/deps/undici/undici:13510:13
+0|cable-un |     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+0|cable-un |     at async file:///var/www/cable-uno-play/dist/index.js:550:24 {
+0|cable-un |   [cause]: Error: connect ECONNREFUSED 190.61.110.177:2728
+0|cable-un |       at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16) {
+0|cable-un |     errno: -111,
+0|cable-un |     code: 'ECONNREFUSED',
+0|cable-un |     syscall: 'connect',
+0|cable-un |     address: '190.61.110.177',
+0|cable-un |     port: 2728
+0|cable-un |   }
+0|cable-un | }
+
+/root/.pm2/logs/cable-uno-play-out.log last 20 lines:
+0|cable-un | 2:25:38 PM [express] GET /api/proxy/stream 200 in 5ms
+0|cable-un | 2:25:38 PM [express] GET /api/proxy/stream 200 in 39ms
+0|cable-un | 2:25:38 PM [express] GET /api/proxy/stream 200 in 49ms
+0|cable-un | 2:25:39 PM [express] GET /api/proxy/stream 200 in 45ms
+0|cable-un | 2:25:41 PM [express] GET /api/proxy/stream 200 in 3ms
+0|cable-un | 2:25:41 PM [express] GET /api/proxy/stream 200 in 48ms
+0|cable-un | 2:25:41 PM [express] GET /api/proxy/stream 200 in 3ms
+0|cable-un | 2:25:41 PM [express] GET /api/proxy/stream 200 in 41ms
+0|cable-un | 2:25:42 PM [express] GET /api/proxy/stream 200 in 43ms
+0|cable-un | 2:25:44 PM [express] GET /api/proxy/stream 200 in 4ms
+0|cable-un | 2:25:44 PM [express] GET /api/proxy/stream 200 in 48ms
+0|cable-un | 2:25:44 PM [express] GET /api/proxy/stream 200 in 3ms
+0|cable-un | 2:25:44 PM [express] GET /api/proxy/stream 200 in 35ms
+0|cable-un | 2:25:45 PM [express] GET /api/proxy/stream 200 in 45ms
+0|cable-un | 6:43:10 PM [express] serving on port 5000
+0|cable-un | 6:55:48 PM [express] serving on port 5000
+0|cable-un | 6:57:33 PM [express] serving on port 5000
+0|cable-un | 6:59:35 PM [express] serving on port 5000
+0|cable-un | 7:15:17 PM [express] serving on port 5000
+0|cable-un | 7:36:33 PM [express] serving on port 5000
+
+^C
+root@cableuno:/var/www/cable-uno-play# # En el servidor, ejecuta:
+cd /var/www/cable-uno-play
+npm run build
+pm2 restart cable-uno-play
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.18 building for production...
+transforming (3) src/main.tsxBrowserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 2057 modules transformed.
+../dist/public/index.html                     2.30 kB │ gzip:   0.92 kB
+../dist/public/assets/index-C85qp07k.css     70.98 kB │ gzip:  12.00 kB
+../dist/public/assets/index-BMnpypzZ.js   1,036.55 kB │ gzip: 316.86 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 7.92s
+
+  dist/index.js  39.0kb
+
+⚡ Done in 18ms
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [cable-uno-play](ids: [ 0 ])
+[PM2] [cable-uno-play](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ cable-uno-play     │ fork     │ 6    │ online    │ 0%       │ 17.6mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@cableuno:/var/www/cable-uno-play# 
+Broadcast message from cableuno@cableuno (Thu 2025-11-13 19:41:03 CST):
+
+The system will reboot now!
+
+
+Broadcast message from cableuno@cableuno (Thu 2025-11-13 19:41:03 CST):
+
+The system will reboot now!
+
+Connection to 190.61.110.177 closed by remote host.
+Connection to 190.61.110.177 closed.
+josevalerinvillegas@MacBook-Pro-de-Jose ~ % 
