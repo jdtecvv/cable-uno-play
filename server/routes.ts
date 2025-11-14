@@ -31,6 +31,8 @@ const MAX_CONCURRENT_SESSIONS = 5;
 export async function registerRoutes(app: Express): Promise<Server> {
   // Prefix for all API routes
   const apiPrefix = "/api";
+  
+  console.log("🚀 Registering API routes with prefix:", apiPrefix);
 
   // Error handling middleware
   const handleError = (res: any, error: any) => {
@@ -352,7 +354,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Proxy endpoint for video streams to avoid Mixed Content issues
+  console.log(`📡 Registering route: GET ${apiPrefix}/proxy/stream`);
   app.get(`${apiPrefix}/proxy/stream`, async (req, res) => {
+    console.log(`🎯 Proxy stream request: ${req.query.url}`);
     try {
       const url = req.query.url as string;
       
