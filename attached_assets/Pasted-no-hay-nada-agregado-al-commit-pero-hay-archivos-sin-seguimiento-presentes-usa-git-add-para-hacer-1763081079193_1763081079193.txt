@@ -1,0 +1,88 @@
+no hay nada agregado al commit pero hay archivos sin seguimiento presentes (usa "git add" para hacerles seguimiento)
+root@cableuno:/var/www/cable-uno-play# git pull origin main
+Desde https://github.com/jdtecvv/cable-uno-play
+ * branch            main       -> FETCH_HEAD
+Ya está actualizado.
+root@cableuno:/var/www/cable-uno-play# # 1. Actualizar código desde GitHub
+git pull origin main
+
+# 2. Instalar dependencias (si hay nuevas)
+npm install
+
+# 3. Reiniciar aplicación
+pm2 restart cable-uno-play
+
+# 4. Ver logs para verificar
+pm2 logs cable-uno-play --lines 20
+Desde https://github.com/jdtecvv/cable-uno-play
+ * branch            main       -> FETCH_HEAD
+Ya está actualizado.
+
+up to date, audited 578 packages in 4s
+
+74 packages are looking for funding
+  run `npm fund` for details
+
+8 vulnerabilities (3 low, 5 moderate)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [cable-uno-play](ids: [ 0 ])
+[PM2] [cable-uno-play](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ cable-uno-play     │ fork     │ 1    │ online    │ 0%       │ 18.0mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+[TAILING] Tailing last 20 lines for [cable-uno-play] process (change the value with --lines option)
+/root/.pm2/logs/cable-uno-play-error.log last 20 lines:
+0|cable-un |     errno: -111,
+0|cable-un |     code: 'ECONNREFUSED',
+0|cable-un |     syscall: 'connect',
+0|cable-un |     address: '190.61.110.177',
+0|cable-un |     port: 2728
+0|cable-un |   }
+0|cable-un | }
+0|cable-un | Stream proxy error: TypeError: fetch failed
+0|cable-un |     at node:internal/deps/undici/undici:13510:13
+0|cable-un |     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+0|cable-un |     at async file:///var/www/cable-uno-play/dist/index.js:550:24 {
+0|cable-un |   [cause]: Error: connect ECONNREFUSED 190.61.110.177:2728
+0|cable-un |       at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16) {
+0|cable-un |     errno: -111,
+0|cable-un |     code: 'ECONNREFUSED',
+0|cable-un |     syscall: 'connect',
+0|cable-un |     address: '190.61.110.177',
+0|cable-un |     port: 2728
+0|cable-un |   }
+0|cable-un | }
+
+/root/.pm2/logs/cable-uno-play-out.log last 20 lines:
+0|cable-un | 2:25:35 PM [express] GET /api/proxy/stream 200 in 3ms
+0|cable-un | 2:25:36 PM [express] GET /api/proxy/stream 200 in 4ms
+0|cable-un | 2:25:37 PM [express] GET /api/proxy/stream 200 in 3ms
+0|cable-un | 2:25:37 PM [express] GET /api/proxy/stream 200 in 39ms
+0|cable-un | 2:25:38 PM [express] GET /api/proxy/stream 200 in 4ms
+0|cable-un | 2:25:38 PM [express] GET /api/proxy/stream 200 in 41ms
+0|cable-un | 2:25:38 PM [express] GET /api/proxy/stream 200 in 5ms
+0|cable-un | 2:25:38 PM [express] GET /api/proxy/stream 200 in 39ms
+0|cable-un | 2:25:38 PM [express] GET /api/proxy/stream 200 in 49ms
+0|cable-un | 2:25:39 PM [express] GET /api/proxy/stream 200 in 45ms
+0|cable-un | 2:25:41 PM [express] GET /api/proxy/stream 200 in 3ms
+0|cable-un | 2:25:41 PM [express] GET /api/proxy/stream 200 in 48ms
+0|cable-un | 2:25:41 PM [express] GET /api/proxy/stream 200 in 3ms
+0|cable-un | 2:25:41 PM [express] GET /api/proxy/stream 200 in 41ms
+0|cable-un | 2:25:42 PM [express] GET /api/proxy/stream 200 in 43ms
+0|cable-un | 2:25:44 PM [express] GET /api/proxy/stream 200 in 4ms
+0|cable-un | 2:25:44 PM [express] GET /api/proxy/stream 200 in 48ms
+0|cable-un | 2:25:44 PM [express] GET /api/proxy/stream 200 in 3ms
+0|cable-un | 2:25:44 PM [express] GET /api/proxy/stream 200 in 35ms
+0|cable-un | 2:25:45 PM [express] GET /api/proxy/stream 200 in 45ms
+
+0|cable-uno-play  | 6:43:10 PM [express] serving on port 5000
