@@ -3,11 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 import { parseM3U } from "@/lib/utils/m3u-parser";
 import VideoPlayer from "@/components/player/video-player";
-import { PlayIcon, TvIcon, SearchIcon, Trash2Icon, DownloadIcon, GridIcon, ListIcon, XIcon, Settings2Icon } from "lucide-react";
+import { PlayIcon, TvIcon, SearchIcon, Trash2Icon, DownloadIcon, GridIcon, ListIcon, XIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface SimpleChannel {
@@ -31,10 +29,8 @@ export default function SimplePlayer() {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [showLoadForm, setShowLoadForm] = useState(false);
-  const [useTranscoding, setUseTranscoding] = useState<boolean>(() => {
-    const saved = localStorage.getItem('use-audio-transcoding');
-    return saved === 'true';
-  });
+  // Transcodificación SIEMPRE activada por defecto (automática para usuarios)
+  const [useTranscoding] = useState<boolean>(true);
   const { toast } = useToast();
 
   // Cargar canales guardados al inicio
@@ -54,18 +50,6 @@ export default function SimplePlayer() {
       setShowLoadForm(true);
     }
   }, []);
-
-  const toggleTranscoding = () => {
-    const newValue = !useTranscoding;
-    setUseTranscoding(newValue);
-    localStorage.setItem('use-audio-transcoding', String(newValue));
-    toast({
-      title: useTranscoding ? "Transcodificación desactivada" : "Transcodificación activada",
-      description: useTranscoding 
-        ? "Audio se reproduce directamente" 
-        : "Audio incompatible se convertirá a AAC (puede aumentar latencia)",
-    });
-  };
 
   const clearChannels = () => {
     setChannels([]);
@@ -213,24 +197,6 @@ export default function SimplePlayer() {
             {/* Botones a la derecha */}
             {channels.length > 0 && (
               <div className="absolute right-6 flex items-center gap-3">
-                {/* Toggle de Transcodificación */}
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-900/50 border border-gray-800">
-                  <Settings2Icon className="w-4 h-4 text-gray-400" />
-                  <Label 
-                    htmlFor="transcoding-toggle"
-                    className="text-xs text-gray-400 cursor-pointer"
-                  >
-                    Transcodificar
-                  </Label>
-                  <Switch
-                    id="transcoding-toggle"
-                    checked={useTranscoding}
-                    onCheckedChange={toggleTranscoding}
-                    className="data-[state=checked]:bg-red-600"
-                    aria-label="Activar transcodificación de audio para canales con códec HEAD"
-                  />
-                </div>
-                
                 <Badge variant="outline" className="border-red-600/50 text-red-500">
                   {channels.length} canales
                 </Badge>
