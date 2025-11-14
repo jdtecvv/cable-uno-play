@@ -110,8 +110,8 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
       const setupHls = async () => {
         let streamUrl = channel.url;
 
-        // If transcoding enabled and HTTP stream, create transcoding session
-        if (useTranscoding && channel.url.startsWith('http://')) {
+        // If transcoding enabled, create transcoding session (supports both HTTP and HTTPS)
+        if (useTranscoding) {
           try {
             const headers: Record<string, string> = {
               'Content-Type': 'application/json',
@@ -152,23 +152,30 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
             transcodingSessionIdRef.current = data.sessionId;
             streamUrl = data.playlistUrl;
             
-            console.log(`Transcoding session created: ${transcodingSessionIdRef.current}`);
+            console.log(`🎵 Transcoding session created: ${transcodingSessionIdRef.current}`);
+            console.log(`📡 Original URL: ${channel.url}`);
+            console.log(`🔄 Transcoded URL: ${streamUrl}`);
           } catch (error) {
-            console.error('Transcoding session error:', error);
+            console.error('❌ Transcoding session error:', error);
             
             if (isMounted) {
               toast({
                 title: "Error de transcodificación",
-                description: error instanceof Error ? error.message : "No se pudo iniciar transcodificación",
+                description: error instanceof Error ? error.message : "No se pudo iniciar transcodificación. Usando stream original.",
                 variant: "destructive",
               });
             }
             
-            // Fallback to direct stream
-            streamUrl = channel.url;
+            // Fallback to direct stream or proxy
+            if (channel.url.startsWith('http://')) {
+              // Use proxy for HTTP to avoid mixed content
+              streamUrl = `/api/proxy/stream?url=${encodeURIComponent(channel.url)}`;
+            } else {
+              streamUrl = channel.url;
+            }
           }
         } else if (channel.url.startsWith('http://')) {
-          // Use normal proxy for HTTP streams
+          // Use normal proxy for HTTP streams (mixed content protection)
           streamUrl = `/api/proxy/stream?url=${encodeURIComponent(channel.url)}`;
         }
         
