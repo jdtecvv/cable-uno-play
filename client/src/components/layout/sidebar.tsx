@@ -28,13 +28,13 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const isMobile = useMobile();
   
   // Fetch categories
-  const { data: categories = [] } = useQuery({
+  const { data: categories = [] } = useQuery<any[]>({
     queryKey: [API_ENDPOINTS.CATEGORIES],
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
   
   // Fetch active playlist
-  const { data: activePlaylist } = useQuery({
+  const { data: activePlaylist } = useQuery<any>({
     queryKey: [API_ENDPOINTS.ACTIVE_PLAYLIST],
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
