@@ -1,0 +1,53 @@
+Last login: Fri Nov 14 08:49:16 on ttys000
+josevalerinvillegas@MacBook-Pro-de-Jose ~ % cd ~/Desktop/cable-uno-play
+git pull origin main
+remote: Enumerating objects: 19, done.
+remote: Counting objects: 100% (19/19), done.
+remote: Compressing objects: 100% (5/5), done.
+remote: Total 14 (delta 9), reused 14 (delta 9), pack-reused 0 (from 0)
+Unpacking objects: 100% (14/14), 18.41 KiB | 942.00 KiB/s, done.
+From https://github.com/jdtecvv/cable-uno-play
+ * branch            main       -> FETCH_HEAD
+   e1cf9a5..8180eac  main       -> origin/main
+Updating e1cf9a5..8180eac
+Fast-forward
+ .replit                                            |   1 -
+ ...-perform-input--1763131108293_1763131108293.txt |  28 ++++++++++
+ ...ose-cd-Desktop--1763130948062_1763130948062.txt |  58 +++++++++++++++++++++
+ ... Pro - 2025-11-14 at 08.38.21_1763131113276.png | Bin 0 -> 76393 bytes
+ server/index.ts                                    |   7 +--
+ 5 files changed, 90 insertions(+), 4 deletions(-)
+ create mode 100644 attached_assets/Pasted--RTIInputSystemClient-remoteTextInputSessionWithID-performInputOperation-Can-only-perform-input--1763131108293_1763131108293.txt
+ create mode 100644 attached_assets/Pasted-Last-login-Fri-Nov-14-08-33-03-on-ttys000-josevalerinvillegas-MacBook-Pro-de-Jose-cd-Desktop--1763130948062_1763130948062.txt
+ create mode 100644 attached_assets/Simulator Screenshot - iPhone 17 Pro - 2025-11-14 at 08.38.21_1763131113276.png
+josevalerinvillegas@MacBook-Pro-de-Jose cable-uno-play % npm run dev
+
+> rest-express@1.0.0 dev
+> tsx server/index.ts
+
+⚠️  Running in development mode WITHOUT database (Simple Player only)
+   Only /api/proxy/* endpoints will work
+   To use full features, set DATABASE_URL environment variable
+🚀 Registering API routes with prefix: /api
+📡 Registering route: GET /api/proxy/stream
+node:events:497
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use 0.0.0.0:5000
+    at Server.setupListenHandle [as _listen2] (node:net:1904:16)
+    at listenInCluster (node:net:1961:12)
+    at doListen (node:net:2135:7)
+    at process.processTicksAndRejections (node:internal/process/task_queues:83:21)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:1940:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 5000
+}
+
+Node.js v20.18.0
+josevalerinvillegas@MacBook-Pro-de-Jose cable-uno-play % 
