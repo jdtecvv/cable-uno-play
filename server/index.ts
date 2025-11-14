@@ -56,10 +56,10 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-  // ALWAYS serve the app on port 5000
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled.
-  const port = 5000;
+  // Read port from environment variable (default: 5000)
+  // This allows macOS development to use port 3000 if 5000 is occupied
+  // Production (Linux) uses default 5000
+  const port = process.env.PORT ? parseInt(process.env.PORT) : 5000;
   // Use 127.0.0.1 for macOS compatibility with Node.js v24+
   // iPhone Simulator can still access it via localhost
   server.listen({

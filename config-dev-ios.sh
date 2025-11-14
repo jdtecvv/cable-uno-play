@@ -16,6 +16,11 @@ if [ -z "$IP" ]; then
 fi
 
 echo "✅ IP local detectada: $IP"
+
+# Usar puerto de variable de entorno PORT (default: 3000 para Mac)
+# En Mac usamos 3000 porque 5000 suele estar ocupado
+PORT="${PORT:-3000}"
+echo "✅ Puerto configurado: $PORT"
 echo ""
 
 # Hacer backup del config original
@@ -33,7 +38,7 @@ const config: CapacitorConfig = {
   appName: 'Cable Uno Play',
   webDir: 'dist/public',
   server: {
-    url: 'http://${IP}:5000',
+    url: 'http://${IP}:${PORT}',
     androidScheme: 'https',
     iosScheme: 'https',
     cleartext: true
@@ -54,7 +59,7 @@ export default config;
 EOF
 
 echo "✅ capacitor.config.ts configurado para desarrollo"
-echo "   URL del servidor: http://${IP}:5000"
+echo "   URL del servidor: http://${IP}:${PORT}"
 echo ""
 
 # Build y sync
@@ -69,8 +74,8 @@ echo ""
 echo "✅ ¡Configuración completada!"
 echo ""
 echo "📋 Próximos pasos:"
-echo "   1. En OTRA terminal, inicia el servidor: npm run dev"
-echo "   2. Espera a ver: [express] serving on port 5000"
+echo "   1. En OTRA terminal, inicia el servidor: PORT=${PORT} npm run dev"
+echo "   2. Espera a ver: [express] serving on port ${PORT}"
 echo "   3. Abre Xcode: open ios/App/App.xcworkspace"
 echo "   4. En Xcode: Product → Clean Build Folder (Shift + Cmd + K)"
 echo "   5. Click ▶️ Play para ejecutar en el Simulator"
