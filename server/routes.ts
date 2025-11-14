@@ -4,6 +4,7 @@ import * as storage from "./storage";
 import { ZodError } from "zod";
 import fs from "fs";
 import path from "path";
+import { spawn } from "child_process";
 import * as schema from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -55,6 +56,97 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(500).json({ 
         message: error instanceof Error ? error.message : "Failed to fetch M3U" 
       });
+    }
+  });
+
+  // Proxy endpoint with FFmpeg transcoding for incompatible audio formats
+  app.get(`${apiPrefix}/proxy/stream-transcode`, async (req, res) => {
+    try {
+      const url = req.query.url as string;
+      
+      if (!url) {
+        return res.status(400).json({ message: "URL parameter is required" });
+      }
+
+      // Validate URL format
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        return res.status(400).json({ message: "Invalid URL format" });
+      }
+
+      // Extract credentials if provided
+      const streamAuth = req.headers['x-stream-auth'] as string | undefined;
+      let inputUrl = url;
+      
+      // Add credentials to URL for FFmpeg (it doesn't support custom headers)
+      if (streamAuth) {
+        try {
+          const decodedAuth = Buffer.from(streamAuth, 'base64').toString('utf-8');
+          const [username, password] = decodedAuth.split(':');
+          const urlObj = new URL(url);
+          if (username && password) {
+            urlObj.username = username;
+            urlObj.password = password;
+          }
+          inputUrl = urlObj.toString();
+        } catch (error) {
+          console.error('Failed to parse auth:', error);
+        }
+      }
+
+      // FFmpeg command: transcode audio to AAC, copy video
+      const ffmpegArgs = [
+        '-i', inputUrl,
+        '-c:v', 'copy',          // Copy video without re-encoding
+        '-c:a', 'aac',           // Transcode audio to AAC
+        '-b:a', '192k',          // Audio bitrate: 192 kbps (high quality)
+        '-f', 'mpegts',          // Output format: MPEG-TS (streaming friendly)
+        '-avoid_negative_ts', 'make_zero',  // Handle timestamp issues
+        'pipe:1'                 // Output to stdout
+      ];
+
+      const ffmpeg = spawn('ffmpeg', ffmpegArgs);
+
+      // Set response headers
+      res.setHeader('Content-Type', 'video/mp2t');
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+      res.setHeader('Cache-Control', 'no-cache');
+
+      // Pipe FFmpeg stdout to response
+      ffmpeg.stdout.pipe(res);
+
+      // Log FFmpeg errors
+      ffmpeg.stderr.on('data', (data) => {
+        console.error(`FFmpeg: ${data.toString()}`);
+      });
+
+      // Handle FFmpeg process errors
+      ffmpeg.on('error', (error) => {
+        console.error('FFmpeg spawn error:', error);
+        if (!res.headersSent) {
+          res.status(500).send('Transcoding failed');
+        }
+      });
+
+      ffmpeg.on('exit', (code) => {
+        if (code !== 0 && code !== null) {
+          console.error(`FFmpeg exited with code ${code}`);
+        }
+        if (!res.writableEnded) {
+          res.end();
+        }
+      });
+
+      // Handle client disconnect
+      req.on('close', () => {
+        ffmpeg.kill('SIGKILL');
+      });
+
+    } catch (error) {
+      console.error("Transcode proxy error:", error);
+      if (!res.headersSent) {
+        res.status(500).send(error instanceof Error ? error.message : "Transcoding failed");
+      }
     }
   });
 

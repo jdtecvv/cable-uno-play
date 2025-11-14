@@ -32,6 +32,7 @@ export interface VideoPlayerProps {
   autoplay?: boolean;
   username?: string;
   password?: string;
+  useTranscoding?: boolean; // Enable FFmpeg audio transcoding for incompatible formats
 }
 
 export interface VideoPlayerRef {
@@ -46,7 +47,7 @@ export interface VideoPlayerRef {
 }
 
 const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
-  ({ channel, onClose, autoplay = true, username, password }, ref) => {
+  ({ channel, onClose, autoplay = true, username, password, useTranscoding = false }, ref) => {
     const videoRef = useRef<HTMLVideoElement>(null);
     const playerContainerRef = useRef<HTMLDivElement>(null);
     const [hls, setHls] = useState<Hls | null>(null);
@@ -106,9 +107,9 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
         // Convert HTTP URLs to use proxy to avoid Mixed Content issues
         const getProxiedUrl = (url: string): string => {
           if (url.startsWith('http://')) {
-            // Use proxy for HTTP streams when page is HTTPS
-            // Credentials are sent via header (X-Stream-Auth) not query params for security
-            return `/api/proxy/stream?url=${encodeURIComponent(url)}`;
+            // Use transcoding proxy for incompatible audio formats, otherwise use normal proxy
+            const proxyEndpoint = useTranscoding ? '/api/proxy/stream-transcode' : '/api/proxy/stream';
+            return `${proxyEndpoint}?url=${encodeURIComponent(url)}`;
           }
           return url;
         };
