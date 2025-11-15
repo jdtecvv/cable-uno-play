@@ -56,8 +56,10 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-  // Read port from environment variable (default: 5000)
-  const port = process.env.PORT ? parseInt(process.env.PORT) : 5000;
+  // Read port from environment variable
+  // Default: 3000 for macOS development (ControlCenter uses 5000), 5000 for production
+  const defaultPort = process.platform === "darwin" ? 3000 : 5000;
+  const port = process.env.PORT ? parseInt(process.env.PORT) : defaultPort;
   
   // CRITICAL: Host binding depends on environment
   // - Production (NODE_ENV=production): Use 127.0.0.1 because Nginx reverse proxy expects localhost
