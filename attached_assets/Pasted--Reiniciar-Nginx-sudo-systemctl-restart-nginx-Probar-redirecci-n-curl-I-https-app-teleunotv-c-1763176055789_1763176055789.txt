@@ -1,0 +1,39 @@
+# Reiniciar Nginx
+sudo systemctl restart nginx
+
+# Probar redirección
+curl -I https://app.teleunotv.cr
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+Job for nginx.service failed because the control process exited with error code.
+See "systemctl status nginx.service" and "journalctl -xeu nginx.service" for details.
+curl: (60) SSL certificate problem: self-signed certificate
+More details here: https://curl.se/docs/sslcerts.html
+
+curl failed to verify the legitimacy of the server and therefore could not
+establish a secure connection to it. To learn more about this situation and
+how to fix it, please visit the web page mentioned above.
+root@cableuno:/home/cableuno# # Ver el error específico
+systemctl status nginx.service
+
+# Ver logs detallados
+journalctl -xeu nginx.service | tail -30
+× nginx.service - A high performance web server and a reverse proxy server
+     Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; preset: en>
+     Active: failed (Result: exit-code) since Fri 2025-11-14 21:06:13 CST; 1min>
+       Docs: man:nginx(8)
+    Process: 25446 ExecStartPre=/usr/sbin/nginx -t -q -g daemon on; master_proc>
+    Process: 25452 ExecStart=/usr/sbin/nginx -g daemon on; master_process on; (>
+        CPU: 67ms
+
+nov 14 21:06:12 cableuno nginx[25452]: nginx: [emerg] bind() to 0.0.0.0:80 fail>
+nov 14 21:06:12 cableuno nginx[25452]: nginx: [emerg] bind() to 0.0.0.0:443 fai>
+nov 14 21:06:12 cableuno nginx[25452]: nginx: [emerg] bind() to 0.0.0.0:80 fail>
+nov 14 21:06:12 cableuno nginx[25452]: nginx: [emerg] bind() to 0.0.0.0:443 fai>
+nov 14 21:06:13 cableuno nginx[25452]: nginx: [emerg] bind() to 0.0.0.0:80 fail>
+nov 14 21:06:13 cableuno nginx[25452]: nginx: [emerg] bind() to 0.0.0.0:443 fai>
+nov 14 21:06:13 cableuno nginx[25452]: nginx: [emerg] still could not bind()
+nov 14 21:06:13 cableuno systemd[1]: nginx.service: Control process exited, cod>
+nov 14 21:06:13 cableuno systemd[1]: nginx.service: Failed with result 'exit-co>
+nov 14 21:06:13 cableuno systemd[1]: Failed to start nginx.service - A high per>
+lines 1-18/18 (END)
