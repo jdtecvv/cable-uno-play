@@ -1,0 +1,224 @@
+grep -n "listen" /home/xui/bin/nginx/conf/nginx.conf | head -20
+root@cableuno:/home/cableuno# grep -n "listen" /home/xui/bin/nginx/conf/nginx.conf | head -20
+root@cableuno:/home/cableuno# # Ver toda la estructura de configuración de XUI
+ls -la /home/xui/bin/nginx/conf/
+
+# Buscar archivos con configuración de puertos
+grep -r "listen.*80" /home/xui/bin/nginx/conf/ 2>/dev/null | head -10
+
+# Ver el archivo principal completo
+cat /home/xui/bin/nginx/conf/nginx.conf
+total 92
+drwxr-xr-x  4 xui  xui  4096 nov 12 06:26 .
+dr-xr-x--- 11 xui  xui  4096 sep 25  2024 ..
+-r-xr-x---  1 xui  xui   232 may 21 18:50 balance.conf
+drwxr-x---  2 xui  xui  4096 abr 22  2025 codes
+-r-xr-x---  1 xui  xui     0 ago  6  2021 custom.conf
+-r-xr-x---  1 xui  xui  1076 dic 13  2020 fastcgi.conf
+-r-xr-x---  1 xui  xui  1007 dic 13  2020 fastcgi_params
+-r-xr-x---  1 xui  xui    10 oct 31  2021 gzip.conf
+-r-xr-x---  1 xui  xui  2837 dic 13  2020 koi-utf
+-r-xr-x---  1 xui  xui  2223 dic 13  2020 koi-win
+-r-xr-x---  1 xui  xui     0 oct 31  2021 limit.conf
+-r-xr-x---  1 xui  xui     0 oct 31  2021 limit_queue.conf
+-r-xr-x---  1 xui  xui  5231 dic 13  2020 mime.types
+-r-xr-x---  1 xui  xui  7158 nov 12 06:29 nginx.conf
+-r-xr-x---  1 root root 7342 nov 12 06:26 nginx.conf.broken
+drwxr-x---  2 xui  xui  4096 nov 12 06:36 ports
+-r-xr-x---  1 xui  xui     0 sep 24  2021 realip_cdn.conf
+-r-xr-x---  1 xui  xui     0 sep 24  2021 realip_cloudflare.conf
+-r-xr-x---  1 xui  xui   157 nov 11 20:11 realip_xui.conf
+-r-xr-x---  1 xui  xui   636 dic 13  2020 scgi_params
+-rwxr-xr-x  1 xui  xui  1424 mar  7  2021 server.crt
+-rwxr-xr-x  1 xui  xui  1708 mar  7  2021 server.key
+-r-xr-x---  1 xui  xui    96 dic 13  2020 ssl.conf
+-r-xr-x---  1 xui  xui   664 dic 13  2020 uwsgi_params
+-r-xr-x---  1 xui  xui  3610 dic 13  2020 win-utf
+/home/xui/bin/nginx/conf/ports/http.conf:listen 80;
+user xui;
+worker_processes  auto;
+worker_rlimit_nofile 300000;
+
+events {
+    worker_connections  16000;
+    use epoll;
+    accept_mutex on;
+    multi_accept on;
+}
+
+thread_pool pool_xui threads=32 max_queue=0;
+
+http {
+    include mime.types;
+    default_type  application/octet-stream;
+    sendfile on;
+    tcp_nopush on;
+    tcp_nodelay on;
+    reset_timedout_connection on;
+    include gzip.conf;
+    fastcgi_read_timeout 200;
+    access_log off;
+    error_log /dev/null;
+    keepalive_timeout 10;
+    include balance.conf;
+    send_timeout 20m;    
+    sendfile_max_chunk 512k;
+    lingering_close off;
+    aio threads=pool_xui;
+    client_body_timeout 13s;
+    client_header_timeout 13s;
+    client_max_body_size 8m;
+    proxy_buffer_size 16k;
+    proxy_busy_buffers_size 24k;
+    proxy_buffers 64 4k;
+    proxy_max_temp_file_size 0;
+    real_ip_header X-Forwarded-For;
+    include realip_cdn.conf;
+    include realip_cloudflare.conf;
+    include realip_xui.conf;
+    include limit.conf;
+    limit_req_zone $binary_remote_addr zone=one:30m rate=20r/s;
+    server {
+        include ports/*.conf;
+        include codes/*.conf;
+        include ssl.conf;
+        include custom.conf;
+        index index.php index.html index.htm;
+        try_files $uri $uri.html $uri/ @extensionless-php;
+        root /home/xui/www/;
+        server_tokens off;
+        chunked_transfer_encoding off;
+        resolver 1.1.1.1 1.0.0.1 valid=300s;
+        resolver_timeout 5s;
+        absolute_redirect off;
+
+        if ($request_method !~ ^(GET|POST)$) {
+            return 200;
+        }
+
+        rewrite_log on;
+        rewrite ^/play/(.*)/(.*)$ /stream/auth.php?token=$1&extension=$2 break;
+        rewrite ^/play/(.*)$ /stream/auth.php?token=$1 break;
+        rewrite ^/key/(.*)$ /stream/key.php?token=$1 break;
+        rewrite ^/movie/(.*)/(.*)/(.*)$ /stream/auth.php?username=$1&password=$2&stream=$3&type=movie break;
+        rewrite ^/movie/(.*)/(.*)$ /stream/auth.php?token=$1&stream=$2&type=movie break;
+        rewrite ^/series/(.*)/(.*)/(.*)$ /stream/auth.php?username=$1&password=$2&stream=$3&type=series break;
+        rewrite ^/series/(.*)/(.*)$ /stream/auth.php?token=$1&stream=$2&type=series break;
+        rewrite ^/subtitle/(.*)/(.*)/(.*)/(.*)$ /stream/auth.php?username=$1&password=$2&stream=$4&sid=$3&type=subtitle break;
+        rewrite ^/subtitle/(.*)/(.*)/(.*)$ /stream/auth.php?username=$1&password=$2&stream=$3&type=subtitle break;
+        rewrite ^/hls/(.*)$ /stream/segment.php?token=$1 break;
+        rewrite ^/tsauth/(.*)$ /stream/timeshift.php?token=$1 break;
+        rewrite ^/thauth/(.*)$ /stream/thumb.php?token=$1 break;
+        rewrite ^/auth/(.*)$ /stream/live.php?token=$1 break;
+        rewrite ^/vauth/(.*)$ /stream/vod.php?token=$1 break;
+        rewrite ^/subauth/(.*)$ /stream/subtitle.php?token=$1 break;
+        rewrite ^/timeshift/(.*)/(.*)/(.*)/(.*)/(.*)\.(.*)$ /stream/auth.php?username=$1&password=$2&stream=$5&extension=$6&duration=$3&start=$4&type=timeshift break;
+        rewrite ^/timeshift/(.*)/(.*)/(.*)/(.*)\.(.*)$ /stream/auth.php?token=$1&stream=$4&extension=$5&duration=$2&start=$3&type=timeshift break;
+        rewrite ^/thumb/(.*)/(.*)/(\d+)$ /stream/auth.php?username=$1&password=$2&stream=$3&type=thumb break;
+        rewrite ^/thumb/(.*)/(\d+)$ /stream/auth.php?token=$1&stream=$2&type=thumb break;
+        rewrite ^/playlist/(.*)/(.*)/(.*)$ /playlist.php?username=$1&password=$2&type=$3 break;
+        rewrite ^/playlist/(.*)/(.*)$ /playlist.php?username=$1&password=$2 break;
+        rewrite ^/player_api/(.*)/(.*)/(.*)$ /player_api.php?username=$1&password=$2&action=$3 break;
+        rewrite ^/player_api/(.*)/(.*)$ /player_api.php?username=$1&password=$2 break;
+        rewrite ^/epg/(.*)/(.*)/gz$ /epg.php?username=$1&password=$2&gzip=1 break;
+        rewrite ^/epg/(.*)/(.*)$ /epg.php?username=$1&password=$2 break;
+        rewrite ^/live/(.*)/(.*)/(\d+)\.(.*)$ /stream/auth.php?username=$1&password=$2&stream=$3&extension=$4&type=live break;
+        rewrite ^/live/(.*)/(.*)/(\d+)$ /stream/auth.php?username=$1&password=$2&stream=$3&extension=ts&type=live break;
+        rewrite ^/live/(.*)/(\d+)\.(.*)$ /stream/auth.php?token=$1&stream=$2&extension=$3&type=live break;
+        rewrite ^/live/(.*)/(\d+)$ /stream/auth.php?token=$1&stream=$2&extension=ts&type=live break;
+        rewrite ^/probe/(.*)$ /probe.php?data=$1 break;
+        rewrite ^/(.*)/(.*)/(\d+)\.(.*)$ /stream/auth.php?username=$1&password=$2&stream=$3&extension=$4&type=live break;
+        rewrite ^/(.*)/(.*)/(\d+)$ /stream/auth.php?username=$1&password=$2&stream=$3&extension=ts&type=live break;
+
+        location = /xmltv.php {
+            rewrite ^ /epg.php last;
+        }
+        
+        location = /get.php {
+            rewrite ^ /playlist.php last;
+        }
+        
+        location = /panel_api.php {
+            rewrite ^ /player_api.php last;
+        }
+        
+        location = /streaming/live.php {
+            return 302 /stream/auth.php?type=live&$args;
+        }
+        
+        location = /streaming/rtmp.php {
+            return 302 /stream/rtmp.php?$args;
+        }
+        
+        location = /streaming/timeshift.php {
+            return 302 /stream/auth.php?type=timeshift&$args;
+        }
+        
+        location = /streaming/vod.php {
+            return 302 /stream/auth.php?type=movie&$args;
+        }
+
+        location = /server/load.php {
+            return 302 /c/portal.php?$args;
+        }
+
+        location ^~ /images/index.html {
+            return 404;
+        }
+        
+        location ^~ /images/admin/index.html {
+            return 404;
+        }
+        
+        location ^~ /images/enigma2/index.html {
+            return 404;
+        }
+
+        location ^~ /images/ {
+            # Stop executing
+        }
+        
+        location ~ ^/status$ {
+            allow 127.0.0.1;
+            deny all;
+            fastcgi_index index.php;
+            fastcgi_pass php;
+            include fastcgi_params;
+            fastcgi_buffering on;
+            fastcgi_buffers 96 32k;
+            fastcgi_buffer_size 32k;
+            fastcgi_max_temp_file_size 0;
+            fastcgi_keep_conn on;
+            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+            fastcgi_param SCRIPT_NAME $fastcgi_script_name;
+        }
+        
+        location /nginx_status {
+            allow 127.0.0.1;
+            deny all;
+            stub_status on;
+        }
+
+        location ~ \.php$ {
+            limit_req zone=one burst=8;
+            include limit_queue.conf;
+            try_files $uri =404;
+            fastcgi_index index.php;
+            fastcgi_pass php;
+            include fastcgi_params;
+            fastcgi_buffering on;
+            fastcgi_buffers 128 32k;
+            fastcgi_buffer_size 32k;
+            fastcgi_busy_buffers_size 128k;
+            fastcgi_max_temp_file_size 0;
+            fastcgi_keep_conn on;
+            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+            fastcgi_param SCRIPT_NAME $fastcgi_script_name;
+        }
+        
+        location @extensionless-php {
+            rewrite ^(.*)$ $1.php last;
+        }
+    }
+}
+root@cableuno:/home/cableuno# 
