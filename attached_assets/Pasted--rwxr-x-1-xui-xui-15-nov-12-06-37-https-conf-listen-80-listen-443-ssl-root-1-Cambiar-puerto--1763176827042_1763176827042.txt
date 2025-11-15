@@ -1,0 +1,128 @@
+-rwxr-x--- 1 xui xui   15 nov 12 06:37 https.conf
+listen 80;listen 443 ssl;root@# 1. Cambiar puerto HTTP de 80 a 81ar puerto HTTP de 80 a 81
+echo "listen 81;" | sudo tee /home/xui/bin/nginx/conf/ports/http.conf
+
+# 2. Cambiar puerto HTTPS de 443 a 444
+echo "listen 444 ssl;" | sudo tee /home/xui/bin/nginx/conf/ports/https.conf
+
+# 3. Verificar los cambios
+cat /home/xui/bin/nginx/conf/ports/http.conf
+cat /home/xui/bin/nginx/conf/ports/https.conf
+
+# 4. Reiniciar XUI completamente (la forma segura)
+/home/xui/service restart
+
+# 5. Esperar 15 segundos
+sleep 15
+
+# 6. Verificar que XUI ahora usa puertos 81 y 444
+netstat -tulpn | grep -E ':(81|444) '
+
+# 7. Iniciar System Nginx (ahora puede usar 80 y 443)
+sudo systemctl start nginx
+
+# 8. Verificar que System Nginx arrancó
+sudo systemctl status nginx
+
+# 9. Probar HTTPS
+curl -Ik https://app.teleunotv.cr
+curl -Ik https://play.teleunotv.cr
+listen 81;
+listen 444 ssl;
+listen 81;
+listen 444 ssl;
+Starting XUI...
+Crontab already installed
+
+Running in foreground...
+
+^C
+
+^[[C^[[C^[[C^[[A^[[D^C
+tcp        0      0 0.0.0.0:444             0.0.0.0:*               ESCUCHAR    43877/nginx: master 
+tcp        0      0 0.0.0.0:81              0.0.0.0:*               ESCUCHAR    43877/nginx: master 
+● nginx.service - A high performance web server and a reverse proxy server
+     Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; preset: enabled)
+     Active: active (running) since Fri 2025-11-14 21:19:28 CST; 40ms ago
+       Docs: man:nginx(8)
+    Process: 48529 ExecStartPre=/usr/sbin/nginx -t -q -g daemon on; master_process on; (code=exited, status=0/SUCCESS)
+    Process: 48531 ExecStart=/usr/sbin/nginx -g daemon on; master_process on; (code=exited, status=0/SUCCESS)
+   Main PID: 48532 (nginx)
+      Tasks: 49 (limit: 231837)
+     Memory: 37.6M (peak: 38.7M)
+        CPU: 257ms
+     CGroup: /system.slice/nginx.service
+             ├─48532 "nginx: master process /usr/sbin/nginx -g daemon on; master_process on;"
+             ├─48533 "nginx: worker process"
+             ├─48534 "nginx: worker process"
+             ├─48535 "nginx: worker process"
+             ├─48536 "nginx: worker process"
+             ├─48537 "nginx: worker process"
+             ├─48539 "nginx: worker process"
+             ├─48540 "nginx: worker process"
+             ├─48541 "nginx: worker process"
+             ├─48542 "nginx: worker process"
+             ├─48543 "nginx: worker process"
+             ├─48544 "nginx: worker process"
+             ├─48545 "nginx: worker process"
+             ├─48546 "nginx: worker process"
+             ├─48547 "nginx: worker process"
+             ├─48548 "nginx: worker process"
+             ├─48549 "nginx: worker process"
+             ├─48550 "nginx: worker process"
+             ├─48551 "nginx: worker process"
+             ├─48552 "nginx: worker process"
+             ├─48553 "nginx: worker process"
+             ├─48554 "nginx: worker process"
+             ├─48555 "nginx: worker process"
+             ├─48557 "nginx: worker process"
+             ├─48558 "nginx: worker process"
+             ├─48559 "nginx: worker process"
+             ├─48560 "nginx: worker process"
+             ├─48561 "nginx: worker process"
+             ├─48562 "nginx: worker process"
+             ├─48563 "nginx: worker process"
+             ├─48564 "nginx: worker process"
+             ├─48565 "nginx: worker process"
+             ├─48566 "nginx: worker process"
+             ├─48567 "nginx: worker process"
+             ├─48568 "nginx: worker process"
+             ├─48569 "nginx: worker process"
+             ├─48570 "nginx: worker process"
+             ├─48571 "nginx: worker process"
+             ├─48572 "nginx: worker process"
+             ├─48573 "nginx: worker process"
+             ├─48574 "nginx: worker process"
+             ├─48575 "nginx: worker process"
+             ├─48576 "nginx: worker process"
+             ├─48577 "nginx: worker process"
+             ├─48578 "nginx: worker process"
+             ├─48579 "nginx: worker process"
+             ├─48580 "nginx: worker process"
+             ├─48581 "nginx: worker process"
+             └─48582 "nginx: worker process"
+
+nov 14 21:19:28 cableuno systemd[1]: Starting nginx.service - A high performance web server and a reverse proxy server...
+nov 14 21:19:28 cableuno systemd[1]: Started nginx.service - A high performance web server and a reverse proxy server.
+
+HTTP/2 302 
+server: nginx/1.24.0 (Ubuntu)
+date: Sat, 15 Nov 2025 03:19:47 GMT
+content-type: text/html
+content-length: 154
+location: https://app.teleunotv.cr/5pUNs3U2/login
+
+HTTP/2 200 
+server: nginx/1.24.0 (Ubuntu)
+date: Sat, 15 Nov 2025 03:19:47 GMT
+content-type: text/html; charset=UTF-8
+content-length: 2301
+x-powered-by: Express
+accept-ranges: bytes
+cache-control: public, max-age=0
+last-modified: Fri, 14 Nov 2025 13:55:08 GMT
+etag: W/"8fd-19a82a5fecf"
+
+root@cableuno:/home/cableuno# 
+root@cableuno:/home/cableuno# 
+root@cableuno:/home/cableuno# 
