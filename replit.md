@@ -40,19 +40,27 @@ Progressive Web App (PWA) features are implemented for mobile installation, incl
 - **Deployment**: An automated `install-server-xui-compatible.sh` script handles full Linux server setup including Node.js, PostgreSQL, Nginx, PM2, SSL/HTTPS with Let's Encrypt, and daily backups.
 
 ### Production Server Configuration
-- **Server**: Ubuntu Linux running on 190.61.110.177
+- **Server**: Ubuntu Linux running on 190.61.110.177 (SSH: port 2121, user: cableuno)
 - **XUI.one Panel**: Custom Nginx at `/home/xui/bin/nginx` listening on ports 81 (HTTP) and 444 (HTTPS)
+  - Port configuration files: `/home/xui/bin/nginx/conf/ports/http.conf` and `https.conf`
+  - Restart command: `/home/xui/service restart`
 - **System Nginx**: Reverse proxy on ports 80/443 for SSL termination and routing
-- **PM2 Process**: Cable Uno Play runs on port 5000 with DATABASE_URL passed explicitly
+  - Configuration: `/etc/nginx/sites-enabled/app.teleunotv.cr` and `play.teleunotv.cr`
+- **Cable Uno Play (PM2)**:
+  - Runs on port 5000 (127.0.0.1 in production, 0.0.0.0 in development)
+  - Start command: `NODE_ENV=production DATABASE_URL="postgresql://cableuno:I@sd1844R0y@localhost:5432/cableuno_play" pm2 start npm --name cable-uno-play -- run dev`
+  - CRITICAL: Must set `NODE_ENV=production` for correct host binding (127.0.0.1)
 - **SSL Certificates**: Let's Encrypt certificates managed by Certbot with auto-renewal
 - **Domain Configuration**:
-  - `play.teleunotv.cr` → Cable Uno Play (port 5000) with full SSL
-  - `app.teleunotv.cr` → XUI.one (port 81) with auto-redirect to `/5pUNs3U2/login`
+  - `play.teleunotv.cr` → System Nginx (80/443) → Cable Uno Play (127.0.0.1:5000)
+  - `app.teleunotv.cr` → System Nginx (80/443) → XUI.one (127.0.0.1:81) with auto-redirect to `/5pUNs3U2/login`
 - **Critical Notes**:
   - NEVER modify XUI's nginx.conf directly - causes segmentation faults
-  - PM2 requires explicit DATABASE_URL: `DATABASE_URL="..." pm2 start`
+  - To change XUI ports: Edit `/home/xui/bin/nginx/conf/ports/*.conf` files, then `/home/xui/service restart`
+  - PM2 requires explicit NODE_ENV and DATABASE_URL environment variables
   - DNS managed through Wix.com for teleunotv.cr domain
   - System Nginx acts as SSL terminator and reverse proxy to both XUI and Cable Uno Play
+  - XUI and Cable Uno Play must use different ports to coexist (81/444 vs 5000)
 
 ### Database Schema
 - **Playlists**: `id`, `name`, `url` (M3U file), `username` (optional), `password` (optional), `isActive`, `createdAt`, `updatedAt`.
