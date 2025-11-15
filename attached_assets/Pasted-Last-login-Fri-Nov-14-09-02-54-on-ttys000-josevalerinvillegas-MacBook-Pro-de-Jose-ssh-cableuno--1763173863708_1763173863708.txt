@@ -1,0 +1,88 @@
+Last login: Fri Nov 14 09:02:54 on ttys000
+josevalerinvillegas@MacBook-Pro-de-Jose ~ % ssh cableuno@190.61.110.177 -p 2121
+cableuno@190.61.110.177's password: 
+Welcome to Ubuntu 24.04.3 LTS (GNU/Linux 6.8.0-87-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+El mantenimiento de seguridad expandido para Applications está desactivado
+
+Se puede aplicar 1 actualización de forma inmediata.
+Para ver estas actualizaciones adicionales, ejecute: apt list --upgradable
+
+12 actualizaciones de seguridad adicionales se pueden aplicar con ESM Apps.
+Aprenda más sobre cómo activar el servicio ESM Apps at https://ubuntu.com/esm
+
+Last login: Fri Nov 14 07:35:30 2025 from 192.168.77.1
+cableuno@cableuno:~$ sudo su
+[sudo] contraseña para cableuno: 
+root@cableuno:/home/cableuno#                                   
+cd /var/www/cable-uno-play
+git pull origin main
+DATABASE_URL="postgresql://cableuno:I@sd1844R0y@localhost:5432/cableuno_play" pm2 restart cable-uno-play
+remote: Enumerating objects: 71, done.
+remote: Counting objects: 100% (71/71), done.
+remote: Compressing objects: 100% (20/20), done.
+remote: Total 63 (delta 51), reused 55 (delta 43), pack-reused 0 (from 0)
+Desempaquetando objetos: 100% (63/63), 2.47 MiB | 3.71 MiB/s, listo.
+Desde https://github.com/jdtecvv/cable-uno-play
+ * branch            main       -> FETCH_HEAD
+   9658682..8180eac  main       -> origin/main
+Actualizando 9658682..8180eac
+Fast-forward
+ .replit                                            |   1 -
+ ACTUALIZAR_TODO.md                                 |   2 +-
+ ...2025-11-14 a la(s) 07.46.46 2_1763128014863.png | Bin 0 -> 2309264 bytes
+ ...a 2025-11-14 a la(s) 07.46.46_1763128014863.png | Bin 0 -> 417333 bytes
+ ...-perform-input--1763131108293_1763131108293.txt |  28 +++++
+ ...-in-the-future--1763129841218_1763129841218.txt |  26 ++++
+ ...ose-cd-Desktop--1763130553938_1763130553938.txt | 110 +++++++++++++++++
+ ...ose-cd-Desktop--1763130948062_1763130948062.txt |  58 +++++++++
+ ...p-diagnostico-s-1763128401585_1763128401585.txt | 136 +++++++++++++++++++++
+ ...o-play-2-Actual-1763128578630_1763128578630.txt | 133 ++++++++++++++++++++
+ ...tes-enabled-def-1763128184343_1763128184343.txt |  25 ++++
+ ...in-rm-rf-dist-n-1763127900195_1763127900195.txt | 119 ++++++++++++++++++
+ ... Pro - 2025-11-14 at 08.38.21_1763131113276.png | Bin 0 -> 76393 bytes
+ config-dev-ios.sh                                  |   8 +-
+ diagnostico-servidor.sh                            |  38 ++++++
+ replit.md                                          |   2 +-
+ server/index.ts                                    |  15 +--
+ 17 files changed, 689 insertions(+), 12 deletions(-)
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-14 a la(s) 07.46.46 2_1763128014863.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-14 a la(s) 07.46.46_1763128014863.png
+ create mode 100644 attached_assets/Pasted--RTIInputSystemClient-remoteTextInputSessionWithID-performInputOperation-Can-only-perform-input--1763131108293_1763131108293.txt
+ create mode 100644 attached_assets/Pasted--UIScene-lifecycle-will-soon-be-required-Failure-to-adopt-will-result-in-an-assert-in-the-future--1763129841218_1763129841218.txt
+ create mode 100644 attached_assets/Pasted-Last-login-Fri-Nov-14-08-14-42-on-ttys003-josevalerinvillegas-MacBook-Pro-de-Jose-cd-Desktop--1763130553938_1763130553938.txt
+ create mode 100644 attached_assets/Pasted-Last-login-Fri-Nov-14-08-33-03-on-ttys000-josevalerinvillegas-MacBook-Pro-de-Jose-cd-Desktop--1763130948062_1763130948062.txt
+ create mode 100644 attached_assets/Pasted-root-cableuno-var-www-cable-uno-play-1-Copiar-el-script-de-diagn-stico-cat-tmp-diagnostico-s-1763128401585_1763128401585.txt
+ create mode 100644 attached_assets/Pasted-root-cableuno-var-www-cable-uno-play-1-Ir-al-directorio-cd-var-www-cable-uno-play-2-Actual-1763128578630_1763128578630.txt
+ create mode 100644 attached_assets/Pasted-root-cableuno-var-www-cable-uno-play-Ver-configuraci-n-de-Nginx-cat-etc-nginx-sites-enabled-def-1763128184343_1763128184343.txt
+ create mode 100644 attached_assets/Pasted-root-cableuno-var-www-cable-uno-play-cd-var-www-cable-uno-play-git-pull-origin-main-rm-rf-dist-n-1763127900195_1763127900195.txt
+ create mode 100644 attached_assets/Simulator Screenshot - iPhone 17 Pro - 2025-11-14 at 08.38.21_1763131113276.png
+ create mode 100644 diagnostico-servidor.sh
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [cable-uno-play](ids: [ 0 ])
+[PM2] [cable-uno-play](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ cable-uno-play     │ fork     │ 1    │ online    │ 0%       │ 17.6mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@cableuno:/var/www/cable-uno-play# curl -I http://127.0.0.1:5000
+curl -I http://127.0.0.1:81
+HTTP/1.1 200 OK
+X-Powered-By: Express
+Accept-Ranges: bytes
+Cache-Control: public, max-age=0
+Last-Modified: Fri, 14 Nov 2025 13:55:08 GMT
+ETag: W/"8fd-19a82a5fecf"
+Content-Type: text/html; charset=UTF-8
+Content-Length: 2301
+Date: Sat, 15 Nov 2025 02:30:38 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+curl: (7) Failed to connect to 127.0.0.1 port 81 after 0 ms: Couldn't connect to server
+root@cableuno:/var/www/cable-uno-play# 
