@@ -1,0 +1,57 @@
+Last login: Fri Nov 14 21:50:06 on ttys001
+josevalerinvillegas@MacBook-Pro-de-Jose ~ % cd ~/Desktop/cable-uno-play
+./config-dev-ios.sh
+🔧 Configurando Cable Uno Play para desarrollo iOS...
+
+✅ IP local detectada: 192.168.90.32
+✅ Puerto configurado: 3000
+
+✅ capacitor.config.ts configurado para desarrollo
+   URL del servidor: http://192.168.90.32:3000
+
+📦 Compilando frontend...
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.18 building for production...
+transforming (2) ../vite/modulepreload-polyfill.jsBrowserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 2057 modules transformed.
+../dist/public/index.html                     2.30 kB │ gzip:   0.92 kB
+../dist/public/assets/index-C85qp07k.css     70.98 kB │ gzip:  12.00 kB
+../dist/public/assets/index-bhyjXHqS.js   1,038.08 kB │ gzip: 317.32 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 7.33s
+
+  dist/index.js  47.4kb
+
+⚡ Done in 20ms
+
+📱 Sincronizando con iOS...
+✔ Copying web assets from public to ios/App/App/public in 34.73ms
+✔ Creating capacitor.config.json in ios/App/App in 1.72ms
+✔ copy ios in 134.66ms
+✔ Updating iOS plugins in 27.06ms
+✔ Updating iOS native dependencies with pod install in 5.14s
+✔ update ios in 5.31s
+[info] Sync finished in 6.198s
+
+✅ ¡Configuración completada!
+
+📋 Próximos pasos:
+   1. En OTRA terminal, inicia el servidor: npm run dev
+   2. Espera a ver: [express] serving on port 5000
+   3. Abre Xcode: open ios/App/App.xcworkspace
+   4. En Xcode: Product → Clean Build Folder (Shift + Cmd + K)
+   5. Click ▶️ Play para ejecutar en el Simulator
+
+ℹ️  El servidor correrá SIN base de datos (solo Simple Player)
+⚠️  IMPORTANTE: Antes de compilar para producción, ejecuta ./config-prod-ios.sh
+
+josevalerinvillegas@MacBook-Pro-de-Jose cable-uno-play % 
