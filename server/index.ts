@@ -57,17 +57,18 @@ app.use((req, res, next) => {
   }
 
   // Read port from environment variable (default: 5000)
-  // This allows macOS development to use port 3000 if 5000 is occupied
-  // Production (Linux) uses default 5000
   const port = process.env.PORT ? parseInt(process.env.PORT) : 5000;
-  // Use 0.0.0.0 to allow access from network (needed for iOS Simulator)
-  // In development, this allows iPhone Simulator to connect via local IP
-  // In production, Nginx reverse proxy handles external access
+  
+  // CRITICAL: Host binding depends on environment
+  // - Production (NODE_ENV=production): Use 127.0.0.1 because Nginx reverse proxy expects localhost
+  // - Development: Use 0.0.0.0 to allow iOS Simulator access via local network IP
+  const host = process.env.NODE_ENV === "production" ? "127.0.0.1" : "0.0.0.0";
+  
   server.listen({
     port,
-    host: "0.0.0.0",
+    host,
     reusePort: true,
   }, () => {
-    log(`serving on port ${port}`);
+    log(`serving on port ${port} (host: ${host})`);
   });
 })();
