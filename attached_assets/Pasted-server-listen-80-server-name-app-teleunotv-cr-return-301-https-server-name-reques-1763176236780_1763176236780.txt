@@ -1,0 +1,652 @@
+server {
+    listen 80;
+    server_name app.teleunotv.cr;
+    return 301 https://$server_name$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name app.teleunotv.cr;
+    
+    ssl_certificate /etc/letsencrypt/live/play.teleunotv.cr/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/play.teleunotv.cr/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+    
+    # Redireccionar raíz a XUI con código
+    location = / {
+        return 302 https://app.teleunotv.cr/5pUNs3U2/login;
+    }
+    
+    # Proxy para todas las demás rutas
+    location / {
+        proxy_pass http://127.0.0.1:81;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+root@cableuno:/home/cableuno# # Verificar configuración
+sudo nginx -t
+
+# Reiniciar Nginx
+sudo systemctl restart nginx
+
+# Probar redirección
+curl -I https://app.teleunotv.cr
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+Job for nginx.service failed because the control process exited with error code.
+See "systemctl status nginx.service" and "journalctl -xeu nginx.service" for details.
+curl: (60) SSL certificate problem: self-signed certificate
+More details here: https://curl.se/docs/sslcerts.html
+
+curl failed to verify the legitimacy of the server and therefore could not
+establish a secure connection to it. To learn more about this situation and
+how to fix it, please visit the web page mentioned above.
+root@cableuno:/home/cableuno# # Ver el error específico
+systemctl status nginx.service
+
+# Ver logs detallados
+journalctl -xeu nginx.service | tail -30
+× nginx.service - A high performance web server and a reverse proxy server
+     Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; preset: en>
+     Active: failed (Result: exit-code) since Fri 2025-11-14 21:06:13 CST; 1min>
+       Docs: man:nginx(8)
+    Process: 25446 ExecStartPre=/usr/sbin/nginx -t -q -g daemon on; master_proc>
+    Process: 25452 ExecStart=/usr/sbin/nginx -g daemon on; master_process on; (>
+        CPU: 67ms
+
+nov 14 21:06:12 cableuno nginx[25452]: nginx: [emerg] bind() to 0.0.0.0:80 fail>
+nov 14 21:06:12 cableuno nginx[25452]: nginx: [emerg] bind() to 0.0.0.0:443 fai>
+nov 14 21:06:12 cableuno nginx[25452]: nginx: [emerg] bind() to 0.0.0.0:80 fail>
+nov 14 21:06:12 cableuno nginx[25452]: nginx: [emerg] bind() to 0.0.0.0:443 fai>
+nov 14 21:06:13 cableuno nginx[25452]: nginx: [emerg] bind() to 0.0.0.0:80 fail>
+nov 14 21:06:13 cableuno nginx[25452]: nginx: [emerg] bind() to 0.0.0.0:443 fai>
+nov 14 21:06:13 cableuno nginx[25452]: nginx: [emerg] still could not bind()
+nov 14 21:06:13 cableuno systemd[1]: nginx.service: Control process exited, cod>
+nov 14 21:06:13 cableuno systemd[1]: nginx.service: Failed with result 'exit-co>
+nov 14 21:06:13 cableuno systemd[1]: Failed to start nginx.service - A high per>
+ ESCOC
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ server and a reverse proxy server
+stem/nginx.service; enabled; preset: enabled)
+since Fri 2025-11-14 21:06:13 CST; 1min 2s ago
+
+n/nginx -t -q -g daemon on; master_process on; (code=exited, status=0/SUCCESS)
+ginx -g daemon on; master_process on; (code=exited, status=1/FAILURE)
+
+
+ginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)
+ginx: [emerg] bind() to 0.0.0.0:443 failed (98: Address already in use)
+ginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)
+ginx: [emerg] bind() to 0.0.0.0:443 failed (98: Address already in use)
+ginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)
+ginx: [emerg] bind() to 0.0.0.0:443 failed (98: Address already in use)
+ginx: [emerg] still could not bind()
+nx.service: Control process exited, code=exited, status=1/FAILURE
+nx.service: Failed with result 'exit-code'.
+led to start nginx.service - A high performance web server and a reverse proxy >
+~
+~
+~
+~
+~
+ ESCOC
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+bled)
+2s ago
+
+ss on; (code=exited, status=0/SUCCESS)
+ode=exited, status=1/FAILURE)
+
+
+d (98: Address already in use)
+ed (98: Address already in use)
+d (98: Address already in use)
+ed (98: Address already in use)
+d (98: Address already in use)
+ed (98: Address already in use)
+
+=exited, status=1/FAILURE
+e'.
+ormance web server and a reverse proxy server.
+~
+~
+~
+~
+~
+ ESCOC
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+erver.
+~
+~
+~
+~
+~
+ ESCOC
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+~
+~
+~
+~
+~
+ ESCOC
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+~
+~
+~
+~
+~
+ ESCOC
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+~
+~
+~
+~
+~
+ ESCOC
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+~
+~
+~
+~
+~
+lines 1-18/18 (END)
+
+
+
+
+
+^[[A^[[A^[[Anov 14 21:06:11 cableuno nginx[25452]: nginx: [emerg] bind() to 0.0.0.0:443 failed (98: Address already in use)
+nov 14 21:06:12 cableuno nginx[25452]: nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)
+nov 14 21:06:12 cableuno nginx[25452]: nginx: [emerg] bind() to 0.0.0.0:443 failed (98: Address already in use)
+nov 14 21:06:12 cableuno nginx[25452]: nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)
+nov 14 21:06:12 cableuno nginx[25452]: nginx: [emerg] bind() to 0.0.0.0:443 failed (98: Address already in use)
+nov 14 21:06:13 cableuno nginx[25452]: nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)
+nov 14 21:06:13 cableuno nginx[25452]: nginx: [emerg] bind() to 0.0.0.0:443 failed (98: Address already in use)
+nov 14 21:06:13 cableuno nginx[25452]: nginx: [emerg] still could not bind()
+nov 14 21:06:13 cableuno systemd[1]: nginx.service: Control process exited, code=exited, status=1/FAILURE
+░░ Subject: Unit process exited
+░░ Defined-By: systemd
+░░ Support: http://www.ubuntu.com/support
+░░ 
+░░ An ExecStart= process belonging to unit nginx.service has exited.
+░░ 
+░░ The process' exit code is 'exited' and its exit status is 1.
+nov 14 21:06:13 cableuno systemd[1]: nginx.service: Failed with result 'exit-code'.
+░░ Subject: Unit failed
+░░ Defined-By: systemd
+░░ Support: http://www.ubuntu.com/support
+░░ 
+░░ The unit nginx.service has entered the 'failed' state with result 'exit-code'.
+nov 14 21:06:13 cableuno systemd[1]: Failed to start nginx.service - A high performance web server and a reverse proxy server.
+░░ Subject: A start job for unit nginx.service has failed
+░░ Defined-By: systemd
+░░ Support: http://www.ubuntu.com/support
+░░ 
+░░ A start job for unit nginx.service has finished with a failure.
+░░ 
+░░ The job identifier is 8892 and the job result is failed.
+root@cableuno:/home/cableuno# 
+root@cableuno:/home/cableuno# 
+root@cableuno:/home/cableuno# 
+root@cableuno:/home/cableuno# 
+root@cableuno:/home/cableuno# 
+root@cableuno:/home/cableuno# ^[[200~# Ver qué procesos están usando los puertos 80 y 443
+#: no se encontró la orden
+root@cableuno:/home/cableuno# netstat -tulpn | grep -E ':(80|443) '
+tcp        0      0 0.0.0.0:443             0.0.0.0:*               ESCUCHAR    2384/nginx: master  
+tcp        0      0 0.0.0.0:80              0.0.0.0:*               ESCUCHAR    2384/nginx: master  
+root@cableuno:/home/cableuno# 
+root@cableuno:/home/cableuno# # Ver todos los procesos nginx corriendo
+root@cableuno:/home/cableuno# ps aux | grep nginx | grep -v grep~
+xui       2384  0.0  0.0  37048  1128 ?        Ss   20:54   0:00 nginx: master process /home/xui/bin/nginx/sbin/nginx
+xui       2386  0.0  0.0 306096 10728 ?        Sl   20:54   0:00 nginx: worker process
+xui       2387  0.0  0.0 306096  8808 ?        Sl   20:54   0:00 nginx: worker process
+xui       2388  0.0  0.0 306096 11112 ?        Sl   20:54   0:00 nginx: worker process
+xui       2389  0.0  0.0 306096  8808 ?        Sl   20:54   0:00 nginx: worker process
+xui       2390  0.0  0.0 306096  8808 ?        Sl   20:54   0:00 nginx: worker process
+xui       2391  0.0  0.0 306096  8808 ?        Sl   20:54   0:00 nginx: worker process
+xui       2392  0.0  0.0 306096  8808 ?        Sl   20:54   0:00 nginx: worker process
+xui       2393  0.0  0.0 306096  9192 ?        Sl   20:54   0:00 nginx: worker process
+xui       2394  0.0  0.0 306096  8808 ?        Sl   20:54   0:00 nginx: worker process
+xui       2395  0.0  0.0 306096  8808 ?        Sl   20:54   0:00 nginx: worker process
+xui       2396  0.0  0.0 306096 10728 ?        Sl   20:54   0:00 nginx: worker process
+xui       2397  0.0  0.0 306096  8808 ?        Sl   20:54   0:00 nginx: worker process
+xui       2398  0.0  0.0 306096  8808 ?        Sl   20:54   0:00 nginx: worker process
+xui       2399  0.0  0.0 306096  8808 ?        Sl   20:54   0:00 nginx: worker process
+xui       2400  0.0  0.0 306096  8808 ?        Sl   20:54   0:00 nginx: worker process
+xui       2401  0.0  0.0 306096  8808 ?        Sl   20:54   0:00 nginx: worker process
+xui       2402  0.0  0.0 306096  8808 ?        Sl   20:54   0:00 nginx: worker process
+xui       2403  0.0  0.0 306096  8808 ?        Sl   20:54   0:00 nginx: worker process
+xui       2404  0.0  0.0 306096  8808 ?        Sl   20:54   0:00 nginx: worker process
+xui       2405  0.0  0.0 306096  8808 ?        Sl   20:54   0:00 nginx: worker process
+xui       2406  0.0  0.0 306096  8808 ?        Sl   20:54   0:00 nginx: worker process
+xui       2407  0.0  0.0 306096  8808 ?        Sl   20:54   0:00 nginx: worker process
+xui       2408  0.0  0.0 306096  8808 ?        Sl   20:54   0:00 nginx: worker process
+xui       2409  0.0  0.0 306096  8808 ?        Sl   20:54   0:00 nginx: worker process
+xui       2410  0.0  0.0 306096  9192 ?        Sl   20:54   0:00 nginx: worker process
+xui       2411  0.0  0.0 306096  8808 ?        Sl   20:54   0:00 nginx: worker process
+xui       2412  0.0  0.0 306096  8808 ?        Sl   20:54   0:00 nginx: worker process
+xui       2414  0.0  0.0 306096  8808 ?        Sl   20:54   0:00 nginx: worker process
+xui       2416  0.0  0.0 306096  8808 ?        Sl   20:54   0:00 nginx: worker process
+xui       2436  0.0  0.0 306096  8808 ?        Sl   20:54   0:00 nginx: worker process
+xui       2473  0.0  0.0 306096  8808 ?        Sl   20:54   0:00 nginx: worker process
+xui       2519  0.0  0.0 306096  8808 ?        Sl   20:54   0:00 nginx: worker process
+xui       2576  0.0  0.0 306096  8808 ?        Sl   20:54   0:00 nginx: worker process
+xui       2631  0.0  0.0 306096 10728 ?        Sl   20:54   0:00 nginx: worker process
+xui       2686  0.0  0.0 306096 10728 ?        Sl   20:54   0:00 nginx: worker process
+xui       2740  0.0  0.0 306096  8808 ?        Sl   20:54   0:00 nginx: worker process
+xui       2793  0.0  0.0 306096  8808 ?        Sl   20:54   0:00 nginx: worker process
+xui       2850  0.0  0.0 306096  8808 ?        Sl   20:54   0:00 nginx: worker process
+xui       2921  0.0  0.0 306096  8808 ?        Sl   20:54   0:00 nginx: worker process
+xui       2977  0.0  0.0 306096  8808 ?        Sl   20:54   0:00 nginx: worker process
+xui       3025  0.0  0.0 306096  8808 ?        Sl   20:54   0:00 nginx: worker process
+xui       3069  0.0  0.0 306096  8808 ?        Sl   20:54   0:00 nginx: worker process
+xui       3101  0.0  0.0 306096  8808 ?        Sl   20:54   0:00 nginx: worker process
+xui       3135  0.0  0.0 306096  8808 ?        Sl   20:54   0:00 nginx: worker process
+xui       3174  0.0  0.0 306096  8808 ?        Sl   20:54   0:00 nginx: worker process
+xui       3207  0.0  0.0 306096  8808 ?        Sl   20:54   0:00 nginx: worker process
+xui       3240  0.0  0.0 306096  8808 ?        Sl   20:54   0:00 nginx: worker process
+xui       3301  0.0  0.0 306096 10728 ?        Sl   20:54   0:00 nginx: worker process
+xui       4034  0.0  0.0  13604  1000 ?        Ss   20:54   0:00 nginx: master process /home/xui/bin/nginx_rtmp/sbin/nginx_rtmp
+xui       4035  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4036  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4037  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4038  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4039  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4040  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4041  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4042  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4043  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4044  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4045  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4046  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4047  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4049  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4050  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4052  0.0  0.0  20380  8680 ?        S    20:54   0:00 nginx: worker process
+xui       4053  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4054  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4055  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4056  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4057  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4058  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4059  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4060  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4061  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4062  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4063  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4064  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4065  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4066  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4067  0.0  0.0  20380  7528 ?        S    20:54   0:00 nginx: worker process
+xui       4068  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4069  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4070  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4071  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4072  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4073  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4074  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4075  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4076  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4077  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4078  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4079  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4080  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4081  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4082  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4083  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+xui       4084  0.0  0.0  20380  8296 ?        S    20:54   0:00 nginx: worker process
+root     32036  0.0  0.0  11780  1920 pts/1    S+   21:10   0:00 grep --color=auto nginx
+root@cableuno:/home/cableuno# 
