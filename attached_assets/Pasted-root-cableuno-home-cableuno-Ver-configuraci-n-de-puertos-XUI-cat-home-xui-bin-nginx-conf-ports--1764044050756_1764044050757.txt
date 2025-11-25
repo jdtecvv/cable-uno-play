@@ -1,0 +1,1056 @@
+root@cableuno:/home/cableuno# # Ver configuración de puertos XUI
+cat /home/xui/bin/nginx/conf/ports/http.conf
+cat /home/xui/bin/nginx/conf/ports/https.conf
+
+# Ver configuración de System Nginx
+cat /etc/nginx/sites-enabled/app.teleunotv.cr
+cat /etc/nginx/sites-enabled/play.teleunotv.cr
+
+# Ver estado de los servicios
+pm2 status
+sudo systemctl status nginx
+listen 80;listen 443 ssl;server {
+    listen 80;
+    server_name app.teleunotv.cr;
+    return 301 https://$server_name$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name app.teleunotv.cr;
+    
+    ssl_certificate /etc/letsencrypt/live/play.teleunotv.cr/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/play.teleunotv.cr/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+    
+    # Redireccionar raíz a XUI con código
+    location = / {
+        return 302 https://app.teleunotv.cr/5pUNs3U2/login;
+    }
+    
+    # Proxy para todas las demás rutas
+    location / {
+        proxy_pass http://127.0.0.1:81;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+server {
+    server_name play.teleunotv.cr;
+    
+    location / {
+        proxy_pass http://127.0.0.1:5000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/play.teleunotv.cr/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/play.teleunotv.cr/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+
+}
+server {
+    if ($host = play.teleunotv.cr) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    listen 80;
+    server_name play.teleunotv.cr;
+    return 404; # managed by Certbot
+
+
+}┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ cable-uno-play     │ fork     │ 0    │ online    │ 0%       │ 55.6mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+● nginx.service - A high performance web server and a reverse proxy server
+     Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; preset: en>
+     Active: active (running) since Mon 2025-11-24 19:29:03 CST; 2h 43min ago
+       Docs: man:nginx(8)
+    Process: 2204 ExecStartPre=/usr/sbin/nginx -t -q -g daemon on; master_proce>
+    Process: 2407 ExecStart=/usr/sbin/nginx -g daemon on; master_process on; (c>
+   Main PID: 2408 (nginx)
+      Tasks: 49 (limit: 9830)
+     Memory: 57.6M (peak: 58.5M)
+        CPU: 10.786s
+     CGroup: /system.slice/nginx.service
+             ├─2408 "nginx: master process /usr/sbin/nginx -g daemon on; master>
+             ├─2409 "nginx: worker process"
+             ├─2410 "nginx: worker process"
+             ├─2411 "nginx: worker process"
+             ├─2412 "nginx: worker process"
+             ├─2413 "nginx: worker process"
+             ├─2414 "nginx: worker process"
+             ├─2415 "nginx: worker process"
+             ├─2416 "nginx: worker process"
+             ├─2417 "nginx: worker process"
+             ├─2418 "nginx: worker process"
+             ├─2419 "nginx: worker process"
+ ESCOC
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ server and a reverse proxy server
+stem/nginx.service; enabled; preset: enabled)
+2025-11-24 19:29:03 CST; 2h 43min ago
+
+/nginx -t -q -g daemon on; master_process on; (code=exited, status=0/SUCCESS)
+inx -g daemon on; master_process on; (code=exited, status=0/SUCCESS)
+
+
+
+
+
+ss /usr/sbin/nginx -g daemon on; master_process on;"
+ss"
+ss"
+ss"
+ss"
+ss"
+ss"
+ss"
+ss"
+ss"
+ss"
+ss"
+ ESCOC
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+bled)
+
+
+s on; (code=exited, status=0/SUCCESS)
+de=exited, status=0/SUCCESS)
+
+
+
+
+
+process on;"
+
+
+
+
+
+
+
+
+
+
+
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ server and a reverse proxy server
+stem/nginx.service; enabled; preset: enabled)
+2025-11-24 19:29:03 CST; 2h 43min ago
+
+/nginx -t -q -g daemon on; master_process on; (code=exited, status=0/SUCCESS)
+inx -g daemon on; master_process on; (code=exited, status=0/SUCCESS)
+
+
+
+
+
+ss /usr/sbin/nginx -g daemon on; master_process on;"
+ss"
+ss"
+ss"
+ss"
+ss"
+ss"
+ss"
+ss"
+ss"
+ss"
+ss"
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+● nginx.service - A high performance web server and a reverse proxy server
+     Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; preset: en>
+     Active: active (running) since Mon 2025-11-24 19:29:03 CST; 2h 43min ago
+       Docs: man:nginx(8)
+    Process: 2204 ExecStartPre=/usr/sbin/nginx -t -q -g daemon on; master_proce>
+    Process: 2407 ExecStart=/usr/sbin/nginx -g daemon on; master_process on; (c>
+   Main PID: 2408 (nginx)
+      Tasks: 49 (limit: 9830)
+     Memory: 57.6M (peak: 58.5M)
+        CPU: 10.786s
+     CGroup: /system.slice/nginx.service
+             ├─2408 "nginx: master process /usr/sbin/nginx -g daemon on; master>
+             ├─2409 "nginx: worker process"
+             ├─2410 "nginx: worker process"
+             ├─2411 "nginx: worker process"
+             ├─2412 "nginx: worker process"
+             ├─2413 "nginx: worker process"
+             ├─2414 "nginx: worker process"
+             ├─2415 "nginx: worker process"
+             ├─2416 "nginx: worker process"
+             ├─2417 "nginx: worker process"
+             ├─2418 "nginx: worker process"
+             ├─2419 "nginx: worker process"
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+● nginx.service - A high performance web server and a reverse proxy server
+     Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; preset: en>
+     Active: active (running) since Mon 2025-11-24 19:29:03 CST; 2h 43min ago
+       Docs: man:nginx(8)
+    Process: 2204 ExecStartPre=/usr/sbin/nginx -t -q -g daemon on; master_proce>
+    Process: 2407 ExecStart=/usr/sbin/nginx -g daemon on; master_process on; (c>
+   Main PID: 2408 (nginx)
+      Tasks: 49 (limit: 9830)
+     Memory: 57.6M (peak: 58.5M)
+        CPU: 10.786s
+     CGroup: /system.slice/nginx.service
+             ├─2408 "nginx: master process /usr/sbin/nginx -g daemon on; master>
+             ├─2409 "nginx: worker process"
+             ├─2410 "nginx: worker process"
+             ├─2411 "nginx: worker process"
+             ├─2412 "nginx: worker process"
+             ├─2413 "nginx: worker process"
+             ├─2414 "nginx: worker process"
+             ├─2415 "nginx: worker process"
+             ├─2416 "nginx: worker process"
+             ├─2417 "nginx: worker process"
+             ├─2418 "nginx: worker process"
+             ├─2419 "nginx: worker process"
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+● nginx.service - A high performance web server and a reverse proxy server
+     Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; preset: en>
+     Active: active (running) since Mon 2025-11-24 19:29:03 CST; 2h 43min ago
+       Docs: man:nginx(8)
+    Process: 2204 ExecStartPre=/usr/sbin/nginx -t -q -g daemon on; master_proce>
+    Process: 2407 ExecStart=/usr/sbin/nginx -g daemon on; master_process on; (c>
+   Main PID: 2408 (nginx)
+      Tasks: 49 (limit: 9830)
+     Memory: 57.6M (peak: 58.5M)
+        CPU: 10.786s
+     CGroup: /system.slice/nginx.service
+             ├─2408 "nginx: master process /usr/sbin/nginx -g daemon on; master>
+             ├─2409 "nginx: worker process"
+             ├─2410 "nginx: worker process"
+             ├─2411 "nginx: worker process"
+             ├─2412 "nginx: worker process"
+             ├─2413 "nginx: worker process"
+             ├─2414 "nginx: worker process"
+             ├─2415 "nginx: worker process"
+             ├─2416 "nginx: worker process"
+             ├─2417 "nginx: worker process"
+             ├─2418 "nginx: worker process"
+             ├─2419 "nginx: worker process"
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+● nginx.service - A high performance web server and a reverse proxy server
+     Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; preset: en>
+     Active: active (running) since Mon 2025-11-24 19:29:03 CST; 2h 43min ago
+       Docs: man:nginx(8)
+    Process: 2204 ExecStartPre=/usr/sbin/nginx -t -q -g daemon on; master_proce>
+    Process: 2407 ExecStart=/usr/sbin/nginx -g daemon on; master_process on; (c>
+   Main PID: 2408 (nginx)
+      Tasks: 49 (limit: 9830)
+     Memory: 57.6M (peak: 58.5M)
+        CPU: 10.786s
+     CGroup: /system.slice/nginx.service
+             ├─2408 "nginx: master process /usr/sbin/nginx -g daemon on; master>
+             ├─2409 "nginx: worker process"
+             ├─2410 "nginx: worker process"
+             ├─2411 "nginx: worker process"
+             ├─2412 "nginx: worker process"
+             ├─2413 "nginx: worker process"
+             ├─2414 "nginx: worker process"
+             ├─2415 "nginx: worker process"
+             ├─2416 "nginx: worker process"
+             ├─2417 "nginx: worker process"
+             ├─2418 "nginx: worker process"
+             ├─2419 "nginx: worker process"
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+● nginx.service - A high performance web server and a reverse proxy server
+     Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; preset: en>
+     Active: active (running) since Mon 2025-11-24 19:29:03 CST; 2h 43min ago
+       Docs: man:nginx(8)
+    Process: 2204 ExecStartPre=/usr/sbin/nginx -t -q -g daemon on; master_proce>
+    Process: 2407 ExecStart=/usr/sbin/nginx -g daemon on; master_process on; (c>
+   Main PID: 2408 (nginx)
+      Tasks: 49 (limit: 9830)
+     Memory: 57.6M (peak: 58.5M)
+        CPU: 10.786s
+     CGroup: /system.slice/nginx.service
+             ├─2408 "nginx: master process /usr/sbin/nginx -g daemon on; master>
+             ├─2409 "nginx: worker process"
+             ├─2410 "nginx: worker process"
+             ├─2411 "nginx: worker process"
+             ├─2412 "nginx: worker process"
+             ├─2413 "nginx: worker process"
+             ├─2414 "nginx: worker process"
+             ├─2415 "nginx: worker process"
+             ├─2416 "nginx: worker process"
+             ├─2417 "nginx: worker process"
+             ├─2418 "nginx: worker process"
+             ├─2419 "nginx: worker process"
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+● nginx.service - A high performance web server and a reverse proxy server
+     Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; preset: en>
+     Active: active (running) since Mon 2025-11-24 19:29:03 CST; 2h 43min ago
+       Docs: man:nginx(8)
+    Process: 2204 ExecStartPre=/usr/sbin/nginx -t -q -g daemon on; master_proce>
+    Process: 2407 ExecStart=/usr/sbin/nginx -g daemon on; master_process on; (c>
+   Main PID: 2408 (nginx)
+      Tasks: 49 (limit: 9830)
+     Memory: 57.6M (peak: 58.5M)
+        CPU: 10.786s
+     CGroup: /system.slice/nginx.service
+             ├─2408 "nginx: master process /usr/sbin/nginx -g daemon on; master>
+             ├─2409 "nginx: worker process"
+             ├─2410 "nginx: worker process"
+             ├─2411 "nginx: worker process"
+             ├─2412 "nginx: worker process"
+             ├─2413 "nginx: worker process"
+             ├─2414 "nginx: worker process"
+             ├─2415 "nginx: worker process"
+             ├─2416 "nginx: worker process"
+             ├─2417 "nginx: worker process"
+             ├─2418 "nginx: worker process"
+             ├─2419 "nginx: worker process"
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+● nginx.service - A high performance web server and a reverse proxy server
+     Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; preset: en>
+     Active: active (running) since Mon 2025-11-24 19:29:03 CST; 2h 43min ago
+       Docs: man:nginx(8)
+    Process: 2204 ExecStartPre=/usr/sbin/nginx -t -q -g daemon on; master_proce>
+    Process: 2407 ExecStart=/usr/sbin/nginx -g daemon on; master_process on; (c>
+   Main PID: 2408 (nginx)
+      Tasks: 49 (limit: 9830)
+     Memory: 57.6M (peak: 58.5M)
+        CPU: 10.786s
+     CGroup: /system.slice/nginx.service
+             ├─2408 "nginx: master process /usr/sbin/nginx -g daemon on; master>
+             ├─2409 "nginx: worker process"
+             ├─2410 "nginx: worker process"
+             ├─2411 "nginx: worker process"
+             ├─2412 "nginx: worker process"
+             ├─2413 "nginx: worker process"
+             ├─2414 "nginx: worker process"
+             ├─2415 "nginx: worker process"
+             ├─2416 "nginx: worker process"
+             ├─2417 "nginx: worker process"
+             ├─2418 "nginx: worker process"
+             ├─2419 "nginx: worker process"
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+● nginx.service - A high performance web server and a reverse proxy server
+     Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; preset: en>
+     Active: active (running) since Mon 2025-11-24 19:29:03 CST; 2h 43min ago
+       Docs: man:nginx(8)
+    Process: 2204 ExecStartPre=/usr/sbin/nginx -t -q -g daemon on; master_proce>
+    Process: 2407 ExecStart=/usr/sbin/nginx -g daemon on; master_process on; (c>
+   Main PID: 2408 (nginx)
+      Tasks: 49 (limit: 9830)
+     Memory: 57.6M (peak: 58.5M)
+        CPU: 10.786s
+     CGroup: /system.slice/nginx.service
+             ├─2408 "nginx: master process /usr/sbin/nginx -g daemon on; master>
+             ├─2409 "nginx: worker process"
+             ├─2410 "nginx: worker process"
+             ├─2411 "nginx: worker process"
+             ├─2412 "nginx: worker process"
+             ├─2413 "nginx: worker process"
+             ├─2414 "nginx: worker process"
+             ├─2415 "nginx: worker process"
+             ├─2416 "nginx: worker process"
+             ├─2417 "nginx: worker process"
+             ├─2418 "nginx: worker process"
+             ├─2419 "nginx: worker process"
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+● nginx.service - A high performance web server and a reverse proxy server
+     Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; preset: en>
+     Active: active (running) since Mon 2025-11-24 19:29:03 CST; 2h 43min ago
+       Docs: man:nginx(8)
+    Process: 2204 ExecStartPre=/usr/sbin/nginx -t -q -g daemon on; master_proce>
+    Process: 2407 ExecStart=/usr/sbin/nginx -g daemon on; master_process on; (c>
+   Main PID: 2408 (nginx)
+      Tasks: 49 (limit: 9830)
+     Memory: 57.6M (peak: 58.5M)
+        CPU: 10.786s
+     CGroup: /system.slice/nginx.service
+             ├─2408 "nginx: master process /usr/sbin/nginx -g daemon on; master>
+             ├─2409 "nginx: worker process"
+             ├─2410 "nginx: worker process"
+             ├─2411 "nginx: worker process"
+             ├─2412 "nginx: worker process"
+             ├─2413 "nginx: worker process"
+             ├─2414 "nginx: worker process"
+             ├─2415 "nginx: worker process"
+             ├─2416 "nginx: worker process"
+             ├─2417 "nginx: worker process"
+             ├─2418 "nginx: worker process"
+             ├─2419 "nginx: worker process"
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+● nginx.service - A high performance web server and a reverse proxy server
+     Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; preset: en>
+     Active: active (running) since Mon 2025-11-24 19:29:03 CST; 2h 43min ago
+       Docs: man:nginx(8)
+    Process: 2204 ExecStartPre=/usr/sbin/nginx -t -q -g daemon on; master_proce>
+    Process: 2407 ExecStart=/usr/sbin/nginx -g daemon on; master_process on; (c>
+   Main PID: 2408 (nginx)
+      Tasks: 49 (limit: 9830)
+     Memory: 57.6M (peak: 58.5M)
+        CPU: 10.786s
+     CGroup: /system.slice/nginx.service
+             ├─2408 "nginx: master process /usr/sbin/nginx -g daemon on; master>
+             ├─2409 "nginx: worker process"
+             ├─2410 "nginx: worker process"
+             ├─2411 "nginx: worker process"
+             ├─2412 "nginx: worker process"
+             ├─2413 "nginx: worker process"
+             ├─2414 "nginx: worker process"
+             ├─2415 "nginx: worker process"
+             ├─2416 "nginx: worker process"
+             ├─2417 "nginx: worker process"
+             ├─2418 "nginx: worker process"
+             ├─2419 "nginx: worker process"
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+● nginx.service - A high performance web server and a reverse proxy server
+     Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; preset: en>
+     Active: active (running) since Mon 2025-11-24 19:29:03 CST; 2h 43min ago
+       Docs: man:nginx(8)
+    Process: 2204 ExecStartPre=/usr/sbin/nginx -t -q -g daemon on; master_proce>
+    Process: 2407 ExecStart=/usr/sbin/nginx -g daemon on; master_process on; (c>
+   Main PID: 2408 (nginx)
+      Tasks: 49 (limit: 9830)
+     Memory: 57.6M (peak: 58.5M)
+        CPU: 10.786s
+     CGroup: /system.slice/nginx.service
+             ├─2408 "nginx: master process /usr/sbin/nginx -g daemon on; master>
+             ├─2409 "nginx: worker process"
+             ├─2410 "nginx: worker process"
+             ├─2411 "nginx: worker process"
+             ├─2412 "nginx: worker process"
+             ├─2413 "nginx: worker process"
+             ├─2414 "nginx: worker process"
+             ├─2415 "nginx: worker process"
+             ├─2416 "nginx: worker process"
+             ├─2417 "nginx: worker process"
+             ├─2418 "nginx: worker process"
+             ├─2419 "nginx: worker process"
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+● nginx.service - A high performance web server and a reverse proxy server
+     Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; preset: en>
+     Active: active (running) since Mon 2025-11-24 19:29:03 CST; 2h 43min ago
+       Docs: man:nginx(8)
+    Process: 2204 ExecStartPre=/usr/sbin/nginx -t -q -g daemon on; master_proce>
+    Process: 2407 ExecStart=/usr/sbin/nginx -g daemon on; master_process on; (c>
+   Main PID: 2408 (nginx)
+      Tasks: 49 (limit: 9830)
+     Memory: 57.6M (peak: 58.5M)
+        CPU: 10.786s
+     CGroup: /system.slice/nginx.service
+             ├─2408 "nginx: master process /usr/sbin/nginx -g daemon on; master>
+             ├─2409 "nginx: worker process"
+             ├─2410 "nginx: worker process"
+             ├─2411 "nginx: worker process"
+             ├─2412 "nginx: worker process"
+             ├─2413 "nginx: worker process"
+             ├─2414 "nginx: worker process"
+             ├─2415 "nginx: worker process"
+             ├─2416 "nginx: worker process"
+             ├─2417 "nginx: worker process"
+             ├─2418 "nginx: worker process"
+             ├─2419 "nginx: worker process"
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+● nginx.service - A high performance web server and a reverse proxy server
+     Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; preset: en>
+     Active: active (running) since Mon 2025-11-24 19:29:03 CST; 2h 43min ago
+       Docs: man:nginx(8)
+    Process: 2204 ExecStartPre=/usr/sbin/nginx -t -q -g daemon on; master_proce>
+    Process: 2407 ExecStart=/usr/sbin/nginx -g daemon on; master_process on; (c>
+   Main PID: 2408 (nginx)
+      Tasks: 49 (limit: 9830)
+     Memory: 57.6M (peak: 58.5M)
+        CPU: 10.786s
+     CGroup: /system.slice/nginx.service
+             ├─2408 "nginx: master process /usr/sbin/nginx -g daemon on; master>
+             ├─2409 "nginx: worker process"
+             ├─2410 "nginx: worker process"
+             ├─2411 "nginx: worker process"
+             ├─2412 "nginx: worker process"
+             ├─2413 "nginx: worker process"
+             ├─2414 "nginx: worker process"
+             ├─2415 "nginx: worker process"
+             ├─2416 "nginx: worker process"
+             ├─2417 "nginx: worker process"
+             ├─2418 "nginx: worker process"
+             ├─2419 "nginx: worker process"
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+● nginx.service - A high performance web server and a reverse proxy server
+     Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; preset: en>
+     Active: active (running) since Mon 2025-11-24 19:29:03 CST; 2h 43min ago
+       Docs: man:nginx(8)
+    Process: 2204 ExecStartPre=/usr/sbin/nginx -t -q -g daemon on; master_proce>
+    Process: 2407 ExecStart=/usr/sbin/nginx -g daemon on; master_process on; (c>
+   Main PID: 2408 (nginx)
+      Tasks: 49 (limit: 9830)
+     Memory: 57.6M (peak: 58.5M)
+        CPU: 10.786s
+     CGroup: /system.slice/nginx.service
+             ├─2408 "nginx: master process /usr/sbin/nginx -g daemon on; master>
+             ├─2409 "nginx: worker process"
+             ├─2410 "nginx: worker process"
+             ├─2411 "nginx: worker process"
+             ├─2412 "nginx: worker process"
+             ├─2413 "nginx: worker process"
+             ├─2414 "nginx: worker process"
+             ├─2415 "nginx: worker process"
+             ├─2416 "nginx: worker process"
+             ├─2417 "nginx: worker process"
+             ├─2418 "nginx: worker process"
+             ├─2419 "nginx: worker process"
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+● nginx.service - A high performance web server and a reverse proxy server
+     Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; preset: en>
+     Active: active (running) since Mon 2025-11-24 19:29:03 CST; 2h 43min ago
+       Docs: man:nginx(8)
+    Process: 2204 ExecStartPre=/usr/sbin/nginx -t -q -g daemon on; master_proce>
+    Process: 2407 ExecStart=/usr/sbin/nginx -g daemon on; master_process on; (c>
+   Main PID: 2408 (nginx)
+      Tasks: 49 (limit: 9830)
+     Memory: 57.6M (peak: 58.5M)
+        CPU: 10.786s
+     CGroup: /system.slice/nginx.service
+             ├─2408 "nginx: master process /usr/sbin/nginx -g daemon on; master>
+             ├─2409 "nginx: worker process"
+             ├─2410 "nginx: worker process"
+             ├─2411 "nginx: worker process"
+             ├─2412 "nginx: worker process"
+             ├─2413 "nginx: worker process"
+             ├─2414 "nginx: worker process"
+             ├─2415 "nginx: worker process"
+             ├─2416 "nginx: worker process"
+             ├─2417 "nginx: worker process"
+             ├─2418 "nginx: worker process"
+             ├─2419 "nginx: worker process"
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+● nginx.service - A high performance web server and a reverse proxy server
+     Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; preset: en>
+     Active: active (running) since Mon 2025-11-24 19:29:03 CST; 2h 43min ago
+       Docs: man:nginx(8)
+    Process: 2204 ExecStartPre=/usr/sbin/nginx -t -q -g daemon on; master_proce>
+    Process: 2407 ExecStart=/usr/sbin/nginx -g daemon on; master_process on; (c>
+   Main PID: 2408 (nginx)
+      Tasks: 49 (limit: 9830)
+     Memory: 57.6M (peak: 58.5M)
+        CPU: 10.786s
+     CGroup: /system.slice/nginx.service
+             ├─2408 "nginx: master process /usr/sbin/nginx -g daemon on; master>
+             ├─2409 "nginx: worker process"
+             ├─2410 "nginx: worker process"
+             ├─2411 "nginx: worker process"
+             ├─2412 "nginx: worker process"
+             ├─2413 "nginx: worker process"
+             ├─2414 "nginx: worker process"
+             ├─2415 "nginx: worker process"
+             ├─2416 "nginx: worker process"
+             ├─2417 "nginx: worker process"
+             ├─2418 "nginx: worker process"
+             ├─2419 "nginx: worker process"
+             ├─2420 "nginx: worker process"
+             ├─2421 "nginx: worker process"
+             ├─2422 "nginx: worker process"
+             ├─2423 "nginx: worker process"
+             ├─2424 "nginx: worker process"
+             ├─2425 "nginx: worker process"
+             ├─2426 "nginx: worker process"
+             ├─2427 "nginx: worker process"
+             ├─2428 "nginx: worker process"
+             ├─2429 "nginx: worker process"
+             ├─2430 "nginx: worker process"
+             ├─2431 "nginx: worker process"
+             ├─2432 "nginx: worker process"
+             ├─2433 "nginx: worker process"
+             ├─2434 "nginx: worker process"
+             ├─2435 "nginx: worker process"
+             ├─2436 "nginx: worker process"
+             ├─2437 "nginx: worker process"
+             ├─2438 "nginx: worker process"
+             ├─2439 "nginx: worker process"
+             ├─2440 "nginx: worker process"
+             ├─2441 "nginx: worker process"
+             ├─2442 "nginx: worker process"
+             ├─2443 "nginx: worker process"
+             ├─2444 "nginx: worker process"
+             ├─2445 "nginx: worker process"
+             ├─2446 "nginx: worker process"
+             ├─2447 "nginx: worker process"
+             ├─2448 "nginx: worker process"
+             ├─2449 "nginx: worker process"
+             ├─2450 "nginx: worker process"
+             ├─2451 "nginx: worker process"
+             ├─2452 "nginx: worker process"
+             ├─2453 "nginx: worker process"
+             ├─2454 "nginx: worker process"
+             ├─2455 "nginx: worker process"
+             └─2456 "nginx: worker process"
+
+nov 24 19:29:02 cableuno systemd[1]: Starting nginx.service - A high performanc>
+nov 24 19:29:03 cableuno systemd[1]: Started nginx.service - A high performance>
+
+root@cableuno:/home/cableuno# 
