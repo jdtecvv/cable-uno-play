@@ -1,0 +1,179 @@
+cableuno@cableuno:~$ sudo su 
+[sudo] contraseña para cableuno: 
+root@cableuno:/home/cableuno# # Verificar certificados SSL
+sudo certbot certificates
+
+# Verificar configuración de Nginx
+sudo nginx -t
+
+# Ver errores de Nginx
+sudo tail -20 /var/log/nginx/error.log
+
+# Probar conexión SSL directamente
+curl -I https://app.teleunotv.cr
+curl -I https://play.teleunotv.cr
+Saving debug log to /var/log/letsencrypt/letsencrypt.log
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Found the following certs:
+  Certificate Name: play.teleunotv.cr
+    Serial Number: 67c27e83d9f625819769992e08bb386242b
+    Key Type: ECDSA
+    Domains: play.teleunotv.cr app.teleunotv.cr
+    Expiry Date: 2026-02-10 12:27:47+00:00 (VALID: 77 days)
+    Certificate Path: /etc/letsencrypt/live/play.teleunotv.cr/fullchain.pem
+    Private Key Path: /etc/letsencrypt/live/play.teleunotv.cr/privkey.pem
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+2025/11/24 22:41:45 [error] 2418#2418: *14797 connect() failed (111: Connection refused) while connecting to upstream, client: 192.168.77.1, server: app.teleunotv.cr, request: "GET /nginx_status HTTP/1.0", upstream: "http://127.0.0.1:81/nginx_status", host: "app.teleunotv.cr"
+2025/11/24 22:41:47 [error] 2418#2418: *14800 connect() failed (111: Connection refused) while connecting to upstream, client: 192.168.77.1, server: app.teleunotv.cr, request: "GET /nginx_status HTTP/1.0", upstream: "http://127.0.0.1:81/nginx_status", host: "app.teleunotv.cr"
+2025/11/24 22:41:49 [error] 2418#2418: *14803 connect() failed (111: Connection refused) while connecting to upstream, client: 192.168.77.1, server: app.teleunotv.cr, request: "GET /nginx_status HTTP/1.0", upstream: "http://127.0.0.1:81/nginx_status", host: "app.teleunotv.cr"
+2025/11/24 22:41:52 [error] 2418#2418: *14806 connect() failed (111: Connection refused) while connecting to upstream, client: 192.168.77.1, server: app.teleunotv.cr, request: "GET /nginx_status HTTP/1.0", upstream: "http://127.0.0.1:81/nginx_status", host: "app.teleunotv.cr"
+2025/11/24 22:41:55 [error] 2418#2418: *14809 connect() failed (111: Connection refused) while connecting to upstream, client: 192.168.77.1, server: app.teleunotv.cr, request: "GET /nginx_status HTTP/1.0", upstream: "http://127.0.0.1:81/nginx_status", host: "app.teleunotv.cr"
+2025/11/24 22:41:57 [error] 2418#2418: *14812 connect() failed (111: Connection refused) while connecting to upstream, client: 192.168.77.1, server: app.teleunotv.cr, request: "GET /nginx_status HTTP/1.0", upstream: "http://127.0.0.1:81/nginx_status", host: "app.teleunotv.cr"
+2025/11/24 22:41:59 [error] 2418#2418: *14815 connect() failed (111: Connection refused) while connecting to upstream, client: 192.168.77.1, server: app.teleunotv.cr, request: "GET /nginx_status HTTP/1.0", upstream: "http://127.0.0.1:81/nginx_status", host: "app.teleunotv.cr"
+2025/11/24 22:42:02 [error] 2418#2418: *14819 connect() failed (111: Connection refused) while connecting to upstream, client: 192.168.77.1, server: app.teleunotv.cr, request: "GET /nginx_status HTTP/1.0", upstream: "http://127.0.0.1:81/nginx_status", host: "app.teleunotv.cr"
+2025/11/24 22:42:04 [error] 2418#2418: *14823 connect() failed (111: Connection refused) while connecting to upstream, client: 192.168.77.1, server: app.teleunotv.cr, request: "GET /nginx_status HTTP/1.0", upstream: "http://127.0.0.1:81/nginx_status", host: "app.teleunotv.cr"
+2025/11/24 22:47:05 [emerg] 3997#3997: bind() to 0.0.0.0:80 failed (98: Address already in use)
+2025/11/24 22:47:05 [emerg] 3997#3997: bind() to 0.0.0.0:443 failed (98: Address already in use)
+2025/11/24 22:47:05 [emerg] 3997#3997: bind() to 0.0.0.0:80 failed (98: Address already in use)
+2025/11/24 22:47:05 [emerg] 3997#3997: bind() to 0.0.0.0:443 failed (98: Address already in use)
+2025/11/24 22:47:05 [emerg] 3997#3997: bind() to 0.0.0.0:80 failed (98: Address already in use)
+2025/11/24 22:47:05 [emerg] 3997#3997: bind() to 0.0.0.0:443 failed (98: Address already in use)
+2025/11/24 22:47:05 [emerg] 3997#3997: bind() to 0.0.0.0:80 failed (98: Address already in use)
+2025/11/24 22:47:05 [emerg] 3997#3997: bind() to 0.0.0.0:443 failed (98: Address already in use)
+2025/11/24 22:47:05 [emerg] 3997#3997: bind() to 0.0.0.0:80 failed (98: Address already in use)
+2025/11/24 22:47:05 [emerg] 3997#3997: bind() to 0.0.0.0:443 failed (98: Address already in use)
+2025/11/24 22:47:05 [emerg] 3997#3997: still could not bind()
+curl: (60) SSL certificate problem: self-signed certificate
+More details here: https://curl.se/docs/sslcerts.html
+
+curl failed to verify the legitimacy of the server and therefore could not
+establish a secure connection to it. To learn more about this situation and
+how to fix it, please visit the web page mentioned above.
+curl: (60) SSL certificate problem: self-signed certificate
+More details here: https://curl.se/docs/sslcerts.html
+
+curl failed to verify the legitimacy of the server and therefore could not
+establish a secure connection to it. To learn more about this situation and
+how to fix it, please visit the web page mentioned above.
+root@cableuno:/home/cableuno# # PASO 1: Detener XUI completamente
+/home/xui/service stop
+
+# PASO 2: Ver qué está usando los puertos 80 y 443
+sudo lsof -i :80
+sudo lsof -i :443
+
+# PASO 3: Matar cualquier proceso en esos puertos
+sudo fuser -k 80/tcp
+sudo fuser -k 443/tcp
+
+# PASO 4: Iniciar System Nginx
+sudo systemctl restart nginx
+
+# PASO 5: Verificar que Nginx tiene los puertos
+sudo lsof -i :80
+sudo lsof -i :443
+Stopping XUI...
+COMMAND   PID     USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+nginx   20196     root    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20197 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20198 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20199 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20200 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20201 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20202 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20203 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20204 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20205 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20206 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20208 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20209 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20210 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20211 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20212 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20213 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20214 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20215 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20216 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20218 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20219 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20220 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20221 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20222 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20223 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20224 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20225 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20226 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20227 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20228 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20229 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20230 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20231 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20232 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20233 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20234 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20235 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20236 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20237 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20238 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20239 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20240 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20241 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20242 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20243 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20244 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20245 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+nginx   20246 www-data    5u  IPv4 108580      0t0  TCP *:http (LISTEN)
+COMMAND   PID     USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+nginx   20196     root    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20197 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20198 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20199 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20200 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20201 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20202 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20203 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20204 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20205 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20206 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20208 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20209 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20210 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20211 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20212 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20213 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20214 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20215 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20216 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20218 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20219 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20220 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20221 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20222 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20223 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20224 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20225 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20226 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20227 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20228 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20229 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20230 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20231 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20232 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20233 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20234 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20235 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20236 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20237 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20238 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20239 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20240 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20241 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20242 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20243 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20244 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20245 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+nginx   20246 www-data    6u  IPv4 108581      0t0  TCP *:https (LISTEN)
+root@cableuno:/home/cableuno# 
