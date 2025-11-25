@@ -1,0 +1,73 @@
+# PASO 8: Iniciar XUI
+/home/xui/service start
+        proxy_pass http://127.0.0.1:80;
+Starting XUI...
+Crontab already installed
+
+Running in foreground...
+^C
+root@cableuno:/home/cableuno# # PASO 9: Verificar que todo funciona
+curl -I https://app.teleunotv.cr
+curl -I https://play.teleunotv.cr
+
+# PASO 10: Verificar PM2
+pm2 status
+HTTP/2 302 
+server: nginx/1.24.0 (Ubuntu)
+date: Tue, 25 Nov 2025 04:58:27 GMT
+content-type: text/html
+content-length: 154
+location: https://app.teleunotv.cr/5pUNs3U2/login
+
+HTTP/2 200 
+server: nginx/1.24.0 (Ubuntu)
+date: Tue, 25 Nov 2025 04:58:28 GMT
+content-type: text/html; charset=UTF-8
+content-length: 2301
+x-powered-by: Express
+accept-ranges: bytes
+cache-control: public, max-age=0
+last-modified: Fri, 14 Nov 2025 13:55:08 GMT
+etag: W/"8fd-19a82a5fecf"
+
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ cable-uno-play     │ fork     │ 0    │ online    │ 0%       │ 54.7mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@cableuno:/home/cableuno# ^C
+root@cableuno:/home/cableuno# # Cambiar System Nginx para apuntar a puerto 81 (donde XUI realmente escucha)
+sed -i 's/proxy_pass http:\/\/127.0.0.1:80/proxy_pass http:\/\/127.0.0.1:81/g' /etc/nginx/sites-enabled/app.teleunotv.cr
+
+# Verificar
+grep "proxy_pass" /etc/nginx/sites-enabled/app.teleunotv.cr
+
+# Recargar Nginx
+sudo nginx -t && sudo systemctl reload nginx
+
+# Probar
+curl -I https://app.teleunotv.cr
+        proxy_pass http://127.0.0.1:81;
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+HTTP/2 302 
+server: nginx/1.24.0 (Ubuntu)
+date: Tue, 25 Nov 2025 04:59:45 GMT
+content-type: text/html
+content-length: 154
+location: https://app.teleunotv.cr/5pUNs3U2/login
+
+root@cableuno:/home/cableuno# # Crear script que asegure el orden correcto al reiniciar
+cat > /home/xui/start-after-nginx.sh << 'EOF'
+#!/bin/bash
+# Esperar a que nginx esté listo
+sleep 5
+# Configurar puertos correctos
+echo "listen 81;" > /home/xui/bin/nginx/conf/ports/http.conf
+echo "listen 444 ssl;" > /home/xui/bin/nginx/conf/ports/https.conf
+# Iniciar XUI
+/home/xui/service start
+EOF
+
+chmod +x /home/xui/start-after-nginx.sh
+root@cableuno:/home/cableuno# 
