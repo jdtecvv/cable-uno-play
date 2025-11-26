@@ -1,0 +1,2263 @@
+Usage: /home/xui/service {start|stop|restart|reload}
+root@cableuno:/home/cableuno# 
+root@cableuno:/home/cableuno# 
+root@cableuno:/home/cableuno# 
+root@cableuno:/home/cableuno# 
+root@cableuno:/home/cableuno# 
+root@cableuno:/home/cableuno# ^[[200~# PASO 1: Detener XUI completamente
+#: no se encontró la orden
+root@cableuno:/home/cableuno# /home/xui/service stop
+Stopping XUI...
+
+# PASO 2: Matar todos los procesos nginx de XUI
+pkill -u xui nginx
+sleep 2
+
+# PASO 3: Verificar que los puertos están libres
+sudo lsof -i :80
+root@cableuno:/home/cableuno# sudo fuser -k 80/tcpsudo fuser -k 80/tcp
+sudo fuser -k 443/tcp
+root@cableuno:/home/cableuno# # PASO 1: Detener XUI completamente
+/home/xui/service stop
+
+# PASO 2: Matar todos los procesos nginx de XUI
+pkill -u xui nginx
+sleep 2
+
+# PASO 3: Verificar que los puertos están libres
+sudo lsof -i :80
+sudo lsof -i :443
+XUI is not running
+COMMAND   PID     USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+firefox 18645 cableuno   80u  IPv4 165916      0t0  TCP cableuno:19668->123.208.120.34.bc.googleusercontent.com:https (ESTABLISHED)
+firefox 18645 cableuno  135u  IPv4  76652      0t0  TCP cableuno:26128->93.243.107.34.bc.googleusercontent.com:https (ESTABLISHED)
+root@cableuno:/home/cableuno# sudo fuser -k 80/tcp
+sudo fuser -k 443/tcp
+root@cableuno:/home/cableuno# # PASO 4: Configurar puertos de XUI PERMANENTEMENTE
+echo "listen 81;" > /home/xui/bin/nginx/conf/ports/http.conf
+echo "listen 444 ssl;" > /home/xui/bin/nginx/conf/ports/https.conf
+
+# PASO 5: Verificar que se guardó
+cat /home/xui/bin/nginx/conf/ports/http.conf
+cat /home/xui/bin/nginx/conf/ports/https.conf
+
+# PASO 6: Iniciar System Nginx PRIMERO
+sudo systemctl start nginx
+
+# PASO 7: Verificar que nginx del sistema tiene los puertos
+sudo lsof -i :80 | head -3
+listen 81;
+listen 444 ssl;
+COMMAND   PID     USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+nginx   33319     root    5u  IPv4 174461      0t0  TCP *:http (LISTEN)
+nginx   33320 www-data    5u  IPv4 174461      0t0  TCP *:http (LISTEN)
+root@cableuno:/home/cableuno# # PASO 8: Verificar puerto 443 también
+sudo lsof -i :443 | head -3
+
+# PASO 9: Iniciar XUI (con los puertos 81/444)
+/home/xui/service start
+COMMAND   PID     USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+firefox 18645 cableuno  135u  IPv4  76652      0t0  TCP cableuno:26128->93.243.107.34.bc.googleusercontent.com:https (ESTABLISHED)
+nginx   33319     root    6u  IPv4 174462      0t0  TCP *:https (LISTEN)
+Starting XUI...
+Crontab already installed
+
+Running in foreground...
+^C
+root@cableuno:/home/cableuno# # PASO 10: Verificar que XUI está en puerto 81
+sudo lsof -i :81 | head -3
+
+# PASO 11: Verificar PM2
+pm2 status
+
+# PASO 12: Probar los sitios
+curl -I https://app.teleunotv.cr
+curl -I https://play.teleunotv.cr
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ cable-uno-play     │ fork     │ 0    │ online    │ 0%       │ 49.7mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+HTTP/2 302 
+server: nginx/1.24.0 (Ubuntu)
+date: Wed, 26 Nov 2025 22:11:36 GMT
+content-type: text/html
+content-length: 154
+location: https://app.teleunotv.cr/5pUNs3U2/login
+
+HTTP/2 200 
+server: nginx/1.24.0 (Ubuntu)
+date: Wed, 26 Nov 2025 22:11:37 GMT
+content-type: text/html; charset=UTF-8
+content-length: 2301
+x-powered-by: Express
+accept-ranges: bytes
+cache-control: public, max-age=0
+last-modified: Fri, 14 Nov 2025 13:55:08 GMT
+etag: W/"8fd-19a82a5fecf"
+
+root@cableuno:/home/cableuno# # Verificar puerto 81 (XUI debería estar ahí)
+sudo lsof -i :81 | head -3
+
+# Crear script de arranque más robusto
+cat > /home/xui/fix-and-start.sh << 'EOF'
+#!/bin/bash
+# Esperar que el sistema esté listo
+sleep 10
+# Detener XUI si está corriendo
+/home/xui/service stop 2>/dev/null
+# Matar cualquier nginx de XUI
+pkill -u xui nginx 2>/dev/null
+sleep 2
+# Configurar puertos correctos
+echo "listen 81;" > /home/xui/bin/nginx/conf/ports/http.conf
+echo "listen 444 ssl;" > /home/xui/bin/nginx/conf/ports/https.conf
+# Asegurar que System Nginx está corriendo
+systemctl restart nginx
+sleep 2
+# Iniciar XUI
+/home/xui/service start &
+EOF
+
+pm2 saver PM2rontabnd-start.sh") | crontab -tart\|start-after-nginx"; echo "@reb
+crontab: crontabs/root: rename: Operación no permitida
+* * * * * /home/xui/bin/php/bin/php /home/xui/crons/root_signals.php # XUI
+* * * * * /home/xui/bin/php/bin/php /home/xui/crons/root_mysql.php # XUI
+[PM2] Saving current process list...
+[PM2] Successfully saved in /root/.pm2/dump.pm2
+root@cableuno:/home/cableuno# ^C
+root@cableuno:/home/cableuno# # Crear servicio systemd para XUI con puertos correctos
+cat > /etc/systemd/system/xui-fix.service << 'EOF'
+[Unit]
+Description=XUI Port Fix and Start
+After=nginx.service
+Requires=nginx.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStartPre=/bin/sleep 5
+ExecStartPre=/home/xui/service stop
+ExecStartPre=/usr/bin/pkill -u xui nginx
+ExecStartPre=/bin/sleep 2
+ExecStartPre=/bin/bash -c 'echo "listen 81;" > /home/xui/bin/nginx/conf/ports/http.conf'
+ExecStartPre=/bin/bash -c 'echo "listen 444 ssl;" > /home/xui/bin/nginx/conf/ports/https.conf'
+ExecStart=/home/xui/service start
+
+[Install]
+WantedBy=multi-user.target
+systemctl status xui-fix.servicel servicio
+Created symlink /etc/systemd/system/multi-user.target.wants/xui-fix.service → /etc/systemd/system/xui-fix.service.
+○ xui-fix.service - XUI Port Fix and Start
+     Loaded: loaded (/etc/systemd/system/xui-fix.service; enabled; preset: enab>
+     Active: inactive (dead)
+ ESCOC
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+rt
+/xui-fix.service; enabled; preset: enabled)
+
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+ ESCOC
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ed)
+
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+ ESCOC
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+ ESCOC
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+ ESCOC
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ed)
+
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+rt
+/xui-fix.service; enabled; preset: enabled)
+
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+○ xui-fix.service - XUI Port Fix and Start
+     Loaded: loaded (/etc/systemd/system/xui-fix.service; enabled; preset: enab>
+     Active: inactive (dead)
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+○ xui-fix.service - XUI Port Fix and Start
+     Loaded: loaded (/etc/systemd/system/xui-fix.service; enabled; preset: enab>
+     Active: inactive (dead)
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+○ xui-fix.service - XUI Port Fix and Start
+     Loaded: loaded (/etc/systemd/system/xui-fix.service; enabled; preset: enab>
+     Active: inactive (dead)
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+○ xui-fix.service - XUI Port Fix and Start
+     Loaded: loaded (/etc/systemd/system/xui-fix.service; enabled; preset: enab>
+     Active: inactive (dead)
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+○ xui-fix.service - XUI Port Fix and Start
+     Loaded: loaded (/etc/systemd/system/xui-fix.service; enabled; preset: enab>
+     Active: inactive (dead)
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+○ xui-fix.service - XUI Port Fix and Start
+     Loaded: loaded (/etc/systemd/system/xui-fix.service; enabled; preset: enab>
+     Active: inactive (dead)
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+○ xui-fix.service - XUI Port Fix and Start
+     Loaded: loaded (/etc/systemd/system/xui-fix.service; enabled; preset: enab>
+     Active: inactive (dead)
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+○ xui-fix.service - XUI Port Fix and Start
+     Loaded: loaded (/etc/systemd/system/xui-fix.service; enabled; preset: enab>
+     Active: inactive (dead)
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+○ xui-fix.service - XUI Port Fix and Start
+     Loaded: loaded (/etc/systemd/system/xui-fix.service; enabled; preset: enab>
+     Active: inactive (dead)
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+○ xui-fix.service - XUI Port Fix and Start
+     Loaded: loaded (/etc/systemd/system/xui-fix.service; enabled; preset: enab>
+     Active: inactive (dead)
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+○ xui-fix.service - XUI Port Fix and Start
+     Loaded: loaded (/etc/systemd/system/xui-fix.service; enabled; preset: enab>
+     Active: inactive (dead)
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+○ xui-fix.service - XUI Port Fix and Start
+     Loaded: loaded (/etc/systemd/system/xui-fix.service; enabled; preset: enab>
+     Active: inactive (dead)
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+○ xui-fix.service - XUI Port Fix and Start
+     Loaded: loaded (/etc/systemd/system/xui-fix.service; enabled; preset: enab>
+     Active: inactive (dead)
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+○ xui-fix.service - XUI Port Fix and Start
+     Loaded: loaded (/etc/systemd/system/xui-fix.service; enabled; preset: enab>
+     Active: inactive (dead)
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+○ xui-fix.service - XUI Port Fix and Start
+     Loaded: loaded (/etc/systemd/system/xui-fix.service; enabled; preset: enab>
+     Active: inactive (dead)
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+○ xui-fix.service - XUI Port Fix and Start
+     Loaded: loaded (/etc/systemd/system/xui-fix.service; enabled; preset: enab>
+     Active: inactive (dead)
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+○ xui-fix.service - XUI Port Fix and Start
+     Loaded: loaded (/etc/systemd/system/xui-fix.service; enabled; preset: enab>
+     Active: inactive (dead)
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+○ xui-fix.service - XUI Port Fix and Start
+     Loaded: loaded (/etc/systemd/system/xui-fix.service; enabled; preset: enab>
+     Active: inactive (dead)
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+○ xui-fix.service - XUI Port Fix and Start
+     Loaded: loaded (/etc/systemd/system/xui-fix.service; enabled; preset: enab>
+     Active: inactive (dead)
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+○ xui-fix.service - XUI Port Fix and Start
+     Loaded: loaded (/etc/systemd/system/xui-fix.service; enabled; preset: enab>
+     Active: inactive (dead)
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+○ xui-fix.service - XUI Port Fix and Start
+     Loaded: loaded (/etc/systemd/system/xui-fix.service; enabled; preset: enab>
+     Active: inactive (dead)
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+○ xui-fix.service - XUI Port Fix and Start
+     Loaded: loaded (/etc/systemd/system/xui-fix.service; enabled; preset: enab>
+     Active: inactive (dead)
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+○ xui-fix.service - XUI Port Fix and Start
+     Loaded: loaded (/etc/systemd/system/xui-fix.service; enabled; preset: enab>
+     Active: inactive (dead)
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+○ xui-fix.service - XUI Port Fix and Start
+     Loaded: loaded (/etc/systemd/system/xui-fix.service; enabled; preset: enab>
+     Active: inactive (dead)
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+○ xui-fix.service - XUI Port Fix and Start
+     Loaded: loaded (/etc/systemd/system/xui-fix.service; enabled; preset: enab>
+     Active: inactive (dead)
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+○ xui-fix.service - XUI Port Fix and Start
+     Loaded: loaded (/etc/systemd/system/xui-fix.service; enabled; preset: enab>
+     Active: inactive (dead)
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+○ xui-fix.service - XUI Port Fix and Start
+     Loaded: loaded (/etc/systemd/system/xui-fix.service; enabled; preset: enab>
+     Active: inactive (dead)
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+○ xui-fix.service - XUI Port Fix and Start
+     Loaded: loaded (/etc/systemd/system/xui-fix.service; enabled; preset: enab>
+     Active: inactive (dead)
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+○ xui-fix.service - XUI Port Fix and Start
+     Loaded: loaded (/etc/systemd/system/xui-fix.service; enabled; preset: enab>
+     Active: inactive (dead)
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+○ xui-fix.service - XUI Port Fix and Start
+     Loaded: loaded (/etc/systemd/system/xui-fix.service; enabled; preset: enab>
+     Active: inactive (dead)
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+○ xui-fix.service - XUI Port Fix and Start
+     Loaded: loaded (/etc/systemd/system/xui-fix.service; enabled; preset: enab>
+     Active: inactive (dead)
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+○ xui-fix.service - XUI Port Fix and Start
+     Loaded: loaded (/etc/systemd/system/xui-fix.service; enabled; preset: enab>
+     Active: inactive (dead)
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+○ xui-fix.service - XUI Port Fix and Start
+     Loaded: loaded (/etc/systemd/system/xui-fix.service; enabled; preset: enab>
+     Active: inactive (dead)
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+○ xui-fix.service - XUI Port Fix and Start
+     Loaded: loaded (/etc/systemd/system/xui-fix.service; enabled; preset: enab>
+     Active: inactive (dead)
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+
+root@cableuno:/home/cableuno# # Ver qué hay en cada puerto
+sudo lsof -i :80 | head -3
+sudo lsof -i :81 | head -3
+sudo lsof -i :443 | head -3
+sudo lsof -i :5000 | head -3
+
+# Ver si XUI está corriendo
+ps aux | grep xui | head -3
+
+# Estado de PM2
+pm2 status
+
+# Probar conexión directa a los backends
+curl -I http://127.0.0.1:81
+curl -I http://127.0.0.1:5000
+COMMAND   PID     USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+nginx   33319     root    5u  IPv4 174461      0t0  TCP *:http (LISTEN)
+nginx   33320 www-data    5u  IPv4 174461      0t0  TCP *:http (LISTEN)
+COMMAND   PID     USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+firefox 18645 cableuno  119u  IPv4 198274      0t0  TCP cableuno:34008->203.137.36.34.bc.googleusercontent.com:https (ESTABLISHED)
+firefox 18645 cableuno  124u  IPv4 207917      0t0  TCP cableuno:9360->93.243.107.34.bc.googleusercontent.com:https (ESTABLISHED)
+COMMAND  PID USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+node    4546 root   17u  IPv4  51284      0t0  TCP localhost:5000 (LISTEN)
+root        1766  0.0  0.0  12872  3456 ?        Ss   15:46   0:00 /bin/bash /home/xui/service start
+xui        33672  0.4  0.0 801968 109632 ?       Ssl  16:11   0:01 /home/xui/bin/redis/redis-server *:6379
+xui        33702  0.0  0.0  13604  1000 ?        Ss   16:11   0:00 nginx: master process /home/xui/bin/nginx_rtmp/sbin/nginx_rtmp
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ cable-uno-play     │ fork     │ 0    │ online    │ 0%       │ 50.6mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+curl: (7) Failed to connect to 127.0.0.1 port 81 after 0 ms: Couldn't connect to server
+HTTP/1.1 200 OK
+X-Powered-By: Express
+Accept-Ranges: bytes
+Cache-Control: public, max-age=0
+Last-Modified: Fri, 14 Nov 2025 13:55:08 GMT
+ETag: W/"8fd-19a82a5fecf"
+Content-Type: text/html; charset=UTF-8
+Content-Length: 2301
+Date: Wed, 26 Nov 2025 22:16:10 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+root@cableuno:/home/cableuno# 
