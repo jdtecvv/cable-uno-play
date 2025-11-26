@@ -1,0 +1,72 @@
+root@cableuno:/home/cableuno# 
+root@cableuno:/home/cableuno# 
+root@cableuno:/home/cableuno# 
+root@cableuno:/home/cableuno# 
+root@cableuno:/home/cableuno# 
+root@cableuno:/home/cableuno# 
+root@cableuno:/home/cableuno# 
+root@cableuno:/home/cableuno# pm2 startup
+                              pm2 startup
+
+root@cableuno:/home/cableuno# 
+root@cableuno:/home/cableuno# 
+root@cableuno:/home/cableuno# 
+root@cableuno:/home/cableuno# 
+root@cableuno:/home/cableuno# 
+root@cableuno:/home/cableuno# 
+root@cableuno:/home/cableuno# # Arreglar el servicio systemd (ignorar errores de
+root@cableuno:/home/cableuno# 
+root@cableuno:/home/cableuno# 
+root@cableuno:/home/cableuno# # Arreglar el servicio systemd (ignorar errores de pkill)
+cat > /etc/systemd/system/xui-fix.service << 'EOF'
+[Unit]
+Description=XUI Port Fix and Start
+After=nginx.service
+Requires=nginx.service
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStartPre=/bin/sleep 5
+ExecStartPre=-/home/xui/service stop
+ExecStartPre=-/usr/bin/pkill -u xui nginx
+ExecStartPre=/bin/sleep 2
+ExecStartPre=/bin/bash -c 'echo "listen 81;" > /home/xui/bin/nginx/conf/ports/http.conf'
+ExecStartPre=/bin/bash -c 'echo "listen 444 ssl;" > /home/xui/bin/nginx/conf/ports/https.conf' 
+ExecStart=/home/xui/service start
+[Install]
+WantedBy=multi-user.target
+EOF
+# Recargar y reiniciar XUI
+systemctl daemon-reload
+/home/xui/service start
+# Guardar PM2
+pm2 save
+# Verificar todo funciona
+curl -I https://app.teleunotv.cr
+curl -I https://play.teleunotv.cr
+Starting XUI...
+Crontab already installed
+
+Running in foreground...
+^C
+[PM2] Saving current process list...
+[PM2] Successfully saved in /root/.pm2/dump.pm2
+HTTP/2 302 
+server: nginx/1.24.0 (Ubuntu)
+date: Wed, 26 Nov 2025 22:26:06 GMT
+content-type: text/html
+content-length: 154
+location: https://app.teleunotv.cr/5pUNs3U2/login
+
+HTTP/2 200 
+server: nginx/1.24.0 (Ubuntu)
+date: Wed, 26 Nov 2025 22:26:06 GMT
+content-type: text/html; charset=UTF-8
+content-length: 2301
+x-powered-by: Express
+accept-ranges: bytes
+cache-control: public, max-age=0
+last-modified: Fri, 14 Nov 2025 13:55:08 GMT
+etag: W/"8fd-19a82a5fecf"
+
+root@cableuno:/home/cableuno# 
