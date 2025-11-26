@@ -1,0 +1,527 @@
+tent-Length: 2301
+Date: Wed, 26 Nov 2025 22:18:20 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+root@cableuno:/home/cableuno# ^C
+root@cableuno:/home/cableuno# root@cableuno:/home/cableuno# 
+root@cableuno:/home/cableuno# curl -I http://127.0.0.1:5000
+
+root@cableuno:/home/cableuno# 
+root@cableuno:/home/cableuno# 
+root@cableuno:/home/cableuno# 
+root@cableuno:/home/cableuno# 
+root@cableuno:/home/cableuno# 
+root@cableuno:/home/cableuno# # Iniciar XUI
+/home/xui/service start
+XUI is already running
+root@cableuno:/home/cableuno# # Verificar que XUI está en puerto 81
+sudo lsof -i :81 | head -3
+
+# Probar los sitios
+curl -I https://app.teleunotv.cr
+curl -I https://play.teleunotv.cr
+HTTP/2 302 
+server: nginx/1.24.0 (Ubuntu)
+date: Wed, 26 Nov 2025 22:20:03 GMT
+content-type: text/html
+content-length: 154
+location: https://app.teleunotv.cr/5pUNs3U2/login
+
+HTTP/2 200 
+server: nginx/1.24.0 (Ubuntu)
+date: Wed, 26 Nov 2025 22:20:03 GMT
+content-type: text/html; charset=UTF-8
+content-length: 2301
+x-powered-by: Express
+accept-ranges: bytes
+cache-control: public, max-age=0
+last-modified: Fri, 14 Nov 2025 13:55:08 GMT
+etag: W/"8fd-19a82a5fecf"
+
+root@cableuno:/home/cableuno# # Iniciar el servicio que creamos
+systemctl start xui-fix.service
+
+# Ver estado
+systemctl status xui-fix.service
+
+# Guardar PM2
+pm2 save
+pm2 startup
+
+Job for xui-fix.service failed because the control process exited with error code.
+See "systemctl status xui-fix.service" and "journalctl -xeu xui-fix.service" for details.
+× xui-fix.service - XUI Port Fix and Start
+     Loaded: loaded (/etc/systemd/system/xui-fix.service; enabled; preset: enab>
+     Active: failed (Result: exit-code) since Wed 2025-11-26 16:21:10 CST; 22ms>
+    Process: 49302 ExecStartPre=/bin/sleep 5 (code=exited, status=0/SUCCESS)
+    Process: 49488 ExecStartPre=/home/xui/service stop (code=exited, status=0/S>
+    Process: 49515 ExecStartPre=/usr/bin/pkill -u xui nginx (code=exited, statu>
+        CPU: 351ms
+
+nov 26 16:21:07 cableuno sudo[49493]: pam_unix(sudo:session): session closed fo>
+nov 26 16:21:08 cableuno sudo[49496]:     root : PWD=/ ; USER=root ; COMMAND=/u>
+nov 26 16:21:08 cableuno sudo[49496]: pam_unix(sudo:session): session opened fo>
+nov 26 16:21:08 cableuno sudo[49496]: pam_unix(sudo:session): session closed fo>
+nov 26 16:21:09 cableuno sudo[49513]:     root : PWD=/ ; USER=root ; COMMAND=/u>
+nov 26 16:21:09 cableuno sudo[49513]: pam_unix(sudo:session): session opened fo>
+nov 26 16:21:09 cableuno sudo[49513]: pam_unix(sudo:session): session closed fo>
+nov 26 16:21:10 cableuno systemd[1]: xui-fix.service: Control process exited, c>
+nov 26 16:21:10 cableuno systemd[1]: xui-fix.service: Failed with result 'exit->
+nov 26 16:21:10 cableuno systemd[1]: Failed to start xui-fix.service - XUI Port>
+...skipping...
+× xui-fix.service - XUI Port Fix and Start
+     Loaded: loaded (/etc/systemd/system/xui-fix.service; enabled; preset: enab>
+     Active: failed (Result: exit-code) since Wed 2025-11-26 16:21:10 CST; 22ms>
+    Process: 49302 ExecStartPre=/bin/sleep 5 (code=exited, status=0/SUCCESS)
+    Process: 49488 ExecStartPre=/home/xui/service stop (code=exited, status=0/S>
+    Process: 49515 ExecStartPre=/usr/bin/pkill -u xui nginx (code=exited, statu>
+        CPU: 351ms
+
+nov 26 16:21:07 cableuno sudo[49493]: pam_unix(sudo:session): session closed fo>
+nov 26 16:21:08 cableuno sudo[49496]:     root : PWD=/ ; USER=root ; COMMAND=/u>
+nov 26 16:21:08 cableuno sudo[49496]: pam_unix(sudo:session): session opened fo>
+nov 26 16:21:08 cableuno sudo[49496]: pam_unix(sudo:session): session closed fo>
+nov 26 16:21:09 cableuno sudo[49513]:     root : PWD=/ ; USER=root ; COMMAND=/u>
+nov 26 16:21:09 cableuno sudo[49513]: pam_unix(sudo:session): session opened fo>
+nov 26 16:21:09 cableuno sudo[49513]: pam_unix(sudo:session): session closed fo>
+nov 26 16:21:10 cableuno systemd[1]: xui-fix.service: Control process exited, c>
+nov 26 16:21:10 cableuno systemd[1]: xui-fix.service: Failed with result 'exit->
+nov 26 16:21:10 cableuno systemd[1]: Failed to start xui-fix.service - XUI Port>
+~
+~
+~
+~
+~
+ ESCOC
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+rt
+/xui-fix.service; enabled; preset: enabled)
+since Wed 2025-11-26 16:21:10 CST; 22ms ago
+ep 5 (code=exited, status=0/SUCCESS)
+i/service stop (code=exited, status=0/SUCCESS)
+/pkill -u xui nginx (code=exited, status=1/FAILURE)
+
+
+m_unix(sudo:session): session closed for user root
+  root : PWD=/ ; USER=root ; COMMAND=/usr/bin/killall -u xui
+m_unix(sudo:session): session opened for user root(uid=0) by (uid=0)
+m_unix(sudo:session): session closed for user root
+  root : PWD=/ ; USER=root ; COMMAND=/usr/bin/killall -u xui
+m_unix(sudo:session): session opened for user root(uid=0) by (uid=0)
+m_unix(sudo:session): session closed for user root
+-fix.service: Control process exited, code=exited, status=1/FAILURE
+-fix.service: Failed with result 'exit-code'.
+led to start xui-fix.service - XUI Port Fix and Start.
+~
+~
+~
+~
+~
+ ESCOC
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ed)
+ago
+
+CCESS)
+=1/FAILURE)
+
+
+ user root
+r/bin/killall -u xui
+ user root(uid=0) by (uid=0)
+ user root
+r/bin/killall -u xui
+ user root(uid=0) by (uid=0)
+ user root
+de=exited, status=1/FAILURE
+ode'.
+Fix and Start.
+~
+~
+~
+~
+~
+ ESCOC
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ed)
+ago
+
+CCESS)
+=1/FAILURE)
+
+
+ user root
+r/bin/killall -u xui
+ user root(uid=0) by (uid=0)
+ user root
+r/bin/killall -u xui
+ user root(uid=0) by (uid=0)
+ user root
+de=exited, status=1/FAILURE
+ode'.
+Fix and Start.
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+rt
+/xui-fix.service; enabled; preset: enabled)
+since Wed 2025-11-26 16:21:10 CST; 22ms ago
+ep 5 (code=exited, status=0/SUCCESS)
+i/service stop (code=exited, status=0/SUCCESS)
+/pkill -u xui nginx (code=exited, status=1/FAILURE)
+
+
+m_unix(sudo:session): session closed for user root
+  root : PWD=/ ; USER=root ; COMMAND=/usr/bin/killall -u xui
+m_unix(sudo:session): session opened for user root(uid=0) by (uid=0)
+m_unix(sudo:session): session closed for user root
+  root : PWD=/ ; USER=root ; COMMAND=/usr/bin/killall -u xui
+m_unix(sudo:session): session opened for user root(uid=0) by (uid=0)
+m_unix(sudo:session): session closed for user root
+-fix.service: Control process exited, code=exited, status=1/FAILURE
+-fix.service: Failed with result 'exit-code'.
+led to start xui-fix.service - XUI Port Fix and Start.
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+× xui-fix.service - XUI Port Fix and Start
+     Loaded: loaded (/etc/systemd/system/xui-fix.service; enabled; preset: enab>
+     Active: failed (Result: exit-code) since Wed 2025-11-26 16:21:10 CST; 22ms>
+    Process: 49302 ExecStartPre=/bin/sleep 5 (code=exited, status=0/SUCCESS)
+    Process: 49488 ExecStartPre=/home/xui/service stop (code=exited, status=0/S>
+    Process: 49515 ExecStartPre=/usr/bin/pkill -u xui nginx (code=exited, statu>
+        CPU: 351ms
+
+nov 26 16:21:07 cableuno sudo[49493]: pam_unix(sudo:session): session closed fo>
+nov 26 16:21:08 cableuno sudo[49496]:     root : PWD=/ ; USER=root ; COMMAND=/u>
+nov 26 16:21:08 cableuno sudo[49496]: pam_unix(sudo:session): session opened fo>
+nov 26 16:21:08 cableuno sudo[49496]: pam_unix(sudo:session): session closed fo>
+nov 26 16:21:09 cableuno sudo[49513]:     root : PWD=/ ; USER=root ; COMMAND=/u>
+nov 26 16:21:09 cableuno sudo[49513]: pam_unix(sudo:session): session opened fo>
+nov 26 16:21:09 cableuno sudo[49513]: pam_unix(sudo:session): session closed fo>
+nov 26 16:21:10 cableuno systemd[1]: xui-fix.service: Control process exited, c>
+nov 26 16:21:10 cableuno systemd[1]: xui-fix.service: Failed with result 'exit->
+nov 26 16:21:10 cableuno systemd[1]: Failed to start xui-fix.service - XUI Port>
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+× xui-fix.service - XUI Port Fix and Start
+     Loaded: loaded (/etc/systemd/system/xui-fix.service; enabled; preset: enab>
+     Active: failed (Result: exit-code) since Wed 2025-11-26 16:21:10 CST; 22ms>
+    Process: 49302 ExecStartPre=/bin/sleep 5 (code=exited, status=0/SUCCESS)
+    Process: 49488 ExecStartPre=/home/xui/service stop (code=exited, status=0/S>
+    Process: 49515 ExecStartPre=/usr/bin/pkill -u xui nginx (code=exited, statu>
+        CPU: 351ms
+
+nov 26 16:21:07 cableuno sudo[49493]: pam_unix(sudo:session): session closed fo>
+nov 26 16:21:08 cableuno sudo[49496]:     root : PWD=/ ; USER=root ; COMMAND=/u>
+nov 26 16:21:08 cableuno sudo[49496]: pam_unix(sudo:session): session opened fo>
+nov 26 16:21:08 cableuno sudo[49496]: pam_unix(sudo:session): session closed fo>
+nov 26 16:21:09 cableuno sudo[49513]:     root : PWD=/ ; USER=root ; COMMAND=/u>
+nov 26 16:21:09 cableuno sudo[49513]: pam_unix(sudo:session): session opened fo>
+nov 26 16:21:09 cableuno sudo[49513]: pam_unix(sudo:session): session closed fo>
+nov 26 16:21:10 cableuno systemd[1]: xui-fix.service: Control process exited, c>
+nov 26 16:21:10 cableuno systemd[1]: xui-fix.service: Failed with result 'exit->
+nov 26 16:21:10 cableuno systemd[1]: Failed to start xui-fix.service - XUI Port>
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+× xui-fix.service - XUI Port Fix and Start
+     Loaded: loaded (/etc/systemd/system/xui-fix.service; enabled; preset: enab>
+     Active: failed (Result: exit-code) since Wed 2025-11-26 16:21:10 CST; 22ms>
+    Process: 49302 ExecStartPre=/bin/sleep 5 (code=exited, status=0/SUCCESS)
+    Process: 49488 ExecStartPre=/home/xui/service stop (code=exited, status=0/S>
+    Process: 49515 ExecStartPre=/usr/bin/pkill -u xui nginx (code=exited, statu>
+        CPU: 351ms
+
+nov 26 16:21:07 cableuno sudo[49493]: pam_unix(sudo:session): session closed fo>
+nov 26 16:21:08 cableuno sudo[49496]:     root : PWD=/ ; USER=root ; COMMAND=/u>
+nov 26 16:21:08 cableuno sudo[49496]: pam_unix(sudo:session): session opened fo>
+nov 26 16:21:08 cableuno sudo[49496]: pam_unix(sudo:session): session closed fo>
+nov 26 16:21:09 cableuno sudo[49513]:     root : PWD=/ ; USER=root ; COMMAND=/u>
+nov 26 16:21:09 cableuno sudo[49513]: pam_unix(sudo:session): session opened fo>
+nov 26 16:21:09 cableuno sudo[49513]: pam_unix(sudo:session): session closed fo>
+nov 26 16:21:10 cableuno systemd[1]: xui-fix.service: Control process exited, c>
+nov 26 16:21:10 cableuno systemd[1]: xui-fix.service: Failed with result 'exit->
+nov 26 16:21:10 cableuno systemd[1]: Failed to start xui-fix.service - XUI Port>
+~
+~
+~
+~
+~
+ ESCOD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+× xui-fix.service - XUI Port Fix and Start
+     Loaded: loaded (/etc/systemd/system/xui-fix.service; enabled; preset: enab>
+     Active: failed (Result: exit-code) since Wed 2025-11-26 16:21:10 CST; 22ms>
+    Process: 49302 ExecStartPre=/bin/sleep 5 (code=exited, status=0/SUCCESS)
+    Process: 49488 ExecStartPre=/home/xui/service stop (code=exited, status=0/S>
+    Process: 49515 ExecStartPre=/usr/bin/pkill -u xui nginx (code=exited, statu>
+        CPU: 351ms
+
+nov 26 16:21:07 cableuno sudo[49493]: pam_unix(sudo:session): session closed fo>
+nov 26 16:21:08 cableuno sudo[49496]:     root : PWD=/ ; USER=root ; COMMAND=/u>
+nov 26 16:21:08 cableuno sudo[49496]: pam_unix(sudo:session): session opened fo>
+nov 26 16:21:08 cableuno sudo[49496]: pam_unix(sudo:session): session closed fo>
+nov 26 16:21:09 cableuno sudo[49513]:     root : PWD=/ ; USER=root ; COMMAND=/u>
+nov 26 16:21:09 cableuno sudo[49513]: pam_unix(sudo:session): session opened fo>
+nov 26 16:21:09 cableuno sudo[49513]: pam_unix(sudo:session): session closed fo>
+nov 26 16:21:10 cableuno systemd[1]: xui-fix.service: Control process exited, c>
+nov 26 16:21:10 cableuno systemd[1]: xui-fix.service: Failed with result 'exit->
+nov 26 16:21:10 cableuno systemd[1]: Failed to start xui-fix.service - XUI Port>
+~
+~
+~
+~
+~
