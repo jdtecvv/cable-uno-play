@@ -1,0 +1,187 @@
+[sudo] contraseña para cableuno: 
+root@cableuno:/home/cableuno# cd /var/www/cable-uno-play
+git pull origin main
+pm2 restart cable-uno-play
+remote: Enumerating objects: 446, done.
+remote: Counting objects: 100% (162/162), done.
+remote: Total 446 (delta 162), reused 162 (delta 162), pack-reused 284 (from 1)
+Recibiendo objetos: 100% (446/446), 68.19 MiB | 19.11 MiB/s, listo.
+Resolviendo deltas: 100% (378/378), completado con 34 objetos locales.
+Desde https://github.com/jdtecvv/cable-uno-play
+ * branch            main       -> FETCH_HEAD
+   8180eac..ea3c6fb  main       -> origin/main
+Actualizando 8180eac..ea3c6fb
+Fast-forward
+ .replit                                            |   11 +
+ .../app/src/main/res/mipmap-hdpi/ic_launcher.png   |  Bin 2786 -> 3687809 bytes
+ .../app/src/main/res/mipmap-mdpi/ic_launcher.png   |  Bin 1869 -> 3687809 bytes
+ .../app/src/main/res/mipmap-xhdpi/ic_launcher.png  |  Bin 3981 -> 3687809 bytes
+ .../app/src/main/res/mipmap-xxhdpi/ic_launcher.png |  Bin 6644 -> 3687809 bytes
+ .../src/main/res/mipmap-xxxhdpi/ic_launcher.png    |  Bin 9441 -> 3687809 bytes
+ ...a 2025-11-14 a la(s) 08.52.17_1763131949277.png |  Bin 0 -> 467559 bytes
+ ...2025-11-14 a la(s) 20.51.48 2_1763175115751.png |  Bin 0 -> 2158840 bytes
+ ...a 2025-11-14 a la(s) 20.51.48_1763175115751.png |  Bin 0 -> 689667 bytes
+ ...a 2025-11-14 a la(s) 21.08.29_1763176374590.png |  Bin 0 -> 658319 bytes
+ ...2025-11-14 a la(s) 21.08.49 2_1763176140920.png |  Bin 0 -> 2159004 bytes
+ ...a 2025-11-14 a la(s) 21.08.49_1763176140920.png |  Bin 0 -> 944529 bytes
+ ...2025-11-24 a la(s) 22.22.06 2_1764044532528.png |  Bin 0 -> 5374803 bytes
+ ...a 2025-11-24 a la(s) 22.22.06_1764044532528.png |  Bin 0 -> 740380 bytes
+ ...a 2025-11-26 a la(s) 18.58.52_1764205186872.png |  Bin 0 -> 3234523 bytes
+ ...a 2025-11-26 a la(s) 20.11.27_1764209566312.png |  Bin 0 -> 1872145 bytes
+ ...a 2025-11-26 a la(s) 21.27.55_1764221678977.png |  Bin 0 -> 1830805 bytes
+ ...a 2025-11-26 a la(s) 21.27.55_1764224162840.png |  Bin 0 -> 1830805 bytes
+ ...a 2025-11-26 a la(s) 21.28.12_1764216514098.png |  Bin 0 -> 1073214 bytes
+ ...2025-11-26 a la(s) 23.41.31 2_1764222097930.png |  Bin 0 -> 1149210 bytes
+ ...a 2025-11-26 a la(s) 23.41.31_1764222097930.png |  Bin 0 -> 3356866 bytes
+ ...25-11-27 a la(s) 00.15.33 (2)_1764224349817.png |  Bin 0 -> 2044835 bytes
+ ...2025-11-27 a la(s) 09.05.41 2_1764255945842.png |  Bin 0 -> 4238630 bytes
+ ...a 2025-11-27 a la(s) 09.05.41_1764255945842.png |  Bin 0 -> 768141 bytes
+ ...UI-is-not-runni-1764195112379_1764195112379.txt |   73 +
+ ...0-Starting-XUI--1764046831732_1764046831732.txt |   73 +
+ ...app-teleunotv-c-1763176055789_1763176055789.txt |   39 +
+ ...nning-in-foregr-1764217099956_1764217099956.txt |   74 +
+ ...Cambiar-puerto--1763176827042_1763176827042.txt |  128 +
+ ...uraci-n-de-Ngin-1764212087141_1764212087141.txt |   75 +
+ ...txt-create-mode-1763173943250_1763173943250.txt |  110 +
+ ...ose-cd-Desktop--1763131983945_1763131983945.txt |   53 +
+ ...se-sudo-lsof-ti-1763133029765_1763133029765.txt |   93 +
+ ...e-ssh-cableuno--1763173863708_1763173863708.txt |   88 +
+ ...ose-cd-Desktop--1763178692488_1763178692489.txt |   57 +
+ ...root-cableuno-h-1764195037173_1764195037173.txt |   54 +
+ ...root-cableuno-h-1764195448791_1764195448791.txt | 2263 +++++++++++++
+ ...e-cableuno-Veri-1764046647834_1764046647835.txt |  179 +
+ ...cableuno-mkdir--1764194453464_1764194453465.txt | 3419 ++++++++++++++++++++
+ ...tps-conf-PASO-6-1764195205273_1764195205274.txt |   89 +
+ ...-cableuno-grep--1763176548162_1763176548162.txt |  224 ++
+ ...26-20-53-54-cab-1764216852167_1764216852167.txt |   74 +
+ ...inx-conf-ports--1764044050756_1764044050757.txt | 1056 ++++++
+ ...es-Verificar-co-1764046364720_1764046364720.txt |   59 +
+ ...ableuno-root-ca-1764195522482_1764195522483.txt |   53 +
+ ...ableuno-root-ca-1764195996241_1764195996241.txt |   72 +
+ ...o-Paso-1-Ver-qu-1764194171280_1764194171281.txt |  143 +
+ ...ver-name-reques-1763176236780_1763176236780.txt |  652 ++++
+ ...live-timeout-5--1764195706836_1764195706837.txt |  527 +++
+ attached_assets/cable coaxial_1763183840677.png    |  Bin 0 -> 2084434 bytes
+ attached_assets/conector _1763183802388.png        |  Bin 0 -> 1306283 bytes
+ attached_assets/conector _1763183802667.png        |  Bin 0 -> 1306283 bytes
+ attached_assets/conector _1763183840678.png        |  Bin 0 -> 1306283 bytes
+ .../Cable_F_male_to_female_86e6bcb2.png            |  Bin 0 -> 515168 bytes
+ .../Cable_Uno_Play_coaxial_icon_92614748.png       |  Bin 0 -> 436784 bytes
+ .../Cable_Uno_Play_professional_icon_d8f242dd.png  |  Bin 0 -> 647229 bytes
+ .../Cable_Uno_exact_connector_match_b45890d6.png   |  Bin 0 -> 456648 bytes
+ .../Cable_Uno_logo_connector_O_27cd0bcf.png        |  Bin 0 -> 608747 bytes
+ .../Cable_Uno_screwed_cable_8618d349.png           |  Bin 0 -> 483576 bytes
+ .../Cable_Uno_single_connector_1dd0058d.png        |  Bin 0 -> 359665 bytes
+ .../Cable_Uno_subtle_connector_1bf8d6be.png        |  Bin 0 -> 448477 bytes
+ .../Cable_Uno_with_cable_down_25e5d372.png         |  Bin 0 -> 482199 bytes
+ .../Cable_Uno_with_connector_O_a94d1833.png        |  Bin 0 -> 675072 bytes
+ ...Cable_coaxial_connected_transition_466df2e3.png |  Bin 0 -> 431334 bytes
+ .../Cable_inserting_into_O_port_ae644985.png       |  Bin 0 -> 568320 bytes
+ .../Connector_O_transparent_PNG_0a1cca91.png       |  Bin 0 -> 1290970 bytes
+ .../Logo_typography_with_F-connector_56aea4bc.png  |  Bin 0 -> 400784 bytes
+ attached_assets/idea_1763183508719.png             |  Bin 0 -> 4450720 bytes
+ attached_assets/idea_1763183508721.png             |  Bin 0 -> 4450720 bytes
+ .../logo cable uno play_1763183796733.png          |  Bin 0 -> 3687809 bytes
+ .../logo cable uno play_1763183840678.png          |  Bin 0 -> 3687809 bytes
+ .../logo cable uno play_1763184046532.png          |  Bin 0 -> 3687809 bytes
+ .../logo cable uno play_1763187753866.png          |  Bin 0 -> 3687809 bytes
+ .../smarters-player-lite_1764253968115.apk         |  Bin 0 -> 45309895 bytes
+ ...al-Equipment-Step-2-Version-2_1763187223461.jpg |  Bin 0 -> 27059 bytes
+ client/index.html                                  |    3 +-
+ client/public/images/apple-touch-icon.png          |  Bin 0 -> 3687809 bytes
+ client/public/images/favicon.png                   |  Bin 0 -> 3687809 bytes
+ client/public/images/icon-192.png                  |  Bin 405887 -> 3687809 bytes
+ client/public/images/icon-512.png                  |  Bin 405887 -> 3687809 bytes
+ client/src/App.tsx                                 |    4 +
+ client/src/components/player/video-player.tsx      |   95 +-
+ client/src/pages/simple-player.tsx                 |  130 +-
+ client/src/pages/xui-player.tsx                    |  525 +++
+ config-dev-ios.sh                                  |   20 +-
+ package-lock.json                                  |  213 ++
+ package.json                                       |    1 +
+ replit.md                                          |   24 +-
+ server/index.ts                                    |   21 +-
+ server/routes.ts                                   |   72 +-
+ subir-a-servidor.sh                                |   40 +-
+ 91 files changed, 10723 insertions(+), 163 deletions(-)
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-14 a la(s) 08.52.17_1763131949277.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-14 a la(s) 20.51.48 2_1763175115751.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-14 a la(s) 20.51.48_1763175115751.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-14 a la(s) 21.08.29_1763176374590.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-14 a la(s) 21.08.49 2_1763176140920.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-14 a la(s) 21.08.49_1763176140920.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-24 a la(s) 22.22.06 2_1764044532528.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-24 a la(s) 22.22.06_1764044532528.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-26 a la(s) 18.58.52_1764205186872.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-26 a la(s) 20.11.27_1764209566312.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-26 a la(s) 21.27.55_1764221678977.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-26 a la(s) 21.27.55_1764224162840.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-26 a la(s) 21.28.12_1764216514098.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-26 a la(s) 23.41.31 2_1764222097930.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-26 a la(s) 23.41.31_1764222097930.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-27 a la(s) 00.15.33 (2)_1764224349817.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-27 a la(s) 09.05.41 2_1764255945842.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-27 a la(s) 09.05.41_1764255945842.png
+ create mode 100644 attached_assets/Pasted--PASO-3-Verificar-que-los-puertos-est-n-libres-sudo-lsof-i-80-sudo-lsof-i-443-XUI-is-not-runni-1764195112379_1764195112379.txt
+ create mode 100644 attached_assets/Pasted--PASO-8-Iniciar-XUI-home-xui-service-start-proxy-pass-http-127-0-0-1-80-Starting-XUI--1764046831732_1764046831732.txt
+ create mode 100644 attached_assets/Pasted--Reiniciar-Nginx-sudo-systemctl-restart-nginx-Probar-redirecci-n-curl-I-https-app-teleunotv-c-1763176055789_1763176055789.txt
+ create mode 100644 attached_assets/Pasted--home-xui-service-start-Stopping-XUI-Starting-XUI-Crontab-already-installed-Running-in-foregr-1764217099956_1764217099956.txt
+ create mode 100644 attached_assets/Pasted--rwxr-x-1-xui-xui-15-nov-12-06-37-https-conf-listen-80-listen-443-ssl-root-1-Cambiar-puerto--1763176827042_1763176827042.txt
+ create mode 100644 attached_assets/Pasted--sudo-contrase-a-para-cableuno-root-cableuno-home-cableuno-1-Editar-la-configuraci-n-de-Ngin-1764212087141_1764212087141.txt
+ create mode 100644 attached_assets/Pasted-1-Copiar-el-script-de-diagn-stico-cat-tmp-diagnostico-s-1763128401585-1763128401585-txt-create-mode-1763173943250_1763173943250.txt
+ create mode 100644 attached_assets/Pasted-Last-login-Fri-Nov-14-08-49-16-on-ttys000-josevalerinvillegas-MacBook-Pro-de-Jose-cd-Desktop--1763131983945_1763131983945.txt
+ create mode 100644 attached_assets/Pasted-Last-login-Fri-Nov-14-08-54-32-on-ttys005-josevalerinvillegas-MacBook-Pro-de-Jose-sudo-lsof-ti-1763133029765_1763133029765.txt
+ create mode 100644 attached_assets/Pasted-Last-login-Fri-Nov-14-09-02-54-on-ttys000-josevalerinvillegas-MacBook-Pro-de-Jose-ssh-cableuno--1763173863708_1763173863708.txt
+ create mode 100644 attached_assets/Pasted-Last-login-Fri-Nov-14-21-50-06-on-ttys001-josevalerinvillegas-MacBook-Pro-de-Jose-cd-Desktop--1763178692488_1763178692489.txt
+ create mode 100644 attached_assets/Pasted-Usage-home-xui-service-start-stop-restart-reload-root-cableuno-home-cableuno-root-cableuno-h-1764195037173_1764195037173.txt
+ create mode 100644 attached_assets/Pasted-Usage-home-xui-service-start-stop-restart-reload-root-cableuno-home-cableuno-root-cableuno-h-1764195448791_1764195448791.txt
+ create mode 100644 attached_assets/Pasted-cableuno-cableuno-sudo-su-sudo-contrase-a-para-cableuno-root-cableuno-home-cableuno-Veri-1764046647834_1764046647835.txt
+ create mode 100644 attached_assets/Pasted-cableuno-cableuno-sudo-su-sudo-contrase-a-para-cableuno-root-cableuno-home-cableuno-mkdir--1764194453464_1764194453465.txt
+ create mode 100644 attached_assets/Pasted-cat-home-xui-bin-nginx-conf-ports-http-conf-cat-home-xui-bin-nginx-conf-ports-https-conf-PASO-6-1764195205273_1764195205274.txt
+ create mode 100644 attached_assets/Pasted-grep-n-listen-home-xui-bin-nginx-conf-nginx-conf-head-20-root-cableuno-home-cableuno-grep--1763176548162_1763176548162.txt
+ create mode 100644 attached_assets/Pasted-nov-26-20-53-54-cableuno-systemd-1-Starting-nginx-service-A-high-performanc-nov-26-20-53-54-cab-1764216852167_1764216852167.txt
+ create mode 100644 attached_assets/Pasted-root-cableuno-home-cableuno-Ver-configuraci-n-de-puertos-XUI-cat-home-xui-bin-nginx-conf-ports--1764044050756_1764044050757.txt
+ create mode 100644 attached_assets/Pasted-root-cableuno-home-cableuno-Verificar-certificados-SSL-sudo-certbot-certificates-Verificar-co-1764046364720_1764046364720.txt
+ create mode 100644 attached_assets/Pasted-root-cableuno-home-cableuno-root-cableuno-home-cableuno-root-cableuno-home-cableuno-root-ca-1764195522482_1764195522483.txt
+ create mode 100644 attached_assets/Pasted-root-cableuno-home-cableuno-root-cableuno-home-cableuno-root-cableuno-home-cableuno-root-ca-1764195996241_1764195996241.txt
+ create mode 100644 attached_assets/Pasted-root-cableuno-home-cableuno-systemctl-restart-astra-root-cableuno-home-cableuno-Paso-1-Ver-qu-1764194171280_1764194171281.txt
+ create mode 100644 attached_assets/Pasted-server-listen-80-server-name-app-teleunotv-cr-return-301-https-server-name-reques-1763176236780_1763176236780.txt
+ create mode 100644 attached_assets/Pasted-tent-Length-2301-Date-Wed-26-Nov-2025-22-18-20-GMT-Connection-keep-alive-Keep-Alive-timeout-5--1764195706836_1764195706837.txt
+ create mode 100644 attached_assets/cable coaxial_1763183840677.png
+ create mode 100644 attached_assets/conector _1763183802388.png
+ create mode 100644 attached_assets/conector _1763183802667.png
+ create mode 100644 attached_assets/conector _1763183840678.png
+ create mode 100644 attached_assets/generated_images/Cable_F_male_to_female_86e6bcb2.png
+ create mode 100644 attached_assets/generated_images/Cable_Uno_Play_coaxial_icon_92614748.png
+ create mode 100644 attached_assets/generated_images/Cable_Uno_Play_professional_icon_d8f242dd.png
+ create mode 100644 attached_assets/generated_images/Cable_Uno_exact_connector_match_b45890d6.png
+ create mode 100644 attached_assets/generated_images/Cable_Uno_logo_connector_O_27cd0bcf.png
+ create mode 100644 attached_assets/generated_images/Cable_Uno_screwed_cable_8618d349.png
+ create mode 100644 attached_assets/generated_images/Cable_Uno_single_connector_1dd0058d.png
+ create mode 100644 attached_assets/generated_images/Cable_Uno_subtle_connector_1bf8d6be.png
+ create mode 100644 attached_assets/generated_images/Cable_Uno_with_cable_down_25e5d372.png
+ create mode 100644 attached_assets/generated_images/Cable_Uno_with_connector_O_a94d1833.png
+ create mode 100644 attached_assets/generated_images/Cable_coaxial_connected_transition_466df2e3.png
+ create mode 100644 attached_assets/generated_images/Cable_inserting_into_O_port_ae644985.png
+ create mode 100644 attached_assets/generated_images/Connector_O_transparent_PNG_0a1cca91.png
+ create mode 100644 attached_assets/generated_images/Logo_typography_with_F-connector_56aea4bc.png
+ create mode 100644 attached_assets/idea_1763183508719.png
+ create mode 100644 attached_assets/idea_1763183508721.png
+ create mode 100644 attached_assets/logo cable uno play_1763183796733.png
+ create mode 100644 attached_assets/logo cable uno play_1763183840678.png
+ create mode 100644 attached_assets/logo cable uno play_1763184046532.png
+ create mode 100644 attached_assets/logo cable uno play_1763187753866.png
+ create mode 100644 attached_assets/smarters-player-lite_1764253968115.apk
+ create mode 100644 attached_assets/v4-460px-Unscrew-a-Coaxial-Cable-From-Audiovisual-Equipment-Step-2-Version-2_1763187223461.jpg
+ create mode 100644 client/public/images/apple-touch-icon.png
+ create mode 100644 client/public/images/favicon.png
+ create mode 100644 client/src/pages/xui-player.tsx
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [cable-uno-play](ids: [ 0 ])
+[PM2] [cable-uno-play](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ cable-uno-play     │ fork     │ 1    │ online    │ 0%       │ 18.8mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@cableuno:/var/www/cable-uno-play# 
