@@ -371,6 +371,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Forward important headers from client to upstream server
       const upstreamHeaders: Record<string, string> = {};
       
+      // Get real client IP and forward it to upstream (XUI needs this to count connections correctly)
+      const clientIp = req.headers['x-forwarded-for'] as string || 
+                       req.headers['x-real-ip'] as string || 
+                       req.socket.remoteAddress || 
+                       'unknown';
+      // Send the original client IP to XUI server
+      upstreamHeaders['X-Forwarded-For'] = clientIp.split(',')[0].trim();
+      upstreamHeaders['X-Real-IP'] = clientIp.split(',')[0].trim();
+      
       // Extract credentials from custom header (secure approach)
       const streamAuth = req.headers['x-stream-auth'] as string | undefined;
       if (streamAuth) {
