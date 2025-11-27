@@ -84,9 +84,12 @@ export default function SimplePlayer() {
 
     setIsLoading(true);
     try {
+      // Normalize the URL by trimming whitespace
+      const normalizedUrl = m3uUrl.trim();
+      
       // Check if this is a direct stream URL (ends with .m3u8 or .ts)
-      const isDirectStream = m3uUrl.match(/\.(m3u8|ts)(\?.*)?$/i);
-      console.log("🎬 loadM3U called with URL:", m3uUrl);
+      const isDirectStream = normalizedUrl.match(/\.(m3u8|ts)(\?.*)?$/i);
+      console.log("🎬 loadM3U called with URL:", normalizedUrl);
       console.log("🎬 isDirectStream:", isDirectStream);
       
       let simpleChannels: SimpleChannel[];
@@ -95,7 +98,7 @@ export default function SimplePlayer() {
         // Direct stream URL - create a single channel entry
         simpleChannels = [{
           name: playlistName || "Canal Directo",
-          url: m3uUrl,
+          url: normalizedUrl,
           logo: undefined,
           group: "Directo",
         }];
@@ -106,7 +109,7 @@ export default function SimplePlayer() {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ url: m3uUrl }),
+          body: JSON.stringify({ url: normalizedUrl }),
         });
 
         if (!response.ok) {
@@ -125,7 +128,7 @@ export default function SimplePlayer() {
           // HLS stream disguised as M3U - treat as single channel
           simpleChannels = [{
             name: playlistName || "Canal Directo",
-            url: m3uUrl,
+            url: normalizedUrl,
             logo: undefined,
             group: "Directo",
           }];
