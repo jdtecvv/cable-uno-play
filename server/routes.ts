@@ -440,8 +440,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
         res.setHeader('ETag', etag);
       }
 
-      // Stream the response body directly without buffering in memory
-      if (response.body) {
+      // Check if this is an M3U8 playlist that needs URL rewriting
+      const isM3U8 = contentType?.includes('application/vnd.apple.mpegurl') || 
+                     contentType?.includes('application/x-mpegurl') ||
+                     contentType?.includes('audio/mpegurl') ||
+                     url.endsWith('.m3u8') || url.endsWith('.m3u');
+
+      if (isM3U8 && response.body) {
+        // For M3U8 playlists, we need to rewrite relative URLs to go through the proxy
+        const chunks: Uint8Array[] = [];
+        const reader = response.body.getReader();
+        
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          if (value) chunks.push(value);
+        }
+        
+        const decoder = new TextDecoder();
+        let playlist = decoder.decode(Buffer.concat(chunks.map(c => Buffer.from(c))));
+        
+        // Get base URL for resolving relative paths
+        const urlObj = new URL(url);
+        const baseUrl = url.substring(0, url.lastIndexOf('/') + 1);
+        
+        // Rewrite relative URLs in the playlist to use the proxy
+        // Match lines that are not comments (#) and are relative URLs
+        const lines = playlist.split('\n');
+        const rewrittenLines = lines.map(line => {
+          const trimmedLine = line.trim();
+          
+          // Skip empty lines and comments
+          if (!trimmedLine || trimmedLine.startsWith('#')) {
+            // But check for URI= in EXT-X tags (like EXT-X-KEY)
+            if (trimmedLine.includes('URI="')) {
+              return trimmedLine.replace(/URI="([^"]+)"/g, (match, uri) => {
+                if (uri.startsWith('http://') || uri.startsWith('https://')) {
+                  return `URI="/api/proxy/stream?url=${encodeURIComponent(uri)}"`;
+                } else {
+                  const absoluteUri = new URL(uri, baseUrl).href;
+                  return `URI="/api/proxy/stream?url=${encodeURIComponent(absoluteUri)}"`;
+                }
+              });
+            }
+            return line;
+          }
+          
+          // If it's already an absolute URL, proxy it
+          if (trimmedLine.startsWith('http://') || trimmedLine.startsWith('https://')) {
+            return `/api/proxy/stream?url=${encodeURIComponent(trimmedLine)}`;
+          }
+          
+          // It's a relative URL - resolve to absolute and proxy
+          const absoluteUrl = new URL(trimmedLine, baseUrl).href;
+          return `/api/proxy/stream?url=${encodeURIComponent(absoluteUrl)}`;
+        });
+        
+        const rewrittenPlaylist = rewrittenLines.join('\n');
+        
+        // Update content length for rewritten playlist
+        res.setHeader('Content-Length', Buffer.byteLength(rewrittenPlaylist));
+        res.send(rewrittenPlaylist);
+      } else if (response.body) {
+        // For non-M3U8 content (segments, etc.), stream directly
         const reader = response.body.getReader();
         
         const pump = async () => {
