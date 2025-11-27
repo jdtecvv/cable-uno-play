@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { parseM3U } from "@/lib/utils/m3u-parser";
 import VideoPlayer from "@/components/player/video-player";
-import { PlayIcon, TvIcon, SearchIcon, Trash2Icon, DownloadIcon, GridIcon, ListIcon, XIcon, ServerIcon } from "lucide-react";
+import { PlayIcon, TvIcon, SearchIcon, Trash2Icon, DownloadIcon, GridIcon, ListIcon, XIcon, UserIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
 
@@ -212,11 +212,16 @@ export default function SimplePlayer() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-6">
-        {/* Link a versión XUI */}
-        <div className="mb-4 flex justify-center">
-          <Link href="/xui" className="text-gray-400 hover:text-blue-500 text-sm transition-colors flex items-center gap-1">
-            <ServerIcon className="w-4 h-4" />
-            Versión XUI (con servidor, usuario y contraseña) →
+        {/* Link a versión XUI - Solo Clientes */}
+        <div className="mb-6 flex justify-center">
+          <Link href="/xui">
+            <Button
+              variant="outline"
+              className="border-blue-600/50 bg-blue-950/30 hover:bg-blue-900/50 hover:border-blue-500 text-blue-400 hover:text-blue-300 transition-all px-6 py-5 rounded-xl shadow-lg shadow-blue-900/20"
+            >
+              <UserIcon className="w-5 h-5 mr-2" />
+              <span className="font-semibold">Solo Clientes</span>
+            </Button>
           </Link>
         </div>
         
