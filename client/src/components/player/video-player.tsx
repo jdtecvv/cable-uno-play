@@ -110,11 +110,18 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
       const setupHls = async () => {
         let streamUrl = channel.url;
 
+        // Convert XUI /ts URLs to .m3u8 for HLS.js compatibility
+        // XUI streams ending in /ts are MPEG-TS direct streams, not HLS playlists
+        if (streamUrl.endsWith('/ts')) {
+          streamUrl = streamUrl.replace(/\/ts$/, '.m3u8');
+          console.log(`🔄 Converted XUI URL from /ts to .m3u8: ${streamUrl}`);
+        }
+
         // Always use proxy for HTTP streams (mixed content protection)
         // FFmpeg transcoding is disabled - use direct HLS.js playback
-        if (channel.url.startsWith('http://')) {
+        if (streamUrl.startsWith('http://')) {
           // Use normal proxy for HTTP streams (mixed content protection)
-          streamUrl = `/api/proxy/stream?url=${encodeURIComponent(channel.url)}`;
+          streamUrl = `/api/proxy/stream?url=${encodeURIComponent(streamUrl)}`;
         }
         
         // Check again before creating HLS instance

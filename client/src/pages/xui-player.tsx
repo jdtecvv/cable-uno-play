@@ -85,7 +85,8 @@ export default function XUIPlayer() {
     // Si el servidor ya tiene protocolo, usarlo; si no, agregar http://
     const protocol = server.startsWith('https://') || server.startsWith('http://') ? '' : 'http://';
     const baseUrl = `${protocol}${server}${port ? `:${port}` : ''}`;
-    return `${baseUrl}/get.php?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&type=m3u_plus&output=ts`;
+    // Usar output=m3u8 para obtener URLs HLS compatibles con HLS.js
+    return `${baseUrl}/get.php?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&type=m3u_plus&output=m3u8`;
   };
 
   const loadXUIPlaylist = async () => {
