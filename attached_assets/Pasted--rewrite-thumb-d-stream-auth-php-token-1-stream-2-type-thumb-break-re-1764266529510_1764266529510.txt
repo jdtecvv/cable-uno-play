@@ -1,0 +1,41 @@
+        rewrite ^/thumb/(.*)/(\d+)$ /stream/auth.php?token=$1&stream=$2&type=thumb break;
+        rewrite ^/playlist/(.*)/(.*)/(.*)$ /playlist.php?username=$1&password=$2&type=$3 break;
+        rewrite ^/playlist/(.*)/(.*)$ /playlist.php?username=$1&password=$2 break;
+        rewrite ^/player_api/(.*)/(.*)/(.*)$ /player_api.php?username=$1&password=$2&action=$3 break;
+        rewrite ^/player_api/(.*)/(.*)$ /player_api.php?username=$1&password=$2 break;
+        rewrite ^/epg/(.*)/(.*)/gz$ /epg.php?username=$1&password=$2&gzip=1 break;
+        rewrite ^/epg/(.*)/(.*)$ /epg.php?username=$1&password=$2 break;
+        rewrite ^/live/(.*)/(.*)/(\d+)\.(.*)$ /stream/auth.php?username=$1&password=$2&stream=$3&extension=$4&type=live break;
+        rewrite ^/live/(.*)/(.*)/(\d+)$ /stream/auth.php?username=$1&password=$2&stream=$3&extension=ts&type=live break;
+        rewrite ^/live/(.*)/(\d+)\.(.*)$ /stream/auth.php?token=$1&stream=$2&extension=$3&type=live break;
+        rewrite ^/live/(.*)/(\d+)$ /stream/auth.php?token=$1&stream=$2&extension=ts&type=live break;
+        rewrite ^/probe/(.*)$ /probe.php?data=$1 break;
+        rewrite ^/(.*)/(.*)/(\d+)\.(.*)$ /stream/auth.php?username=$1&password=$2&stream=$3&extension=$4&type=live break;
+        rewrite ^/(.*)/(.*)/(\d+)$ /stream/auth.php?username=$1&password=$2&stream=$3&extension=ts&type=live break;
+
+        location = /xmltv.php {
+            rewrite ^ /epg.php last;
+        }
+        
+        location = /get.php {
+root@cableuno:/home/cableuno# ls -la /home/xui/www/
+ls -la /home/xui/www/player_api.php
+total 536
+drwxr-xr-x  5 xui xui   4096 may 21  2025 .
+drwxr-xr-x 16 xui xui   4096 nov 26 16:12 ..
+drwxr-xr-x  2 xui xui   4096 sep 25  2024 admin
+-r-xr-x---  1 xui xui  75638 sep 25  2024 api.php
+-r-xr-x---  1 xui xui  48013 sep 25  2024 constants.php
+-r-xr-x---  1 xui xui  89137 sep 25  2024 enigma2.php
+-r-xr-x---  1 xui xui  27098 sep 25  2024 epg.php
+drwxr-xr-x  4 xui xui   4096 nov 26 17:25 images
+-r-xr-x---  1 xui xui    635 sep 25  2024 index.html
+-r-xr-x---  1 xui xui   6217 sep 25  2024 init.php
+-r-xr-x---  1 xui xui 178834 sep 25  2024 player_api.php
+-r-xr-x---  1 xui xui  23121 sep 25  2024 playlist.php
+-r-xr-x---  1 xui xui  23070 sep 25  2024 probe.php
+-r-xr-x---  1 xui xui   4356 sep 25  2024 progress.php
+drwxr-xr-x  2 xui xui   4096 sep 25  2024 stream
+-r-xr-x---  1 xui xui  30935 sep 25  2024 xplugin.php
+-r-xr-x--- 1 xui xui 178834 sep 25  2024 /home/xui/www/player_api.php
+root@cableuno:/home/cableuno# 
