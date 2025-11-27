@@ -84,32 +84,63 @@ export default function SimplePlayer() {
 
     setIsLoading(true);
     try {
-      // Use proxy endpoint to avoid CORS issues
-      const response = await fetch('/api/proxy/m3u', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ url: m3uUrl }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "No se pudo cargar la URL");
-      }
-
-      const { content } = await response.json();
-      const playlist = parseM3U(content);
+      // Check if this is a direct stream URL (ends with .m3u8 or .ts)
+      const isDirectStream = m3uUrl.match(/\.(m3u8|ts)(\?.*)?$/i);
       
-      const simpleChannels: SimpleChannel[] = playlist.items.map(item => ({
-        name: item.name,
-        url: item.url,
-        logo: item.tvg?.logo || undefined,
-        group: item.group?.title || undefined,
-        // Usar credenciales del M3U si existen
-        username: item.username || undefined,
-        password: item.password || undefined,
-      }));
+      let simpleChannels: SimpleChannel[];
+      
+      if (isDirectStream) {
+        // Direct stream URL - create a single channel entry
+        simpleChannels = [{
+          name: playlistName || "Canal Directo",
+          url: m3uUrl,
+          logo: undefined,
+          group: "Directo",
+        }];
+      } else {
+        // M3U playlist - fetch and parse
+        const response = await fetch('/api/proxy/m3u', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ url: m3uUrl }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || "No se pudo cargar la URL");
+        }
+
+        const { content } = await response.json();
+        
+        // Check if the content is an HLS playlist (not a channel list)
+        const isHLSPlaylist = content.includes('#EXT-X-STREAM-INF') || 
+                              content.includes('#EXT-X-TARGETDURATION') ||
+                              content.includes('#EXT-X-MEDIA-SEQUENCE');
+        
+        if (isHLSPlaylist) {
+          // HLS stream disguised as M3U - treat as single channel
+          simpleChannels = [{
+            name: playlistName || "Canal Directo",
+            url: m3uUrl,
+            logo: undefined,
+            group: "Directo",
+          }];
+        } else {
+          // Regular M3U channel list
+          const playlist = parseM3U(content);
+          
+          simpleChannels = playlist.items.map(item => ({
+            name: item.name,
+            url: item.url,
+            logo: item.tvg?.logo || undefined,
+            group: item.group?.title || undefined,
+            username: item.username || undefined,
+            password: item.password || undefined,
+          }));
+        }
+      }
 
       setChannels(simpleChannels);
       localStorage.setItem('simple-channels', JSON.stringify(simpleChannels));
