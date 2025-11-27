@@ -1,0 +1,74 @@
+/home/xui/service start
+Stopping XUI...
+Starting XUI...
+Crontab already installed
+
+Running in foreground...
+^C
+root@cableuno:/home/cableuno# sudo systemctl start nginx
+sudo systemctl status nginx
+● nginx.service - A high performance web server and a reverse proxy server
+     Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; preset: en>
+     Active: active (running) since Wed 2025-11-26 22:17:47 CST; 41ms ago
+       Docs: man:nginx(8)
+    Process: 281672 ExecStartPre=/usr/sbin/nginx -t -q -g daemon on; master_pro>
+    Process: 281690 ExecStart=/usr/sbin/nginx -g daemon on; master_process on; >
+   Main PID: 281691 (nginx)
+      Tasks: 49 (limit: 231837)
+     Memory: 37.7M (peak: 38.6M)
+        CPU: 280ms
+     CGroup: /system.slice/nginx.service
+             ├─281691 "nginx: master process /usr/sbin/nginx -g daemon on; mast>
+             ├─281692 "nginx: worker process"
+             ├─281693 "nginx: worker process"
+             ├─281694 "nginx: worker process"
+             ├─281695 "nginx: worker process"
+             ├─281696 "nginx: worker process"
+             ├─281697 "nginx: worker process"
+             ├─281698 "nginx: worker process"
+             ├─281699 "nginx: worker process"
+             ├─281700 "nginx: worker process"
+             ├─281701 "nginx: worker process"
+             ├─281703 "nginx: worker process"
+             ├─281704 "nginx: worker process"
+             ├─281705 "nginx: worker process"
+             ├─281706 "nginx: worker process"
+             ├─281707 "nginx: worker process"
+             ├─281708 "nginx: worker process"
+             ├─281709 "nginx: worker process"
+             ├─281710 "nginx: worker process"
+             ├─281711 "nginx: worker process"
+             ├─281712 "nginx: worker process"
+             ├─281714 "nginx: worker process"
+             ├─281715 "nginx: worker process"
+             ├─281716 "nginx: worker process"
+             ├─281717 "nginx: worker process"
+             ├─281718 "nginx: worker process"
+             ├─281719 "nginx: worker process"
+             ├─281720 "nginx: worker process"
+             ├─281721 "nginx: worker process"
+             ├─281722 "nginx: worker process"
+             ├─281723 "nginx: worker process"
+             ├─281724 "nginx: worker process"
+             ├─281725 "nginx: worker process"
+             ├─281726 "nginx: worker process"
+             ├─281727 "nginx: worker process"
+             ├─281728 "nginx: worker process"
+             ├─281729 "nginx: worker process"
+             ├─281730 "nginx: worker process"
+             ├─281731 "nginx: worker process"
+             ├─281732 "nginx: worker process"
+             ├─281733 "nginx: worker process"
+             ├─281734 "nginx: worker process"
+             ├─281735 "nginx: worker process"
+             ├─281736 "nginx: worker process"
+             ├─281737 "nginx: worker process"
+             ├─281738 "nginx: worker process"
+             ├─281739 "nginx: worker process"
+             ├─281740 "nginx: worker process"
+             └─281741 "nginx: worker process"
+
+nov 26 22:17:47 cableuno systemd[1]: Starting nginx.service - A high performanc>
+nov 26 22:17:47 cableuno systemd[1]: Started nginx.service - A high performance>
+
+root@cableuno:/home/cableuno# 
