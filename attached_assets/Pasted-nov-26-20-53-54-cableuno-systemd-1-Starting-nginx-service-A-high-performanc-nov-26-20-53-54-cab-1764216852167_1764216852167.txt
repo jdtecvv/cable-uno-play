@@ -1,0 +1,74 @@
+nov 26 20:53:54 cableuno systemd[1]: Starting nginx.service - A high performanc>
+nov 26 20:53:54 cableuno systemd[1]: Started nginx.service - A high performance>
+
+root@cableuno:/home/cableuno# sudo apt update && sudo apt install -y ffmpeg
+Ign:1 http://nimblestreamer.com/ubuntu jammy/ InRelease                        
+Des:2 http://security.ubuntu.com/ubuntu noble-security InRelease [126 kB]      
+Obj:3 http://nimblestreamer.com/ubuntu jammy/ Release                          
+Obj:4 https://deb.nodesource.com/node_20.x nodistro InRelease                  
+Obj:5 http://cr.archive.ubuntu.com/ubuntu noble InRelease                      
+Des:6 http://cr.archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+Obj:7 http://cr.archive.ubuntu.com/ubuntu noble-backports InRelease  
+Des:9 http://cr.archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1 619 kB]
+Des:10 http://cr.archive.ubuntu.com/ubuntu noble-updates/main i386 Packages [554 kB]
+Des:11 http://cr.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1 500 kB]
+Des:12 http://cr.archive.ubuntu.com/ubuntu noble-updates/universe i386 Packages [990 kB]
+Des:13 http://cr.archive.ubuntu.com/ubuntu noble-updates/universe amd64 c-n-f Metadata [31,4 kB]
+Des:14 http://security.ubuntu.com/ubuntu noble-security/main amd64 Components [21,5 kB]
+Des:15 http://security.ubuntu.com/ubuntu noble-security/restricted amd64 Components [212 B]
+Des:16 http://security.ubuntu.com/ubuntu noble-security/universe amd64 Components [52,3 kB]
+Des:17 http://security.ubuntu.com/ubuntu noble-security/multiverse amd64 Components [212 B]
+Descargados 5 021 kB en 3s (1 916 kB/s)                           
+Leyendo lista de paquetes... Hecho
+Creando árbol de dependencias... Hecho
+Leyendo la información de estado... Hecho
+Se pueden actualizar 3 paquetes. Ejecute «apt list --upgradable» para verlos.
+Leyendo lista de paquetes... Hecho
+Creando árbol de dependencias... Hecho
+Leyendo la información de estado... Hecho
+ffmpeg ya está en su versión más reciente (7:6.1.1-3ubuntu5).
+Los paquetes indicados a continuación se instalaron de forma automática y ya no son necesarios.
+  libgl1-amber-dri libglapi-mesa libllvm19 libzip5 mailcap
+Utilice «sudo apt autoremove» para eliminarlos.
+0 actualizados, 0 nuevos se instalarán, 0 para eliminar y 3 no actualizados.
+root@cableuno:/home/cableuno# sudo apt update && sudo apt install -y ffmpeg
+Obj:1 http://cr.archive.ubuntu.com/ubuntu noble InRelease
+Obj:2 http://cr.archive.ubuntu.com/ubuntu noble-updates InRelease              
+Obj:3 http://cr.archive.ubuntu.com/ubuntu noble-backports InRelease            
+Obj:4 https://deb.nodesource.com/node_20.x nodistro InRelease                  
+Ign:5 http://nimblestreamer.com/ubuntu jammy/ InRelease                        
+Obj:6 http://nimblestreamer.com/ubuntu jammy/ Release          
+Obj:7 http://security.ubuntu.com/ubuntu noble-security InRelease
+Leyendo lista de paquetes... Hecho
+Creando árbol de dependencias... Hecho
+Leyendo la información de estado... Hecho
+Se pueden actualizar 3 paquetes. Ejecute «apt list --upgradable» para verlos.
+Leyendo lista de paquetes... Hecho
+Creando árbol de dependencias... Hecho
+Leyendo la información de estado... Hecho
+ffmpeg ya está en su versión más reciente (7:6.1.1-3ubuntu5).
+Los paquetes indicados a continuación se instalaron de forma automática y ya no son necesarios.
+  libgl1-amber-dri libglapi-mesa libllvm19 libzip5 mailcap
+Utilice «sudo apt autoremove» para eliminarlos.
+0 actualizados, 0 nuevos se instalarán, 0 para eliminar y 3 no actualizados.
+root@cableuno:/home/cableuno# /home/xui/service restart
+Starting XUI...
+[26-Nov-2025 22:13:27] ERROR: Another FPM instance seems to already listen on /home/xui/bin/php/sockets/3.sock
+[26-Nov-2025 22:13:27] ERROR: FPM initialization failed
+Crontab already installed
+
+Running in foreground...
+^C
+root@cableuno:/home/cableuno# ffmpeg -version
+ffmpeg version 6.1.1-3ubuntu5 Copyright (c) 2000-2023 the FFmpeg developers
+built with gcc 13 (Ubuntu 13.2.0-23ubuntu3)
+configuration: --prefix=/usr --extra-version=3ubuntu5 --toolchain=hardened --libdir=/usr/lib/x86_64-linux-gnu --incdir=/usr/include/x86_64-linux-gnu --arch=amd64 --enable-gpl --disable-stripping --disable-omx --enable-gnutls --enable-libaom --enable-libass --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libcodec2 --enable-libdav1d --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libglslang --enable-libgme --enable-libgsm --enable-libharfbuzz --enable-libmp3lame --enable-libmysofa --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libtheora --enable-libtwolame --enable-libvidstab --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libx265 --enable-libxml2 --enable-libxvid --enable-libzimg --enable-openal --enable-opencl --enable-opengl --disable-sndio --enable-libvpl --disable-libmfx --enable-libdc1394 --enable-libdrm --enable-libiec61883 --enable-chromaprint --enable-frei0r --enable-ladspa --enable-libbluray --enable-libjack --enable-libpulse --enable-librabbitmq --enable-librist --enable-libsrt --enable-libssh --enable-libsvtav1 --enable-libx264 --enable-libzmq --enable-libzvbi --enable-lv2 --enable-sdl2 --enable-libplacebo --enable-librav1e --enable-pocketsphinx --enable-librsvg --enable-libjxl --enable-shared
+libavutil      58. 29.100 / 58. 29.100
+libavcodec     60. 31.102 / 60. 31.102
+libavformat    60. 16.100 / 60. 16.100
+libavdevice    60.  3.100 / 60.  3.100
+libavfilter     9. 12.100 /  9. 12.100
+libswscale      7.  5.100 /  7.  5.100
+libswresample   4. 12.100 /  4. 12.100
+libpostproc    57.  3.100 / 57.  3.100
+root@cableuno:/home/cableuno# 
