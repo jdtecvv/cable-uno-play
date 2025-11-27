@@ -122,8 +122,16 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
           console.log(`🔄 Converted XUI URL from /ts to /m3u8: ${streamUrl}`);
         }
 
-        // Always use proxy for HTTP streams (mixed content protection)
-        // FFmpeg transcoding is disabled - use direct HLS.js playback
+        // Convert XUI HTTP URLs to HTTPS (direct connection without proxy)
+        // This allows XUI to see the real client IP instead of proxy IP
+        // app.teleunotv.cr:81 (HTTP) -> app.teleunotv.cr (HTTPS via System Nginx :443)
+        if (streamUrl.includes('app.teleunotv.cr:81')) {
+          streamUrl = streamUrl.replace('http://app.teleunotv.cr:81', 'https://app.teleunotv.cr');
+          console.log(`🔒 Converted XUI URL to HTTPS: ${streamUrl}`);
+        }
+
+        // Use proxy only for HTTP streams that are NOT from our XUI server
+        // (mixed content protection for external streams)
         if (streamUrl.startsWith('http://')) {
           // Use normal proxy for HTTP streams (mixed content protection)
           streamUrl = `/api/proxy/stream?url=${encodeURIComponent(streamUrl)}`;
@@ -152,33 +160,33 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
             levelLoadingTimeOut: 15000,    // 15s timeout for level
             // Intercept ALL XHR requests made by HLS.js
             xhrSetup: function(xhr: XMLHttpRequest, url: string) {
+              let finalUrl = url;
+              
+              // Convert XUI HTTP URLs to HTTPS (segments referenced in manifest)
+              if (url.includes('app.teleunotv.cr:81')) {
+                finalUrl = url.replace('http://app.teleunotv.cr:81', 'https://app.teleunotv.cr');
+                xhr.open('GET', finalUrl, true);
+              }
+              
               // Handle HTTP URLs - redirect through proxy to avoid Mixed Content
-              if (url.startsWith('http://')) {
-                const proxiedUrl = `/api/proxy/stream?url=${encodeURIComponent(url)}`;
+              // (only for non-XUI streams)
+              if (finalUrl.startsWith('http://')) {
+                const proxiedUrl = `/api/proxy/stream?url=${encodeURIComponent(finalUrl)}`;
                 xhr.open('GET', proxiedUrl, true);
-                
-                // Send session ID to identify this player instance (reduces XUI connection count)
-                xhr.setRequestHeader('X-Session-ID', sessionId);
                 
                 // Send credentials via header for proxy to forward
                 if (username && password) {
                   const credentials = btoa(`${username}:${password}`);
                   xhr.setRequestHeader('X-Stream-Auth', credentials);
                 }
-              } else if (url.startsWith('/api/proxy/stream')) {
+              } else if (finalUrl.startsWith('/api/proxy/stream')) {
                 // Already proxied URL (manifests reference segments via proxy) - add credentials
-                // Send session ID to identify this player instance
-                xhr.setRequestHeader('X-Session-ID', sessionId);
-                
                 if (username && password) {
                   const credentials = btoa(`${username}:${password}`);
                   xhr.setRequestHeader('X-Stream-Auth', credentials);
                 }
-              } else if (url.startsWith('https://')) {
+              } else if (finalUrl.startsWith('https://')) {
                 // For HTTPS URLs, add Authorization header directly (no proxy needed)
-                // Send session ID to identify this player instance
-                xhr.setRequestHeader('X-Session-ID', sessionId);
-                
                 if (username && password) {
                   const credentials = btoa(`${username}:${password}`);
                   xhr.setRequestHeader('Authorization', `Basic ${credentials}`);
