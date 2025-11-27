@@ -110,71 +110,9 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
       const setupHls = async () => {
         let streamUrl = channel.url;
 
-        // If transcoding enabled, create transcoding session (supports both HTTP and HTTPS)
-        if (useTranscoding) {
-          try {
-            const headers: Record<string, string> = {
-              'Content-Type': 'application/json',
-            };
-            
-            // Add auth header if credentials provided
-            if (username && password) {
-              const credentials = btoa(`${username}:${password}`);
-              headers['X-Stream-Auth'] = credentials;
-            }
-
-            // Don't abort - let request complete so we can cleanup the session
-            const response = await fetch('/api/proxy/stream-transcode/sessions', {
-              method: 'POST',
-              headers,
-              body: JSON.stringify({ url: channel.url }),
-            });
-
-            if (!response.ok) {
-              const error = await response.json();
-              throw new Error(error.message || 'Failed to create transcoding session');
-            }
-
-            const data = await response.json();
-
-            // Check if component is still mounted
-            if (!isMounted) {
-              // Component unmounted during fetch, clean up session immediately
-              if (data.sessionId) {
-                fetch(`/api/proxy/stream-transcode/sessions/${data.sessionId}`, {
-                  method: 'DELETE',
-                }).catch(err => console.error('Failed to cleanup orphaned session:', err));
-              }
-              return;
-            }
-
-            // Component still mounted, use the session
-            transcodingSessionIdRef.current = data.sessionId;
-            streamUrl = data.playlistUrl;
-            
-            console.log(`🎵 Transcoding session created: ${transcodingSessionIdRef.current}`);
-            console.log(`📡 Original URL: ${channel.url}`);
-            console.log(`🔄 Transcoded URL: ${streamUrl}`);
-          } catch (error) {
-            console.error('❌ Transcoding session error:', error);
-            
-            if (isMounted) {
-              toast({
-                title: "Error de transcodificación",
-                description: error instanceof Error ? error.message : "No se pudo iniciar transcodificación. Usando stream original.",
-                variant: "destructive",
-              });
-            }
-            
-            // Fallback to direct stream or proxy
-            if (channel.url.startsWith('http://')) {
-              // Use proxy for HTTP to avoid mixed content
-              streamUrl = `/api/proxy/stream?url=${encodeURIComponent(channel.url)}`;
-            } else {
-              streamUrl = channel.url;
-            }
-          }
-        } else if (channel.url.startsWith('http://')) {
+        // Always use proxy for HTTP streams (mixed content protection)
+        // FFmpeg transcoding is disabled - use direct HLS.js playback
+        if (channel.url.startsWith('http://')) {
           // Use normal proxy for HTTP streams (mixed content protection)
           streamUrl = `/api/proxy/stream?url=${encodeURIComponent(channel.url)}`;
         }
