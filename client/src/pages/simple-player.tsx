@@ -86,6 +86,8 @@ export default function SimplePlayer() {
     try {
       // Check if this is a direct stream URL (ends with .m3u8 or .ts)
       const isDirectStream = m3uUrl.match(/\.(m3u8|ts)(\?.*)?$/i);
+      console.log("🎬 loadM3U called with URL:", m3uUrl);
+      console.log("🎬 isDirectStream:", isDirectStream);
       
       let simpleChannels: SimpleChannel[];
       
