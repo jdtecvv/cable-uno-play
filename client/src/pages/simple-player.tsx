@@ -64,9 +64,9 @@ export default function SimplePlayer() {
   };
 
   const loadM3U = async () => {
-    // v3.0 - Direct stream detection with debug
-    alert("Código v3.0 - URL: " + m3uUrl);
-    if (!m3uUrl) {
+    const urlToLoad = m3uUrl.trim();
+    
+    if (!urlToLoad) {
       toast({
         title: "Error",
         description: "Por favor ingresa una URL de M3U",
@@ -86,33 +86,30 @@ export default function SimplePlayer() {
 
     setIsLoading(true);
     try {
-      // Normalize the URL by trimming whitespace
-      const normalizedUrl = m3uUrl.trim();
-      
-      // Check if this is a direct stream URL (ends with .m3u8 or .ts)
-      const isDirectStream = normalizedUrl.match(/\.(m3u8|ts)(\?.*)?$/i);
-      
       let simpleChannels: SimpleChannel[];
+      
+      // Check if this is a direct stream URL (ends with .m3u8, .ts, or contains stream indicators)
+      const isDirectStream = urlToLoad.match(/\.(m3u8|ts)(\?.*)?$/i) || 
+                             urlToLoad.includes('/live/') ||
+                             urlToLoad.includes('/playlist.m3u8') ||
+                             urlToLoad.includes(':1935/');
       
       if (isDirectStream) {
         // Direct stream URL - create a single channel entry
-        alert("✅ Detectado como stream directo .m3u8");
         simpleChannels = [{
-          name: playlistName || "Canal Directo",
-          url: normalizedUrl,
+          name: playlistName.trim() || "Canal Directo",
+          url: urlToLoad,
           logo: undefined,
           group: "Directo",
         }];
       } else {
-        alert("❌ NO detectado como stream directo, llamando API...");
-        
         // M3U playlist - fetch and parse
         const response = await fetch('/api/proxy/m3u', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ url: normalizedUrl }),
+          body: JSON.stringify({ url: urlToLoad }),
         });
 
         if (!response.ok) {
@@ -130,8 +127,8 @@ export default function SimplePlayer() {
         if (isHLSPlaylist) {
           // HLS stream disguised as M3U - treat as single channel
           simpleChannels = [{
-            name: playlistName || "Canal Directo",
-            url: normalizedUrl,
+            name: playlistName.trim() || "Canal Directo",
+            url: urlToLoad,
             logo: undefined,
             group: "Directo",
           }];
@@ -162,8 +159,8 @@ export default function SimplePlayer() {
     } catch (error) {
       console.error("Error loading M3U:", error);
       toast({
-        title: "Error v2",
-        description: error instanceof Error ? error.message : "No se pudo cargar el M3U",
+        title: "Error",
+        description: error instanceof Error ? error.message : "No se pudo cargar la lista",
         variant: "destructive",
       });
     } finally {
