@@ -1,0 +1,75 @@
+[sudo] contraseña para cableuno: 
+root@cableuno:/home/cableuno# # 1. Editar la configuración de Nginx para XUI
+sudo nano /etc/nginx/sites-enabled/app.teleunotv.cr
+root@cableuno:/home/cableuno# sudo nginx -t && sudo systemctl reload nginx
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+nginx.service is not active, cannot reload.
+root@cableuno:/home/cableuno# sudo systemctl start nginx
+sudo systemctl enable nginx
+sudo systemctl status nginx
+Synchronizing state of nginx.service with SysV service script with /usr/lib/systemd/systemd-sysv-install.
+Executing: /usr/lib/systemd/systemd-sysv-install enable nginx
+● nginx.service - A high performance web server and a reverse proxy server
+     Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; preset: en>
+     Active: active (running) since Wed 2025-11-26 20:53:54 CST; 2s ago
+       Docs: man:nginx(8)
+   Main PID: 83499 (nginx)
+      Tasks: 49 (limit: 231837)
+     Memory: 35.7M (peak: 37.8M)
+        CPU: 274ms
+     CGroup: /system.slice/nginx.service
+             ├─83499 "nginx: master process /usr/sbin/nginx -g daemon on; maste>
+             ├─83500 "nginx: worker process"
+             ├─83501 "nginx: worker process"
+             ├─83502 "nginx: worker process"
+             ├─83503 "nginx: worker process"
+             ├─83504 "nginx: worker process"
+             ├─83505 "nginx: worker process"
+             ├─83506 "nginx: worker process"
+             ├─83508 "nginx: worker process"
+             ├─83509 "nginx: worker process"
+             ├─83510 "nginx: worker process"
+             ├─83511 "nginx: worker process"
+             ├─83512 "nginx: worker process"
+             ├─83513 "nginx: worker process"
+             ├─83514 "nginx: worker process"
+             ├─83515 "nginx: worker process"
+             ├─83517 "nginx: worker process"
+             ├─83518 "nginx: worker process"
+             ├─83519 "nginx: worker process"
+             ├─83520 "nginx: worker process"
+             ├─83521 "nginx: worker process"
+             ├─83522 "nginx: worker process"
+             ├─83523 "nginx: worker process"
+             ├─83524 "nginx: worker process"
+             ├─83525 "nginx: worker process"
+             ├─83526 "nginx: worker process"
+             ├─83527 "nginx: worker process"
+             ├─83528 "nginx: worker process"
+             ├─83529 "nginx: worker process"
+             ├─83530 "nginx: worker process"
+             ├─83531 "nginx: worker process"
+             ├─83532 "nginx: worker process"
+             ├─83533 "nginx: worker process"
+             ├─83534 "nginx: worker process"
+             ├─83535 "nginx: worker process"
+             ├─83536 "nginx: worker process"
+             ├─83537 "nginx: worker process"
+             ├─83538 "nginx: worker process"
+             ├─83539 "nginx: worker process"
+             ├─83540 "nginx: worker process"
+             ├─83541 "nginx: worker process"
+             ├─83542 "nginx: worker process"
+             ├─83544 "nginx: worker process"
+             ├─83546 "nginx: worker process"
+             ├─83547 "nginx: worker process"
+             ├─83548 "nginx: worker process"
+             ├─83549 "nginx: worker process"
+             ├─83550 "nginx: worker process"
+             └─83551 "nginx: worker process"
+
+nov 26 20:53:54 cableuno systemd[1]: Starting nginx.service - A high performanc>
+nov 26 20:53:54 cableuno systemd[1]: Started nginx.service - A high performance>
+
+root@cableuno:/home/cableuno# 
