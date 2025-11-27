@@ -98,6 +98,9 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
       }
     }, [channel?.id, queryClient]);
 
+    // Generate unique session ID for this player instance (persists across segment requests)
+    const sessionIdRef = useRef<string>(`${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
+
     // Initialize HLS.js
     useEffect(() => {
       if (!videoRef.current || !channel?.url) return;
@@ -106,6 +109,7 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
       setError(null);
       
       let isMounted = true;
+      const sessionId = sessionIdRef.current;
   
       const setupHls = async () => {
         let streamUrl = channel.url;
@@ -153,6 +157,9 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
                 const proxiedUrl = `/api/proxy/stream?url=${encodeURIComponent(url)}`;
                 xhr.open('GET', proxiedUrl, true);
                 
+                // Send session ID to identify this player instance (reduces XUI connection count)
+                xhr.setRequestHeader('X-Session-ID', sessionId);
+                
                 // Send credentials via header for proxy to forward
                 if (username && password) {
                   const credentials = btoa(`${username}:${password}`);
@@ -160,12 +167,18 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
                 }
               } else if (url.startsWith('/api/proxy/stream')) {
                 // Already proxied URL (manifests reference segments via proxy) - add credentials
+                // Send session ID to identify this player instance
+                xhr.setRequestHeader('X-Session-ID', sessionId);
+                
                 if (username && password) {
                   const credentials = btoa(`${username}:${password}`);
                   xhr.setRequestHeader('X-Stream-Auth', credentials);
                 }
               } else if (url.startsWith('https://')) {
                 // For HTTPS URLs, add Authorization header directly (no proxy needed)
+                // Send session ID to identify this player instance
+                xhr.setRequestHeader('X-Session-ID', sessionId);
+                
                 if (username && password) {
                   const credentials = btoa(`${username}:${password}`);
                   xhr.setRequestHeader('Authorization', `Basic ${credentials}`);

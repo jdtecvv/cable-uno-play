@@ -380,6 +380,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       upstreamHeaders['X-Forwarded-For'] = clientIp.split(',')[0].trim();
       upstreamHeaders['X-Real-IP'] = clientIp.split(',')[0].trim();
       
+      // Forward session ID to help XUI identify same user across multiple segment requests
+      const sessionId = req.headers['x-session-id'] as string | undefined;
+      if (sessionId) {
+        upstreamHeaders['X-Session-ID'] = sessionId;
+      }
+      
+      // Enable Keep-Alive for persistent connections (reduces connection count on XUI)
+      upstreamHeaders['Connection'] = 'keep-alive';
+      upstreamHeaders['Keep-Alive'] = 'timeout=300, max=1000';
+      
       // Extract credentials from custom header (secure approach)
       const streamAuth = req.headers['x-stream-auth'] as string | undefined;
       if (streamAuth) {
@@ -413,7 +423,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Enable CORS
       res.setHeader('Access-Control-Allow-Origin', '*');
       res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Range, X-Stream-Auth');
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Range, X-Stream-Auth, X-Session-ID');
       res.setHeader('Access-Control-Expose-Headers', 'Content-Length, Content-Range, Content-Type, Accept-Ranges');
 
       // Forward upstream status code (200, 206, 304, etc.)
