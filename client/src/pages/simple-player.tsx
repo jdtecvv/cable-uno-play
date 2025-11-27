@@ -64,7 +64,8 @@ export default function SimplePlayer() {
   };
 
   const loadM3U = async () => {
-    // v2.0 - Direct stream detection fix
+    // v3.0 - Direct stream detection with debug
+    alert("Código v3.0 - URL: " + m3uUrl);
     if (!m3uUrl) {
       toast({
         title: "Error",
