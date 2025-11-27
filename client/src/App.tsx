@@ -10,6 +10,7 @@ import Favorites from "@/pages/favorites";
 import Watch from "@/pages/watch";
 import Setup from "@/pages/setup";
 import SimplePlayer from "@/pages/simple-player";
+import XUIPlayer from "@/pages/xui-player";
 import NotFound from "@/pages/not-found";
 import { ThemeProvider } from "./lib/theme-provider";
 
@@ -21,6 +22,9 @@ function Router() {
       
       {/* Simple Player - modo standalone sin base de datos */}
       <Route path="/simple" component={SimplePlayer} />
+      
+      {/* XUI Player - versión full con credenciales XUI */}
+      <Route path="/xui" component={XUIPlayer} />
       
       {/* Aplicación completa con layout y base de datos */}
       <Route path="/">
