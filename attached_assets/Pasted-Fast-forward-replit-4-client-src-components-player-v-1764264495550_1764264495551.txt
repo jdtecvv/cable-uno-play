@@ -1,0 +1,69 @@
+Fast-forward
+ .replit                                       |  4 +++
+ client/src/components/player/video-player.tsx | 38 ++++++++++++++++-----------
+ 2 files changed, 27 insertions(+), 15 deletions(-)
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.18 building for production...
+transforming (3) src/main.tsxBrowserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 2058 modules transformed.
+../dist/public/index.html                     2.37 kB │ gzip:   0.94 kB
+../dist/public/assets/index-BvUB-Oid.css     73.40 kB │ gzip:  12.34 kB
+../dist/public/assets/index-hYwPHWDa.js   1,052.17 kB │ gzip: 319.39 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 8.41s
+
+  dist/index.js  49.9kb
+
+⚡ Done in 19ms
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [cable-uno-play](ids: [ 0 ])
+[PM2] [cable-uno-play](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ cable-uno-play     │ fork     │ 6    │ online    │ 0%       │ 17.3mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@cableuno:/var/www/cable-uno-play# cd /var/www/cable-uno-play && git pull origin main && npm run build && pm2 restart cable-uno-play
+Desde https://github.com/jdtecvv/cable-uno-play
+ * branch            main       -> FETCH_HEAD
+Ya está actualizado.
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.18 building for production...
+transforming (3) src/main.tsxBrowserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 2058 modules transformed.
+../dist/public/index.html                     2.37 kB │ gzip:   0.94 kB
+../dist/public/assets/index-BvUB-Oid.css     73.40 kB │ gzip:  12.34 kB
+../dist/public/assets/index-hYwPHWDa.js   1,052.17 kB │ gzip: 319.39 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 9.54s
+
+  dist/index.js  49.9kb
+
+⚡ Done in 18ms
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [cable-uno-play](ids: [ 0 ])
+[PM2] [cable-uno-play](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ cable-uno-play     │ fork     │ 7    │ online    │ 0%       │ 17.3mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@cableuno:/var/www/cable-uno-play# 
