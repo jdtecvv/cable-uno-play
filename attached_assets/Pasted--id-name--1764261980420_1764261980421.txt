@@ -1,0 +1,112 @@
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ cable-uno-play     │ fork     │ 1    │ online    │ 0%       │ 18.8mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@cableuno:/var/www/cable-uno-play# NODE_ENV=production DATABASE_URL="postgresql://cableuno:I@sd1844R0y@localhost:5432/cableuno_play" pm2 restart cable-uno-play
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [cable-uno-play](ids: [ 0 ])
+[PM2] [cable-uno-play](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ cable-uno-play     │ fork     │ 2    │ online    │ 0%       │ 17.6mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@cableuno:/var/www/cable-uno-play# pm2 status
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ cable-uno-play     │ fork     │ 2    │ online    │ 0%       │ 55.4mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@cableuno:/var/www/cable-uno-play# cd /var/www/cable-uno-play
+npm run build
+NODE_ENV=production DATABASE_URL="postgresql://cableuno:I@sd1844R0y@localhost:5432/cableuno_play" pm2 restart cable-uno-play
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.18 building for production...
+transforming (5) ../node_modules/@tanstack/react-query/build/modern/index.jBrowserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 2058 modules transformed.
+../dist/public/index.html                     2.37 kB │ gzip:   0.94 kB
+../dist/public/assets/index-BvUB-Oid.css     73.40 kB │ gzip:  12.34 kB
+../dist/public/assets/index-y9Agg5Pb.js   1,051.76 kB │ gzip: 319.28 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 16.93s
+
+  dist/index.js  49.6kb
+
+⚡ Done in 36ms
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [cable-uno-play](ids: [ 0 ])
+[PM2] [cable-uno-play](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ cable-uno-play     │ fork     │ 3    │ online    │ 0%       │ 18.0mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@cableuno:/var/www/cable-uno-play# cd /var/www/cable-uno-play
+git pull origin main
+npm run build
+pm2 restart cable-uno-play
+remote: Enumerating objects: 40, done.
+remote: Counting objects: 100% (40/40), done.
+remote: Compressing objects: 100% (6/6), done.
+remote: Total 40 (delta 34), reused 40 (delta 34), pack-reused 0 (from 0)
+Desempaquetando objetos: 100% (40/40), 3.54 MiB | 4.27 MiB/s, listo.
+Desde https://github.com/jdtecvv/cable-uno-play
+ * branch            main       -> FETCH_HEAD
+   ea3c6fb..7f54f08  main       -> origin/main
+Actualizando ea3c6fb..7f54f08
+Fast-forward
+ .replit                                            |   2 +-
+ ...2025-11-27 a la(s) 09.23.56 2_1764257042764.png | Bin 0 -> 1210749 bytes
+ ...a 2025-11-27 a la(s) 09.23.56_1764257042764.png | Bin 0 -> 1724914 bytes
+ ...a 2025-11-27 a la(s) 10.36.08_1764261571549.png | Bin 0 -> 946808 bytes
+ ...44-attached-ass-1764256516789_1764256516789.txt |  53 ++++++
+ ...-play-git-pull--1764256458067_1764256458068.txt | 187 +++++++++++++++++++++
+ client/src/components/player/video-player.tsx      |  13 ++
+ server/routes.ts                                   |  21 ++-
+ 8 files changed, 274 insertions(+), 2 deletions(-)
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-27 a la(s) 09.23.56 2_1764257042764.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-27 a la(s) 09.23.56_1764257042764.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-27 a la(s) 10.36.08_1764261571549.png
+ create mode 100644 attached_assets/Pasted--create-mode-100644-attached-assets-cable-coaxial-1763183840677-png-create-mode-100644-attached-ass-1764256516789_1764256516789.txt
+ create mode 100644 attached_assets/Pasted--sudo-contrase-a-para-cableuno-root-cableuno-home-cableuno-cd-var-www-cable-uno-play-git-pull--1764256458067_1764256458068.txt
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.18 building for production...
+transforming (3) src/main.tsxBrowserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 2058 modules transformed.
+../dist/public/index.html                     2.37 kB │ gzip:   0.94 kB
+../dist/public/assets/index-BvUB-Oid.css     73.40 kB │ gzip:  12.34 kB
+../dist/public/assets/index-DxK6EO_V.js   1,052.00 kB │ gzip: 319.34 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 8.16s
+
+  dist/index.js  50.1kb
+
+⚡ Done in 19ms
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [cable-uno-play](ids: [ 0 ])
+[PM2] [cable-uno-play](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ cable-uno-play     │ fork     │ 4    │ online    │ 0%       │ 17.6mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@cableuno:/var/www/cable-uno-play# 
