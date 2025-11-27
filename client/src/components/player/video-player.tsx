@@ -130,9 +130,22 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
 
         if (Hls.isSupported()) {
           const hlsInstance = new Hls({
-            maxBufferLength: 30,
-            maxMaxBufferLength: 60,
-            lowLatencyMode: true,
+            // Optimized for IPTV streaming - larger buffers for stability
+            maxBufferLength: 60,           // 60 seconds of buffer
+            maxMaxBufferLength: 120,       // Max 2 minutes buffer
+            maxBufferSize: 60 * 1000 * 1000, // 60MB buffer size
+            maxBufferHole: 0.5,            // Allow small gaps
+            lowLatencyMode: false,         // Disable low latency for stability
+            startLevel: -1,                // Auto quality selection
+            abrEwmaDefaultEstimate: 500000, // 500kbps initial estimate
+            abrBandWidthFactor: 0.95,      // Conservative bandwidth usage
+            abrBandWidthUpFactor: 0.7,     // Slow to upgrade quality
+            fragLoadingTimeOut: 20000,     // 20s timeout for segments
+            fragLoadingMaxRetry: 6,        // Retry 6 times
+            fragLoadingRetryDelay: 1000,   // 1s between retries
+            manifestLoadingTimeOut: 15000, // 15s timeout for manifest
+            manifestLoadingMaxRetry: 4,    // Retry manifest 4 times
+            levelLoadingTimeOut: 15000,    // 15s timeout for level
             // Intercept ALL XHR requests made by HLS.js
             xhrSetup: function(xhr: XMLHttpRequest, url: string) {
               // Handle HTTP URLs - redirect through proxy to avoid Mixed Content
