@@ -160,7 +160,7 @@ export default function SimplePlayer() {
     } catch (error) {
       console.error("Error loading M3U:", error);
       toast({
-        title: "Error",
+        title: "Error v2",
         description: error instanceof Error ? error.message : "No se pudo cargar el M3U",
         variant: "destructive",
       });
