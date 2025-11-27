@@ -1,0 +1,53 @@
+ create mode 100644 attached_assets/cable coaxial_1763183840677.png
+ create mode 100644 attached_assets/conector _1763183802388.png
+ create mode 100644 attached_assets/conector _1763183802667.png
+ create mode 100644 attached_assets/conector _1763183840678.png
+ create mode 100644 attached_assets/generated_images/Cable_F_male_to_female_86e6bcb2.png
+ create mode 100644 attached_assets/generated_images/Cable_Uno_Play_coaxial_icon_92614748.png
+ create mode 100644 attached_assets/generated_images/Cable_Uno_Play_professional_icon_d8f242dd.png
+ create mode 100644 attached_assets/generated_images/Cable_Uno_exact_connector_match_b45890d6.png
+ create mode 100644 attached_assets/generated_images/Cable_Uno_logo_connector_O_27cd0bcf.png
+ create mode 100644 attached_assets/generated_images/Cable_Uno_screwed_cable_8618d349.png
+ create mode 100644 attached_assets/generated_images/Cable_Uno_single_connector_1dd0058d.png
+ create mode 100644 attached_assets/generated_images/Cable_Uno_subtle_connector_1bf8d6be.png
+ create mode 100644 attached_assets/generated_images/Cable_Uno_with_cable_down_25e5d372.png
+ create mode 100644 attached_assets/generated_images/Cable_Uno_with_connector_O_a94d1833.png
+ create mode 100644 attached_assets/generated_images/Cable_coaxial_connected_transition_466df2e3.png
+ create mode 100644 attached_assets/generated_images/Cable_inserting_into_O_port_ae644985.png
+ create mode 100644 attached_assets/generated_images/Connector_O_transparent_PNG_0a1cca91.png
+ create mode 100644 attached_assets/generated_images/Logo_typography_with_F-connector_56aea4bc.png
+ create mode 100644 attached_assets/idea_1763183508719.png
+ create mode 100644 attached_assets/idea_1763183508721.png
+ create mode 100644 attached_assets/logo cable uno play_1763183796733.png
+ create mode 100644 attached_assets/logo cable uno play_1763183840678.png
+ create mode 100644 attached_assets/logo cable uno play_1763184046532.png
+ create mode 100644 attached_assets/logo cable uno play_1763187753866.png
+ create mode 100644 attached_assets/smarters-player-lite_1764253968115.apk
+ create mode 100644 attached_assets/v4-460px-Unscrew-a-Coaxial-Cable-From-Audiovisual-Equipment-Step-2-Version-2_1763187223461.jpg
+ create mode 100644 client/public/images/apple-touch-icon.png
+ create mode 100644 client/public/images/favicon.png
+ create mode 100644 client/src/pages/xui-player.tsx
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [cable-uno-play](ids: [ 0 ])
+[PM2] [cable-uno-play](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ cable-uno-play     │ fork     │ 1    │ online    │ 0%       │ 18.8mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@cableuno:/var/www/cable-uno-play# NODE_ENV=production DATABASE_URL="postgresql://cableuno:I@sd1844R0y@localhost:5432/cableuno_play" pm2 restart cable-uno-play
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [cable-uno-play](ids: [ 0 ])
+[PM2] [cable-uno-play](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ cable-uno-play     │ fork     │ 2    │ online    │ 0%       │ 17.6mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@cableuno:/var/www/cable-uno-play# pm2 status
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ cable-uno-play     │ fork     │ 2    │ online    │ 0%       │ 55.4mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@cableuno:/var/www/cable-uno-play# 
