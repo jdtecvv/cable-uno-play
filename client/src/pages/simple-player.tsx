@@ -91,13 +91,12 @@ export default function SimplePlayer() {
       
       // Check if this is a direct stream URL (ends with .m3u8 or .ts)
       const isDirectStream = normalizedUrl.match(/\.(m3u8|ts)(\?.*)?$/i);
-      console.log("🎬 loadM3U called with URL:", normalizedUrl);
-      console.log("🎬 isDirectStream:", isDirectStream);
       
       let simpleChannels: SimpleChannel[];
       
       if (isDirectStream) {
         // Direct stream URL - create a single channel entry
+        alert("✅ Detectado como stream directo .m3u8");
         simpleChannels = [{
           name: playlistName || "Canal Directo",
           url: normalizedUrl,
@@ -105,6 +104,8 @@ export default function SimplePlayer() {
           group: "Directo",
         }];
       } else {
+        alert("❌ NO detectado como stream directo, llamando API...");
+        
         // M3U playlist - fetch and parse
         const response = await fetch('/api/proxy/m3u', {
           method: 'POST',
