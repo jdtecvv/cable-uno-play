@@ -356,10 +356,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Proxy endpoint for video streams to avoid Mixed Content issues
   console.log(`📡 Registering route: GET ${apiPrefix}/proxy/stream`);
   app.get(`${apiPrefix}/proxy/stream`, async (req, res) => {
-    console.log(`🎯 Proxy stream request: ${req.query.url}`);
+    const url = req.query.url as string;
+    console.log(`🎯 Proxy stream request: ${url}`);
     try {
-      const url = req.query.url as string;
-      
       if (!url) {
         return res.status(400).json({ message: "URL parameter is required" });
       }
@@ -393,7 +392,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         upstreamHeaders['If-None-Match'] = req.headers['if-none-match'] as string;
       }
 
+      console.log(`📡 Fetching from upstream: ${url}`);
       const response = await fetch(url, { headers: upstreamHeaders });
+      console.log(`📡 Upstream response: ${response.status} ${response.statusText}, Content-Type: ${response.headers.get('content-type')}`)
       
       // Accept 200, 206 (Partial Content), and 304 (Not Modified)
       if (!response.ok && response.status !== 206 && response.status !== 304) {
