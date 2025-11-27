@@ -20,6 +20,7 @@ interface XUIChannel {
 
 interface XUICredentials {
   server: string;
+  port: string;
   username: string;
   password: string;
   playlistName: string;
@@ -28,6 +29,7 @@ interface XUICredentials {
 export default function XUIPlayer() {
   const [credentials, setCredentials] = useState<XUICredentials>({
     server: "",
+    port: "",
     username: "",
     password: "",
     playlistName: "",
@@ -64,6 +66,7 @@ export default function XUIPlayer() {
     setChannels([]);
     setCredentials({
       server: "",
+      port: "",
       username: "",
       password: "",
       playlistName: "",
@@ -78,10 +81,10 @@ export default function XUIPlayer() {
   };
 
   const buildM3UUrl = () => {
-    const { server, username, password } = credentials;
+    const { server, port, username, password } = credentials;
     // Si el servidor ya tiene protocolo, usarlo; si no, agregar http://
     const protocol = server.startsWith('https://') || server.startsWith('http://') ? '' : 'http://';
-    const baseUrl = `${protocol}${server}`;
+    const baseUrl = `${protocol}${server}${port ? `:${port}` : ''}`;
     return `${baseUrl}/get.php?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&type=m3u_plus&output=ts`;
   };
 
@@ -299,13 +302,23 @@ export default function XUIPlayer() {
                   <label className="text-xs text-gray-500 flex items-center gap-1">
                     <WifiIcon className="w-3 h-3" /> Servidor
                   </label>
-                  <Input
-                    type="text"
-                    placeholder="dominio (ej: app.teleunotv.cr)"
-                    value={credentials.server}
-                    onChange={(e) => setCredentials(prev => ({ ...prev, server: e.target.value }))}
-                    className="bg-gray-950/80 border-gray-800 text-white focus:border-blue-600 transition-colors"
-                  />
+                  <div className="grid grid-cols-4 gap-2">
+                    <Input
+                      type="text"
+                      placeholder="dominio o IP"
+                      value={credentials.server}
+                      onChange={(e) => setCredentials(prev => ({ ...prev, server: e.target.value }))}
+                      className="col-span-3 bg-gray-950/80 border-gray-800 text-white focus:border-blue-600 transition-colors"
+                    />
+                    <Input
+                      type="text"
+                      placeholder="Puerto"
+                      value={credentials.port}
+                      onChange={(e) => setCredentials(prev => ({ ...prev, port: e.target.value }))}
+                      className="bg-gray-950/80 border-gray-800 text-white focus:border-blue-600 transition-colors text-center"
+                    />
+                  </div>
+                  <p className="text-xs text-gray-600">Deja el puerto vacío para usar el estándar (80/443)</p>
                 </div>
                 
                 <div className="space-y-2">
