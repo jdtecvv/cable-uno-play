@@ -1,0 +1,85 @@
+Advertencias de cookies 2
+La cookie “__cf_bm” pronto será rechazada porque es externa y no tiene el atributo “Partitioned“. replit-dev-banner.js
+La cookie “_cfuvid” pronto será rechazada porque es externa y no tiene el atributo “Partitioned“. replit-dev-banner.js
+XHRGET
+https://play.teleunotv.cr/api/categories
+[HTTP/2 500  985ms]
+
+XHRGET
+https://play.teleunotv.cr/api/playlists/active
+[HTTP/2 500  983ms]
+
+XHRGET
+https://play.teleunotv.cr/api/channels/recent
+[HTTP/2 500  1079ms]
+
+XHRGET
+https://play.teleunotv.cr/api/channels
+[HTTP/2 500  980ms]
+
+XHRGET
+https://play.teleunotv.cr/api/channels/recent
+[HTTP/2 500  977ms]
+
+Service Worker registered successfully: 
+ServiceWorkerRegistration { installing: ServiceWorker, waiting: null, active: null, navigationPreload: NavigationPreloadManager, scope: "https://play.teleunotv.cr/", updateViaCache: "imports", onupdatefound: null, pushManager: PushManager, cookies: CookieStoreManager }
+index-CFThyKMX.js:231:144677
+Base de datos no disponible, redirigiendo a Simple Player... index-CFThyKMX.js:192:199689
+🔧 Fixed malformed URL (removed extra colon): https://app.teleunotv.cr/play/ARagZMtj5hXVhDUwz-BExu7itmRcdSq8FyLFTA9igLk/m3u8 index-CFThyKMX.js:231:101300
+Fallo al cargar 'https://app.teleunotv.cr/play/ARagZMtj5hXVhDUwz-BExu7itmRcdSq8FyLFTA9igLk/m3u8'. Un ServiceWorker ha pasado un promise a FetchEvent.respondWith() que lo ha rechazado con 'TypeError: NetworkError when attempting to fetch resource.'. service-worker.js:58:9
+Solicitud de origen cruzado bloqueada: La política de mismo origen no permite la lectura de recursos remotos en https://app.teleunotv.cr/play/ARagZMtj5hXVhDUwz-BExu7itmRcdSq8FyLFTA9igLk/m3u8. (Razón: Solicitud CORS sin éxito). Código de estado: (null).
+
+Fatal network error 
+Object { type: "networkError", details: "manifestLoadError", fatal: true, url: "https://app.teleunotv.cr/play/ARagZMtj5hXVhDUwz-BExu7itmRcdSq8FyLFTA9igLk/m3u8", loader: {…}, context: {…}, error: Error, networkDetails: XMLHttpRequest, stats: {…}, response: {…} }
+index-CFThyKMX.js:231:103112
+    Zf https://play.teleunotv.cr/assets/index-CFThyKMX.js:231
+    emit https://play.teleunotv.cr/assets/index-CFThyKMX.js:207
+    emit https://play.teleunotv.cr/assets/index-CFThyKMX.js:231
+    trigger https://play.teleunotv.cr/assets/index-CFThyKMX.js:231
+    handleNetworkError https://play.teleunotv.cr/assets/index-CFThyKMX.js:231
+    onError https://play.teleunotv.cr/assets/index-CFThyKMX.js:231
+    readystatechange https://play.teleunotv.cr/assets/index-CFThyKMX.js:231
+    (Asíncrono: EventHandlerNonNull)
+    openAndSendXhr https://play.teleunotv.cr/assets/index-CFThyKMX.js:231
+    loadInternal https://play.teleunotv.cr/assets/index-CFThyKMX.js:231
+    (Asíncrono: promise callback)
+    loadInternal https://play.teleunotv.cr/assets/index-CFThyKMX.js:231
+    load https://play.teleunotv.cr/assets/index-CFThyKMX.js:231
+    load https://play.teleunotv.cr/assets/index-CFThyKMX.js:231
+    onManifestLoading https://play.teleunotv.cr/assets/index-CFThyKMX.js:231
+    emit https://play.teleunotv.cr/assets/index-CFThyKMX.js:207
+    emit https://play.teleunotv.cr/assets/index-CFThyKMX.js:231
+    trigger https://play.teleunotv.cr/assets/index-CFThyKMX.js:231
+    loadSource https://play.teleunotv.cr/assets/index-CFThyKMX.js:231
+    Zf https://play.teleunotv.cr/assets/index-CFThyKMX.js:231
+    Zf https://play.teleunotv.cr/assets/index-CFThyKMX.js:231
+    cf https://play.teleunotv.cr/assets/index-CFThyKMX.js:40
+    jo https://play.teleunotv.cr/assets/index-CFThyKMX.js:40
+    fk https://play.teleunotv.cr/assets/index-CFThyKMX.js:40
+    wi https://play.teleunotv.cr/assets/index-CFThyKMX.js:40
+    Nv https://play.teleunotv.cr/assets/index-CFThyKMX.js:40
+    xi https://play.teleunotv.cr/assets/index-CFThyKMX.js:38
+    xr https://play.teleunotv.cr/assets/index-CFThyKMX.js:40
+    (Asíncrono: VoidFunction)
+    xr https://play.teleunotv.cr/assets/index-CFThyKMX.js:40
+    dn https://play.teleunotv.cr/assets/index-CFThyKMX.js:40
+    q1 https://play.teleunotv.cr/assets/index-CFThyKMX.js:38
+    onClick https://play.teleunotv.cr/assets/index-CFThyKMX.js:231
+    kI https://play.teleunotv.cr/assets/index-CFThyKMX.js:37
+    DI https://play.teleunotv.cr/assets/index-CFThyKMX.js:37
+    NI https://play.teleunotv.cr/assets/index-CFThyKMX.js:37
+    sv https://play.teleunotv.cr/assets/index-CFThyKMX.js:37
+    kT https://play.teleunotv.cr/assets/index-CFThyKMX.js:37
+    yh https://play.teleunotv.cr/assets/index-CFThyKMX.js:37
+    n0 https://play.teleunotv.cr/assets/index-CFThyKMX.js:40
+    tT https://play.teleunotv.cr/assets/index-CFThyKMX.js:37
+    yh https://play.teleunotv.cr/assets/index-CFThyKMX.js:37
+    kg https://play.teleunotv.cr/assets/index-CFThyKMX.js:37
+    QI https://play.teleunotv.cr/assets/index-CFThyKMX.js:37
+    (Asíncrono: EventListener.handleEvent)
+    PT https://play.teleunotv.cr/assets/index-CFThyKMX.js:37
+    gh https://play.teleunotv.cr/assets/index-CFThyKMX.js:37
+    Il https://play.teleunotv.cr/assets/index-CFThyKMX.js:37
+    Il https://play.teleunotv.cr/assets/index-CFThyKMX.js:37
+    createRoot https://play.teleunotv.cr/assets/index-CFThyKMX.js:40
+    <anonymous> https://play.teleunotv.cr/assets/index-CFThyKMX.js:231

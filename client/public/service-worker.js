@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cable-uno-play-v1';
+const CACHE_NAME = 'cable-uno-play-v2';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -37,6 +37,11 @@ self.addEventListener('activate', (event) => {
 // Fetch event - serve from cache when offline, network first for streams
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
+  
+  // Don't intercept cross-origin requests (let browser handle CORS directly)
+  if (url.origin !== self.location.origin) {
+    return;
+  }
   
   // Network first for API calls and video streams
   if (url.pathname.startsWith('/api/') || 
