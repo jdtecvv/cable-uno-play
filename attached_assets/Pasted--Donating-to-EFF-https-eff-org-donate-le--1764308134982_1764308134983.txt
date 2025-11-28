@@ -1,0 +1,53 @@
+ * Donating to EFF:                    https://eff.org/donate-le
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Job for nginx.service failed because the control process exited with error code.
+See "systemctl status nginx.service" and "journalctl -xeu nginx.service" for details.
+root@cableuno:/var/www/cable-uno-play# ^C
+root@cableuno:/var/www/cable-uno-play# # 1. Editar la configuración para usar el nuevo certificado
+sed -i 's|/etc/letsencrypt/live/play.teleunotv.cr/|/etc/letsencrypt/live/play.teleunotv.cr-0001/|g' /etc/nginx/sites-enabled/play.teleunotv.cr
+
+# 2. Verificar la configuración
+nginx -t
+
+# 3. Iniciar Nginx
+systemctl start nginx
+
+# 4. Verificar que funciona
+curl -sI https://play.teleunotv.cr | head -5
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+Job for nginx.service failed because the control process exited with error code.
+See "systemctl status nginx.service" and "journalctl -xeu nginx.service" for details.
+root@cableuno:/var/www/cable-uno-play# # Ver el error exacto de Nginx
+journalctl -xeu nginx.service --no-pager | tail -30
+░░ 
+░░ The job identifier is 3014.
+nov 27 23:34:12 cableuno nginx[46745]: nginx: [emerg] bind() to 0.0.0.0:443 failed (98: Address already in use)
+nov 27 23:34:12 cableuno nginx[46745]: nginx: [emerg] bind() to 0.0.0.0:443 failed (98: Address already in use)
+nov 27 23:34:13 cableuno nginx[46745]: nginx: [emerg] bind() to 0.0.0.0:443 failed (98: Address already in use)
+nov 27 23:34:13 cableuno nginx[46745]: nginx: [emerg] bind() to 0.0.0.0:443 failed (98: Address already in use)
+nov 27 23:34:14 cableuno nginx[46745]: nginx: [emerg] bind() to 0.0.0.0:443 failed (98: Address already in use)
+nov 27 23:34:14 cableuno nginx[46745]: nginx: [emerg] still could not bind()
+nov 27 23:34:14 cableuno systemd[1]: nginx.service: Control process exited, code=exited, status=1/FAILURE
+░░ Subject: Unit process exited
+░░ Defined-By: systemd
+░░ Support: http://www.ubuntu.com/support
+░░ 
+░░ An ExecStart= process belonging to unit nginx.service has exited.
+░░ 
+░░ The process' exit code is 'exited' and its exit status is 1.
+nov 27 23:34:14 cableuno systemd[1]: nginx.service: Failed with result 'exit-code'.
+░░ Subject: Unit failed
+░░ Defined-By: systemd
+░░ Support: http://www.ubuntu.com/support
+░░ 
+░░ The unit nginx.service has entered the 'failed' state with result 'exit-code'.
+nov 27 23:34:14 cableuno systemd[1]: Failed to start nginx.service - A high performance web server and a reverse proxy server.
+░░ Subject: A start job for unit nginx.service has failed
+░░ Defined-By: systemd
+░░ Support: http://www.ubuntu.com/support
+░░ 
+░░ A start job for unit nginx.service has finished with a failure.
+░░ 
+░░ The job identifier is 3014 and the job result is failed.
+root@cableuno:/var/www/cable-uno-play# 
