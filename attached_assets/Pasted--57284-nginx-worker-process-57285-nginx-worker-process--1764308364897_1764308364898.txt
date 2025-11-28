@@ -1,0 +1,108 @@
+             ├─57284 "nginx: worker process"
+             ├─57285 "nginx: worker process"
+             ├─57286 "nginx: worker process"
+             ├─57287 "nginx: worker process"
+             ├─57288 "nginx: worker process"
+             ├─57289 "nginx: worker process"
+             ├─57290 "nginx: worker process"
+             ├─57291 "nginx: worker process"
+             ├─57292 "nginx: worker process"
+             ├─57293 "nginx: worker process"
+             ├─57295 "nginx: worker process"
+             ├─57296 "nginx: worker process"
+             ├─57297 "nginx: worker process"
+             ├─57298 "nginx: worker process"
+             ├─57299 "nginx: worker process"
+             ├─57300 "nginx: worker process"
+             ├─57301 "nginx: worker process"
+             ├─57302 "nginx: worker process"
+             ├─57303 "nginx: worker process"
+             ├─57304 "nginx: worker process"
+             ├─57305 "nginx: worker process"
+             ├─57306 "nginx: worker process"
+             ├─57307 "nginx: worker process"
+             ├─57308 "nginx: worker process"
+             ├─57309 "nginx: worker process"
+             ├─57310 "nginx: worker process"
+             ├─57311 "nginx: worker process"
+             ├─57312 "nginx: worker process"
+             ├─57313 "nginx: worker process"
+             ├─57314 "nginx: worker process"
+             ├─57315 "nginx: worker process"
+             ├─57316 "nginx: worker process"
+             ├─57317 "nginx: master process /usr/sbin/nginx -g daemon on; maste>
+             └─57318 "nginx: master process /usr/sbin/nginx -g daemon on; maste>
+
+nov 27 23:36:35 cableuno systemd[1]: Starting nginx.service - A high performanc>
+nov 27 23:36:35 cableuno systemd[1]: Started nginx.service - A high performance>
+lines 41-63/63 (END)
+[1]+  Detenido                systemctl status nginx
+root@cableuno:/var/www/cable-uno-play# [200~# 1. Verificar que play.teleunotv.cr funciona
+[200~#: no se encontró la orden
+root@cableuno:/var/www/cable-uno-play# curl -sI https://play.teleunotv.cr | head -10
+HTTP/2 200 
+server: nginx/1.24.0 (Ubuntu)
+date: Fri, 28 Nov 2025 05:38:52 GMT
+content-type: text/html; charset=UTF-8
+content-length: 2369
+x-powered-by: Express
+accept-ranges: bytes
+cache-control: public, max-age=0
+last-modified: Fri, 28 Nov 2025 04:57:02 GMT
+etag: W/"941-19ac8d2614a"
+root@cableuno:/var/www/cable-uno-play# 
+root@cableuno:/var/www/cable-uno-play# # 2. Ver toda la configuración de Nginx
+root@cableuno:/var/www/cable-uno-play# ls -la /etc/nginx/sites-enabled/
+total 16
+drwxr-xr-x 2 root root 4096 nov 27 23:34 .
+drwxr-xr-x 8 root root 4096 nov 27 23:30 ..
+-rw-r--r-- 1 root root 1206 nov 26 20:52 app.teleunotv.cr
+-rw-r--r-- 1 root root 1055 nov 27 23:34 play.teleunotv.cr
+root@cableuno:/var/www/cable-uno-play# 
+root@cableuno:/var/www/cable-uno-play# # 3. Ver configuración de app.teleunotv.cr
+root@cableuno:/var/www/cable-uno-play# cat /etc/nginx/sites-enabled/app.teleunotv.cr
+server {
+    listen 80;
+    server_name app.teleunotv.cr;
+    return 301 https://$server_name$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name app.teleunotv.cr;
+
+    ssl_certificate /etc/letsencrypt/live/play.teleunotv.cr/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/play.teleunotv.cr/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    # Redireccionar raíz a XUI login
+    location = / {
+        return 302 https://app.teleunotv.cr/5pUNs3U2/login;
+    }
+
+    # Proxy a XUI (todo lo demás)
+    location / {
+        proxy_pass http://127.0.0.1:81;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        
+        # Reescribir redirects de XUI
+        proxy_redirect http://app.teleunotv.cr:81/ https://app.teleunotv.cr/;
+        proxy_redirect http://127.0.0.1:81/ https://app.teleunotv.cr/;
+        
+        # Para streaming sin buffer
+        proxy_buffering off;
+        proxy_read_timeout 300s;
+        proxy_connect_timeout 75s;
+    }
+}
+root@cableuno:/var/www/cable-uno-play# 
+root@cableuno:/var/www/cable-uno-play# # 4. Verificar que XUI está corriendo
+root@cableuno:/var/www/cable-uno-play# netstat -tlnp | grep -E "81|444"~
+tcp        4      0 0.0.0.0:8081            0.0.0.0:*               ESCUCHAR    1752/nimble         
+root@cableuno:/var/www/cable-uno-play# 
+root@cableuno:/var/www/cable-uno-play# 
+root@cableuno:/var/www/cable-uno-play# 
