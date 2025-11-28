@@ -1,0 +1,439 @@
+Service Worker registered successfully: 
+ServiceWorkerRegistration { installing: null, waiting: null, active: ServiceWorker, navigationPreload: NavigationPreloadManager, scope: "https://play.teleunotv.cr/", updateViaCache: "imports", onupdatefound: null, pushManager: PushManager, cookies: CookieStoreManager }
+index-CiQ8t__y.js:231:145089
+Error loading XUI playlist: Error: No se encontraron canales válidos en el archivo M3U
+    sy https://play.teleunotv.cr/assets/index-CiQ8t__y.js:192
+    b https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+    k1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    D1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    N1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    sv https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    kT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    yh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    n0 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    tT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    yh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    kg https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Q1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    PT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    gh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Il https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Il https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    createRoot https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    <anonymous> https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+index-CiQ8t__y.js:231:133420
+Error loading XUI playlist: Error: No se encontraron canales válidos en el archivo M3U
+    sy https://play.teleunotv.cr/assets/index-CiQ8t__y.js:192
+    b https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+    k1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    D1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    N1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    sv https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    kT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    yh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    n0 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    tT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    yh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    kg https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Q1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    PT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    gh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Il https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Il https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    createRoot https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    <anonymous> https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+index-CiQ8t__y.js:231:133420
+Error loading XUI playlist: Error: No se encontraron canales válidos en el archivo M3U
+    sy https://play.teleunotv.cr/assets/index-CiQ8t__y.js:192
+    b https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+    k1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    D1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    N1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    sv https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    kT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    yh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    n0 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    tT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    yh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    kg https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Q1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    PT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    gh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Il https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Il https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    createRoot https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    <anonymous> https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+index-CiQ8t__y.js:231:133420
+Error loading XUI playlist: Error: No se encontraron canales válidos en el archivo M3U
+    sy https://play.teleunotv.cr/assets/index-CiQ8t__y.js:192
+    b https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+    k1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    D1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    N1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    sv https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    kT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    yh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    n0 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    tT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    yh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    kg https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Q1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    PT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    gh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Il https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Il https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    createRoot https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    <anonymous> https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+index-CiQ8t__y.js:231:133420
+Error loading XUI playlist: Error: No se encontraron canales válidos en el archivo M3U
+    sy https://play.teleunotv.cr/assets/index-CiQ8t__y.js:192
+    b https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+    k1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    D1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    N1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    sv https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    kT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    yh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    n0 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    tT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    yh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    kg https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Q1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    PT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    gh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Il https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Il https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    createRoot https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    <anonymous> https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+index-CiQ8t__y.js:231:133420
+Error loading XUI playlist: Error: No se encontraron canales válidos en el archivo M3U
+    sy https://play.teleunotv.cr/assets/index-CiQ8t__y.js:192
+    b https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+    k1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    D1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    N1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    sv https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    kT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    yh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    n0 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    tT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    yh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    kg https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Q1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    PT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    gh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Il https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Il https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    createRoot https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    <anonymous> https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+index-CiQ8t__y.js:231:133420
+Error loading XUI playlist: Error: No se encontraron canales válidos en el archivo M3U
+    sy https://play.teleunotv.cr/assets/index-CiQ8t__y.js:192
+    b https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+    k1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    D1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    N1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    sv https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    kT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    yh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    n0 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    tT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    yh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    kg https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Q1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    PT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    gh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Il https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Il https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    createRoot https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    <anonymous> https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+index-CiQ8t__y.js:231:133420
+Error loading XUI playlist: Error: No se encontraron canales válidos en el archivo M3U
+    sy https://play.teleunotv.cr/assets/index-CiQ8t__y.js:192
+    b https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+    k1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    D1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    N1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    sv https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    kT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    yh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    n0 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    tT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    yh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    kg https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Q1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    PT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    gh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Il https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Il https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    createRoot https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    <anonymous> https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+index-CiQ8t__y.js:231:133420
+Error loading XUI playlist: Error: No se encontraron canales válidos en el archivo M3U
+    sy https://play.teleunotv.cr/assets/index-CiQ8t__y.js:192
+    b https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+    k1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    D1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    N1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    sv https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    kT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    yh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    n0 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    tT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    yh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    kg https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Q1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    PT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    gh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Il https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Il https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    createRoot https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    <anonymous> https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+index-CiQ8t__y.js:231:133420
+Error loading XUI playlist: Error: No se encontraron canales válidos en el archivo M3U
+    sy https://play.teleunotv.cr/assets/index-CiQ8t__y.js:192
+    b https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+    k1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    D1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    N1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    sv https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    kT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    yh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    n0 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    tT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    yh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    kg https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Q1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    PT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    gh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Il https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Il https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    createRoot https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    <anonymous> https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+index-CiQ8t__y.js:231:133420
+Error loading XUI playlist: Error: No se encontraron canales válidos en el archivo M3U
+    sy https://play.teleunotv.cr/assets/index-CiQ8t__y.js:192
+    b https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+    k1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    D1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    N1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    sv https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    kT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    yh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    n0 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    tT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    yh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    kg https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Q1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    PT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    gh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Il https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Il https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    createRoot https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    <anonymous> https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+index-CiQ8t__y.js:231:133420
+Error loading XUI playlist: Error: No se encontraron canales válidos en el archivo M3U
+    sy https://play.teleunotv.cr/assets/index-CiQ8t__y.js:192
+    b https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+    k1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    D1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    N1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    sv https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    kT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    yh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    n0 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    tT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    yh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    kg https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Q1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    PT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    gh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Il https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Il https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    createRoot https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    <anonymous> https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+index-CiQ8t__y.js:231:133420
+Error loading XUI playlist: Error: No se encontraron canales válidos en el archivo M3U
+    sy https://play.teleunotv.cr/assets/index-CiQ8t__y.js:192
+    b https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+    k1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    D1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    N1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    sv https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    kT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    yh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    n0 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    tT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    yh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    kg https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Q1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    PT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    gh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Il https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Il https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    createRoot https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    <anonymous> https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+index-CiQ8t__y.js:231:133420
+Error loading XUI playlist: Error: No se encontraron canales válidos en el archivo M3U
+    sy https://play.teleunotv.cr/assets/index-CiQ8t__y.js:192
+    b https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+    k1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    D1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    N1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    sv https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    kT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    yh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    n0 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    tT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    yh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    kg https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Q1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    PT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    gh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Il https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Il https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    createRoot https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    <anonymous> https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+index-CiQ8t__y.js:231:133420
+Error loading XUI playlist: Error: No se encontraron canales válidos en el archivo M3U
+    sy https://play.teleunotv.cr/assets/index-CiQ8t__y.js:192
+    b https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+    k1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    D1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    N1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    sv https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    kT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    yh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    n0 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    tT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    yh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    kg https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Q1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    PT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    gh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Il https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Il https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    createRoot https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    <anonymous> https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+index-CiQ8t__y.js:231:133420
+XHRPOST
+https://play.teleunotv.cr/api/proxy/m3u
+[HTTP/1.1 500  0ms]
+
+Error loading XUI playlist: Error: fetch failed
+    b https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+    k1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    D1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    N1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    sv https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    kT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    yh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    n0 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    tT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    yh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    kg https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Q1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    PT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    gh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Il https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Il https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    createRoot https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    <anonymous> https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+index-CiQ8t__y.js:231:133420
+Solicitud de origen cruzado bloqueada: La política de mismo origen no permite la lectura de recursos remotos en https://app.teleunotv.cr:81/play/ARagZMtj5hXVhDUwz-BExu7itmRcdSq8FyLFTA9igLk/m3u8. (Razón: Solicitud CORS sin éxito). Código de estado: (null). 2
+Fatal network error 
+Object { type: "networkError", details: "manifestLoadError", fatal: true, url: "https://app.teleunotv.cr:81/play/ARagZMtj5hXVhDUwz-BExu7itmRcdSq8FyLFTA9igLk/m3u8", loader: {…}, context: {…}, error: Error, networkDetails: XMLHttpRequest, stats: {…}, response: {…} }
+index-CiQ8t__y.js:231:103524
+Error playing video: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    onMediaDetaching https://play.teleunotv.cr/assets/index-CiQ8t__y.js:218
+    emit https://play.teleunotv.cr/assets/index-CiQ8t__y.js:207
+    emit https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+    trigger https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+    detachMedia https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+    destroy https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+    Zf https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+    np https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    dl https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    jo https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    fk https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    wi https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    Nv https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    xi https://play.teleunotv.cr/assets/index-CiQ8t__y.js:38
+    Sr https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    Sr https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    dn https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    qI https://play.teleunotv.cr/assets/index-CiQ8t__y.js:38
+    onClose https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+    k1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    D1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    N1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    sv https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    kT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    yh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    n0 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    tT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    yh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    kg https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Q1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    PT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    gh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Il https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Il https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    createRoot https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    <anonymous> https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+index-CiQ8t__y.js:231:105381
+Solicitud de origen cruzado bloqueada: La política de mismo origen no permite la lectura de recursos remotos en https://app.teleunotv.cr:81/play/ARagZMtj5hXVhDUwz-BExu7itmRcdSq8FyLFTA9igLk/m3u8. (Razón: Solicitud CORS sin éxito). Código de estado: (null). 2
+Fatal network error 
+Object { type: "networkError", details: "manifestLoadError", fatal: true, url: "https://app.teleunotv.cr:81/play/ARagZMtj5hXVhDUwz-BExu7itmRcdSq8FyLFTA9igLk/m3u8", loader: {…}, context: {…}, error: Error, networkDetails: XMLHttpRequest, stats: {…}, response: {…} }
+index-CiQ8t__y.js:231:103524
+    Zf https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+    emit https://play.teleunotv.cr/assets/index-CiQ8t__y.js:207
+    emit https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+    trigger https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+    handleNetworkError https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+    onError https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+    readystatechange https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+    (Asíncrono: EventHandlerNonNull)
+    openAndSendXhr https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+    loadInternal https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+    (Asíncrono: promise callback)
+    loadInternal https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+    load https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+    load https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+    onManifestLoading https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+    emit https://play.teleunotv.cr/assets/index-CiQ8t__y.js:207
+    emit https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+    trigger https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+    loadSource https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+    Zf https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+    Zf https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+    cf https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    jo https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    fk https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    wi https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    Nv https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    xi https://play.teleunotv.cr/assets/index-CiQ8t__y.js:38
+    Sr https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    (Asíncrono: VoidFunction)
+    Sr https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    dn https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    qI https://play.teleunotv.cr/assets/index-CiQ8t__y.js:38
+    onClick https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
+    k1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    D1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    N1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    sv https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    kT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    yh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    n0 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    tT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    yh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    kg https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Q1 https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    (Asíncrono: EventListener.handleEvent)
+    PT https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    gh https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Il https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    Il https://play.teleunotv.cr/assets/index-CiQ8t__y.js:37
+    createRoot https://play.teleunotv.cr/assets/index-CiQ8t__y.js:40
+    <anonymous> https://play.teleunotv.cr/assets/index-CiQ8t__y.js:231
