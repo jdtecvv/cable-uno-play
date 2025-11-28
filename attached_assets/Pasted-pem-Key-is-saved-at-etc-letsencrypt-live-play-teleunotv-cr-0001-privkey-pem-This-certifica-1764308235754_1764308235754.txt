@@ -1,0 +1,140 @@
+pem
+Key is saved at:         /etc/letsencrypt/live/play.teleunotv.cr-0001/privkey.pem
+This certificate expires on 2026-02-26.
+These files will be updated when the certificate renews.
+Certbot has set up a scheduled task to automatically renew this certificate in the background.
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+If you like Certbot, please consider supporting our work by:
+ * Donating to ISRG / Let's Encrypt:   https://letsencrypt.org/donate
+ * Donating to EFF:                    https://eff.org/donate-le
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Job for nginx.service failed because the control process exited with error code.
+See "systemctl status nginx.service" and "journalctl -xeu nginx.service" for details.
+root@cableuno:/var/www/cable-uno-play# ^C
+root@cableuno:/var/www/cable-uno-play# # 1. Editar la configuración para usar el nuevo certificado
+sed -i 's|/etc/letsencrypt/live/play.teleunotv.cr/|/etc/letsencrypt/live/play.teleunotv.cr-0001/|g' /etc/nginx/sites-enabled/play.teleunotv.cr
+
+# 2. Verificar la configuración
+nginx -t
+
+# 3. Iniciar Nginx
+systemctl start nginx
+
+# 4. Verificar que funciona
+curl -sI https://play.teleunotv.cr | head -5
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+Job for nginx.service failed because the control process exited with error code.
+See "systemctl status nginx.service" and "journalctl -xeu nginx.service" for details.
+root@cableuno:/var/www/cable-uno-play# # Ver el error exacto de Nginx
+journalctl -xeu nginx.service --no-pager | tail -30
+░░ 
+░░ The job identifier is 3014.
+nov 27 23:34:12 cableuno nginx[46745]: nginx: [emerg] bind() to 0.0.0.0:443 failed (98: Address already in use)
+nov 27 23:34:12 cableuno nginx[46745]: nginx: [emerg] bind() to 0.0.0.0:443 failed (98: Address already in use)
+nov 27 23:34:13 cableuno nginx[46745]: nginx: [emerg] bind() to 0.0.0.0:443 failed (98: Address already in use)
+nov 27 23:34:13 cableuno nginx[46745]: nginx: [emerg] bind() to 0.0.0.0:443 failed (98: Address already in use)
+nov 27 23:34:14 cableuno nginx[46745]: nginx: [emerg] bind() to 0.0.0.0:443 failed (98: Address already in use)
+nov 27 23:34:14 cableuno nginx[46745]: nginx: [emerg] still could not bind()
+nov 27 23:34:14 cableuno systemd[1]: nginx.service: Control process exited, code=exited, status=1/FAILURE
+░░ Subject: Unit process exited
+░░ Defined-By: systemd
+░░ Support: http://www.ubuntu.com/support
+░░ 
+░░ An ExecStart= process belonging to unit nginx.service has exited.
+░░ 
+░░ The process' exit code is 'exited' and its exit status is 1.
+nov 27 23:34:14 cableuno systemd[1]: nginx.service: Failed with result 'exit-code'.
+░░ Subject: Unit failed
+░░ Defined-By: systemd
+░░ Support: http://www.ubuntu.com/support
+░░ 
+░░ The unit nginx.service has entered the 'failed' state with result 'exit-code'.
+nov 27 23:34:14 cableuno systemd[1]: Failed to start nginx.service - A high performance web server and a reverse proxy server.
+░░ Subject: A start job for unit nginx.service has failed
+░░ Defined-By: systemd
+░░ Support: http://www.ubuntu.com/support
+░░ 
+░░ A start job for unit nginx.service has finished with a failure.
+░░ 
+░░ The job identifier is 3014 and the job result is failed.
+root@cableuno:/var/www/cable-uno-play# # Ver qué proceso usa el puerto 443
+netstat -tlnp | grep 443
+
+# Matar el proceso que usa el puerto 443 si es necesario
+fuser -k 443/tcp
+
+# Iniciar Nginx
+systemctl start nginx
+
+# Verificar
+systemctl status nginx
+tcp        0      0 0.0.0.0:443             0.0.0.0:*               ESCUCHAR    16445/nginx: master 
+443/tcp:             16445 16446 16447 16448 16449 16450 16451 16452 16453 16454 16455 16456 16457 16458 16460 16461 16462 16463 16464 16465 16466 16467 16468 16469 16470 16471 16472 16473 16474 16476 16493 16516 16548 16589 16636 16678 16724 16768 16830 16897 16957 17011 17049 17086 17110 17142 17176 17230 17321
+● nginx.service - A high performance web server and a reverse proxy server
+     Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; preset: en>
+     Active: active (running) since Thu 2025-11-27 23:36:35 CST; 32ms ago
+       Docs: man:nginx(8)
+    Process: 57264 ExecStartPre=/usr/sbin/nginx -t -q -g daemon on; master_proc>
+    Process: 57266 ExecStart=/usr/sbin/nginx -g daemon on; master_process on; (>
+   Main PID: 57267 (nginx)
+      Tasks: 43 (limit: 231837)
+     Memory: 32.3M (peak: 32.3M)
+        CPU: 240ms
+     CGroup: /system.slice/nginx.service
+             ├─57267 "nginx: master process /usr/sbin/nginx -g daemon on; maste>
+             ├─57268 "nginx: worker process"
+             ├─57269 "nginx: worker process"
+             ├─57270 "nginx: worker process"
+             ├─57271 "nginx: worker process"
+             ├─57273 "nginx: worker process"
+             ├─57274 "nginx: worker process"
+             ├─57275 "nginx: worker process"
+             ├─57276 "nginx: worker process"
+             ├─57277 "nginx: worker process"
+             ├─57278 "nginx: worker process"
+             ├─57279 "nginx: worker process"
+             ├─57280 "nginx: worker process"
+             ├─57282 "nginx: worker process"
+             ├─57283 "nginx: worker process"
+             ├─57284 "nginx: worker process"
+             ├─57285 "nginx: worker process"
+             ├─57286 "nginx: worker process"
+             ├─57287 "nginx: worker process"
+             ├─57288 "nginx: worker process"
+             ├─57289 "nginx: worker process"
+             ├─57290 "nginx: worker process"
+             ├─57291 "nginx: worker process"
+             ├─57292 "nginx: worker process"
+             ├─57293 "nginx: worker process"
+             ├─57295 "nginx: worker process"
+             ├─57296 "nginx: worker process"
+             ├─57297 "nginx: worker process"
+             ├─57298 "nginx: worker process"
+             ├─57299 "nginx: worker process"
+             ├─57300 "nginx: worker process"
+             ├─57301 "nginx: worker process"
+             ├─57302 "nginx: worker process"
+             ├─57303 "nginx: worker process"
+             ├─57304 "nginx: worker process"
+             ├─57305 "nginx: worker process"
+             ├─57306 "nginx: worker process"
+             ├─57307 "nginx: worker process"
+             ├─57308 "nginx: worker process"
+             ├─57309 "nginx: worker process"
+             ├─57310 "nginx: worker process"
+             ├─57311 "nginx: worker process"
+             ├─57312 "nginx: worker process"
+             ├─57313 "nginx: worker process"
+             ├─57314 "nginx: worker process"
+             ├─57315 "nginx: worker process"
+             ├─57316 "nginx: worker process"
+             ├─57317 "nginx: master process /usr/sbin/nginx -g daemon on; maste>
+             └─57318 "nginx: master process /usr/sbin/nginx -g daemon on; maste>
+
+nov 27 23:36:35 cableuno systemd[1]: Starting nginx.service - A high performanc>
+nov 27 23:36:35 cableuno systemd[1]: Started nginx.service - A high performance>
+lines 41-63/63 (END)
+[1]+  Detenido                systemctl status nginx
+root@cableuno:/var/www/cable-uno-play# 
