@@ -102,11 +102,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const convertXUIUrlToLocal = (url: string): string => {
     // Convert all XUI variants to localhost:81
     // Patterns: app.teleunotv.cr:81, 190.61.110.177:81, app.teleunotv.cr, 190.61.110.177
+    // Note: Don't use /g flag with .test() as it advances lastIndex and causes issues
     const xuiPatterns = [
-      { pattern: /https?:\/\/app\.teleunotv\.cr:81/g, replacement: 'http://127.0.0.1:81' },
-      { pattern: /https?:\/\/190\.61\.110\.177:81/g, replacement: 'http://127.0.0.1:81' },
-      { pattern: /https?:\/\/app\.teleunotv\.cr(?!:)/g, replacement: 'http://127.0.0.1:81' },
-      { pattern: /https?:\/\/190\.61\.110\.177(?!:)/g, replacement: 'http://127.0.0.1:81' },
+      { pattern: /https?:\/\/app\.teleunotv\.cr:81/, replacement: 'http://127.0.0.1:81' },
+      { pattern: /https?:\/\/190\.61\.110\.177:81/, replacement: 'http://127.0.0.1:81' },
+      { pattern: /https?:\/\/app\.teleunotv\.cr(?!:)/, replacement: 'http://127.0.0.1:81' },
+      { pattern: /https?:\/\/190\.61\.110\.177(?!:)/, replacement: 'http://127.0.0.1:81' },
     ];
     
     let result = url;
