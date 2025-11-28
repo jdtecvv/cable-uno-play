@@ -1,0 +1,69 @@
+cableuno@cableuno:~$ sudo su 
+[sudo] contraseña para cableuno: 
+Lo siento, pruebe otra vez.
+[sudo] contraseña para cableuno: 
+root@cableuno:/home/cableuno# cd /var/www/cable-uno-play
+git pull origin main
+npm run build
+pm2 restart cable-uno-play
+remote: Enumerating objects: 36, done.
+remote: Counting objects: 100% (36/36), done.
+remote: Compressing objects: 100% (10/10), done.
+remote: Total 26 (delta 16), reused 26 (delta 16), pack-reused 0 (from 0)
+Desempaquetando objetos: 100% (26/26), 338.89 KiB | 1.07 MiB/s, listo.
+Desde https://github.com/jdtecvv/cable-uno-play
+ * branch            main       -> FETCH_HEAD
+   daa30d0..eef1e0f  main       -> origin/main
+Actualizando daa30d0..eef1e0f
+Fast-forward
+ ...a 2025-11-28 a la(s) 09.29.13_1764344264952.png | Bin 0 -> 50854 bytes
+ ...a 2025-11-28 a la(s) 09.29.26_1764344264952.png | Bin 0 -> 48111 bytes
+ ...a 2025-11-28 a la(s) 09.29.37_1764344264952.png | Bin 0 -> 46705 bytes
+ ...a 2025-11-28 a la(s) 09.29.46_1764344264952.png | Bin 0 -> 51223 bytes
+ ...a 2025-11-28 a la(s) 09.30.00_1764344264952.png | Bin 0 -> 63442 bytes
+ ...a 2025-11-28 a la(s) 09.30.06_1764344264952.png | Bin 0 -> 57698 bytes
+ ...a 2025-11-28 a la(s) 09.30.13_1764344264953.png | Bin 0 -> 50942 bytes
+ ...n-npm-run-build-1764310430616_1764310430617.txt |  96 +++++++++++++++++++++
+ client/src/components/player/video-player.tsx      |  46 ++++++++--
+ server/routes.ts                                   |  28 +++++-
+ 10 files changed, 161 insertions(+), 9 deletions(-)
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-28 a la(s) 09.29.13_1764344264952.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-28 a la(s) 09.29.26_1764344264952.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-28 a la(s) 09.29.37_1764344264952.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-28 a la(s) 09.29.46_1764344264952.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-28 a la(s) 09.30.00_1764344264952.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-28 a la(s) 09.30.06_1764344264952.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-28 a la(s) 09.30.13_1764344264953.png
+ create mode 100644 attached_assets/Pasted-root-cableuno-var-www-cable-uno-play-cd-var-www-cable-uno-play-git-pull-origin-main-npm-run-build-1764310430616_1764310430617.txt
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.18 building for production...
+transforming (3) src/main.tsxBrowserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 2058 modules transformed.
+../dist/public/index.html                     2.37 kB │ gzip:   0.94 kB
+../dist/public/assets/index-BvUB-Oid.css     73.40 kB │ gzip:  12.34 kB
+../dist/public/assets/index-CiQ8t__y.js   1,052.82 kB │ gzip: 319.60 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 9.33s
+
+  dist/index.js  50.7kb
+
+⚡ Done in 19ms
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [cable-uno-play](ids: [ 0 ])
+[PM2] [cable-uno-play](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ cable-uno-play     │ fork     │ 4    │ online    │ 0%       │ 18.0mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@cableuno:/var/www/cable-uno-play# 
+
