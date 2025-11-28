@@ -97,6 +97,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Run cleanup every minute
   setInterval(cleanupStaleSessions, 60 * 1000);
 
+  // Helper function to convert XUI URLs to internal localhost (for server-side proxy)
+  // XUI nginx listens only on 127.0.0.1:81, so we need to route requests internally
+  const convertXUIUrlToLocal = (url: string): string => {
+    // Convert all XUI variants to localhost:81
+    // Patterns: app.teleunotv.cr:81, 190.61.110.177:81, app.teleunotv.cr, 190.61.110.177
+    const xuiPatterns = [
+      { pattern: /https?:\/\/app\.teleunotv\.cr:81/g, replacement: 'http://127.0.0.1:81' },
+      { pattern: /https?:\/\/190\.61\.110\.177:81/g, replacement: 'http://127.0.0.1:81' },
+      { pattern: /https?:\/\/app\.teleunotv\.cr(?!:)/g, replacement: 'http://127.0.0.1:81' },
+      { pattern: /https?:\/\/190\.61\.110\.177(?!:)/g, replacement: 'http://127.0.0.1:81' },
+    ];
+    
+    let result = url;
+    for (const { pattern, replacement } of xuiPatterns) {
+      if (pattern.test(result)) {
+        result = result.replace(pattern, replacement);
+        console.log(`🔄 XUI URL converted to local: ${url} -> ${result}`);
+        break;
+      }
+    }
+    return result;
+  };
+
   // Proxy endpoint to avoid CORS issues when loading M3U from external URLs
   app.post(`${apiPrefix}/proxy/m3u`, async (req, res) => {
     try {
@@ -111,7 +134,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid URL format" });
       }
 
-      const response = await fetch(url);
+      // Convert XUI URLs to localhost for internal access
+      const fetchUrl = convertXUIUrlToLocal(url);
+
+      const response = await fetch(fetchUrl);
       
       if (!response.ok) {
         return res.status(response.status).json({ 
