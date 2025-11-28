@@ -1,0 +1,96 @@
+tcp        0      0 127.0.0.1:5000          0.0.0.0:*               ESCUCHAR    25887/node          
+Saving debug log to /var/log/letsencrypt/letsencrypt.log
+Requesting a certificate for play.teleunotv.cr
+
+
+
+
+
+An unexpected error occurred:
+acme.errors.ClientError: <Response [405]>
+Ask for help or search for solutions at https://community.letsencrypt.org. See the logfile /var/log/letsencrypt/letsencrypt.log or re-run Certbot with -v for more details.
+Job for nginx.service failed because the control process exited with error code.
+See "systemctl status nginx.service" and "journalctl -xeu nginx.service" for details.
+root@cableuno:/var/www/cable-uno-play# 
+root@cableuno:/var/www/cable-uno-play# 
+root@cableuno:/var/www/cable-uno-play# 
+root@cableuno:/var/www/cable-uno-play# 
+root@cableuno:/var/www/cable-uno-play# 
+root@cableuno:/var/www/cable-uno-play# # 1. Ver qué error tiene Nginx
+nginx -t
+
+# 2. Ver la configuración de play.teleunotv.cr
+cat /etc/nginx/sites-enabled/play.teleunotv.cr
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+server {
+    server_name play.teleunotv.cr;
+    
+    location / {
+        proxy_pass http://127.0.0.1:5000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/play.teleunotv.cr/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/play.teleunotv.cr/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+
+}
+server {
+    if ($host = play.teleunotv.cr) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    listen 80;
+    server_name play.teleunotv.cr;
+    return 404; # managed by Certbot
+
+
+root@cableuno:/var/www/cable-uno-play# # 1. Verificar si existen los certificadoss
+ls -la /etc/letsencrypt/live/play.teleunotv.cr/
+
+# 2. Si no existen, usar certbot en modo standalone (primero parar nginx)
+systemctl stop nginx
+
+# 3. Generar certificado nuevo
+certbot certonly --standalone -d play.teleunotv.cr
+
+# 4. Reiniciar nginx
+systemctl start nginx
+total 12
+drwxr-xr-x 2 root root 4096 nov 12 07:26 .
+drwx------ 3 root root 4096 nov 12 07:19 ..
+lrwxrwxrwx 1 root root   41 nov 12 07:26 cert.pem -> ../../archive/play.teleunotv.cr/cert2.pem
+lrwxrwxrwx 1 root root   42 nov 12 07:26 chain.pem -> ../../archive/play.teleunotv.cr/chain2.pem
+lrwxrwxrwx 1 root root   46 nov 12 07:26 fullchain.pem -> ../../archive/play.teleunotv.cr/fullchain2.pem
+lrwxrwxrwx 1 root root   44 nov 12 07:26 privkey.pem -> ../../archive/play.teleunotv.cr/privkey2.pem
+-rw-r--r-- 1 root root  692 nov 12 07:19 README
+Saving debug log to /var/log/letsencrypt/letsencrypt.log
+Requesting a certificate for play.teleunotv.cr
+
+Successfully received certificate.
+Certificate is saved at: /etc/letsencrypt/live/play.teleunotv.cr-0001/fullchain.pem
+Key is saved at:         /etc/letsencrypt/live/play.teleunotv.cr-0001/privkey.pem
+This certificate expires on 2026-02-26.
+These files will be updated when the certificate renews.
+Certbot has set up a scheduled task to automatically renew this certificate in the background.
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+If you like Certbot, please consider supporting our work by:
+ * Donating to ISRG / Let's Encrypt:   https://letsencrypt.org/donate
+ * Donating to EFF:                    https://eff.org/donate-le
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Job for nginx.service failed because the control process exited with error code.
+See "systemctl status nginx.service" and "journalctl -xeu nginx.service" for details.
+root@cableuno:/var/www/cable-uno-play# ^C
+root@cableuno:/var/www/cable-uno-play# 
