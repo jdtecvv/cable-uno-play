@@ -1,0 +1,67 @@
+./dist/public/assets/index-BvUB-Oid.css     73.40 kB │ gzip:  12.34 kB
+../dist/public/assets/index-CiQ8t__y.js   1,052.82 kB │ gzip: 319.60 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 10.27s
+
+  dist/index.js  50.7kb
+
+⚡ Done in 19ms
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [cable-uno-play](ids: [ 0 ])
+[PM2] [cable-uno-play](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ cable-uno-play     │ fork     │ 7    │ online    │ 0%       │ 17.6mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@cableuno:/var/www/cable-uno-play# pm2 logs cable-uno-play --lines 20
+[TAILING] Tailing last 20 lines for [cable-uno-play] process (change the value with --lines option)
+/root/.pm2/logs/cable-uno-play-error.log last 20 lines:
+0|cable-un |     at async getCategories (file:///var/www/cable-uno-play/dist/index.js:437:10)
+0|cable-un |     at async file:///var/www/cable-uno-play/dist/index.js:1110:27 {
+0|cable-un |   length: 75,
+0|cable-un |   severity: 'ERROR',
+0|cable-un |   code: '28P01',
+0|cable-un |   detail: undefined,
+0|cable-un |   hint: undefined,
+0|cable-un |   position: undefined,
+0|cable-un |   internalPosition: undefined,
+0|cable-un |   internalQuery: undefined,
+0|cable-un |   where: undefined,
+0|cable-un |   schema: undefined,
+0|cable-un |   table: undefined,
+0|cable-un |   column: undefined,
+0|cable-un |   dataType: undefined,
+0|cable-un |   constraint: undefined,
+0|cable-un |   file: undefined,
+0|cable-un |   line: undefined,
+0|cable-un |   routine: undefined
+0|cable-un | }
+
+/root/.pm2/logs/cable-uno-play-out.log last 20 lines:
+0|cable-un | > rest-express@1.0.0 start
+0|cable-un | > NODE_ENV=production node dist/index.js
+0|cable-un | 
+0|cable-un | 🚀 Registering API routes with prefix: /api
+0|cable-un | 📡 Registering route: GET /api/proxy/stream
+0|cable-un | 9:46:04 AM [express] serving on port 5000 (host: 127.0.0.1)
+0|cable-un | 
+0|cable-un | > rest-express@1.0.0 start
+0|cable-un | > NODE_ENV=production node dist/index.js
+0|cable-un | 
+0|cable-un | 🚀 Registering API routes with prefix: /api
+0|cable-un | 📡 Registering route: GET /api/proxy/stream
+0|cable-un | 12:12:09 PM [express] serving on port 5000 (host: 127.0.0.1)
+0|cable-un | 
+0|cable-un | > rest-express@1.0.0 start
+0|cable-un | > NODE_ENV=production node dist/index.js
+0|cable-un | 
+0|cable-un | 🚀 Registering API routes with prefix: /api
+0|cable-un | 📡 Registering route: GET /api/proxy/stream
+0|cable-un | 12:16:20 PM [express] serving on port 5000 (host: 127.0.0.1)
+
+
