@@ -1,0 +1,80 @@
+0|cable-un | 🚀 Registering API routes with prefix: /api
+0|cable-un | 📡 Registering route: GET /api/proxy/stream
+0|cable-un | 12:16:20 PM [express] serving on port 5000 (host: 127.0.0.1)
+
+^C
+root@cableuno:/var/www/cable-uno-play# grep -n "global flag" /var/www/cable-uno-play/server/routes.ts
+root@cableuno:/var/www/cable-uno-play# root@cableuno:/var/www/cable-uno-play# grep -n "global flag" /var/www/cable-uno-play/server/routes.ts
+root@cableuno:/var/www/cable-uno-play# 
+bash: root@cableuno:/var/www/cable-uno-play#: No existe el archivo o el directorio
+bash: root@cableuno:/var/www/cable-uno-play#: No existe el archivo o el directorio
+root@cableuno:/var/www/cable-uno-play# 
+root@cableuno:/var/www/cable-uno-play# 
+root@cableuno:/var/www/cable-uno-play# 
+root@cableuno:/var/www/cable-uno-play# 
+root@cableuno:/var/www/cable-uno-play# pm2 logs cable-uno-play --lines 30
+[TAILING] Tailing last 30 lines for [cable-uno-play] process (change the value with --lines option)
+/root/.pm2/logs/cable-uno-play-error.log last 30 lines:
+0|cable-un |   dataType: undefined,
+0|cable-un |   constraint: undefined,
+0|cable-un |   file: undefined,
+0|cable-un |   line: undefined,
+0|cable-un |   routine: undefined
+0|cable-un | }
+0|cable-un | API Error: error: password authentication failed for user 'neondb_owner'
+0|cable-un |     at file:///var/www/cable-uno-play/node_modules/@neondatabase/serverless/index.mjs:1345:74
+0|cable-un |     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+0|cable-un |     at async NeonPreparedQuery.execute (file:///var/www/cable-uno-play/node_modules/drizzle-orm/neon-serverless/session.js:76:20)
+0|cable-un |     at async getCategories (file:///var/www/cable-uno-play/dist/index.js:437:10)
+0|cable-un |     at async file:///var/www/cable-uno-play/dist/index.js:1110:27 {
+0|cable-un |   length: 75,
+0|cable-un |   severity: 'ERROR',
+0|cable-un |   code: '28P01',
+0|cable-un |   detail: undefined,
+0|cable-un |   hint: undefined,
+0|cable-un |   position: undefined,
+0|cable-un |   internalPosition: undefined,
+0|cable-un |   internalQuery: undefined,
+0|cable-un |   where: undefined,
+0|cable-un |   schema: undefined,
+0|cable-un |   table: undefined,
+0|cable-un |   column: undefined,
+0|cable-un |   dataType: undefined,
+0|cable-un |   constraint: undefined,
+0|cable-un |   file: undefined,
+0|cable-un |   line: undefined,
+0|cable-un |   routine: undefined
+0|cable-un | }
+
+/root/.pm2/logs/cable-uno-play-out.log last 30 lines:
+0|cable-un | 12:22:05 AM [express] GET /api/channels/recent 500 in 671ms :: {"message":"password authentication fa…
+0|cable-un | 12:22:05 AM [express] GET /api/categories 500 in 825ms :: {"message":"password authentication failed …
+0|cable-un | 
+0|cable-un | > rest-express@1.0.0 start
+0|cable-un | > NODE_ENV=production node dist/index.js
+0|cable-un | 
+0|cable-un | 🚀 Registering API routes with prefix: /api
+0|cable-un | 📡 Registering route: GET /api/proxy/stream
+0|cable-un | 9:41:21 AM [express] serving on port 5000 (host: 127.0.0.1)
+0|cable-un | 
+0|cable-un | > rest-express@1.0.0 start
+0|cable-un | > NODE_ENV=production node dist/index.js
+0|cable-un | 
+0|cable-un | 🚀 Registering API routes with prefix: /api
+0|cable-un | 📡 Registering route: GET /api/proxy/stream
+0|cable-un | 9:46:04 AM [express] serving on port 5000 (host: 127.0.0.1)
+0|cable-un | 
+0|cable-un | > rest-express@1.0.0 start
+0|cable-un | > NODE_ENV=production node dist/index.js
+0|cable-un | 
+0|cable-un | 🚀 Registering API routes with prefix: /api
+0|cable-un | 📡 Registering route: GET /api/proxy/stream
+0|cable-un | 12:12:09 PM [express] serving on port 5000 (host: 127.0.0.1)
+0|cable-un | 
+0|cable-un | > rest-express@1.0.0 start
+0|cable-un | > NODE_ENV=production node dist/index.js
+0|cable-un | 
+0|cable-un | 🚀 Registering API routes with prefix: /api
+0|cable-un | 📡 Registering route: GET /api/proxy/stream
+0|cable-un | 12:16:20 PM [express] serving on port 5000 (host: 127.0.0.1)
+
