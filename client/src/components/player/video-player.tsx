@@ -114,6 +114,13 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
       const setupHls = async () => {
         let streamUrl = channel.url;
 
+        // Fix XUI malformed URLs with extra colon after domain
+        // Example: https://app.teleunotv.cr:/play/... -> https://app.teleunotv.cr/play/...
+        if (streamUrl.includes('://') && streamUrl.match(/:\/\/[^/]+:\/[^/]/)) {
+          streamUrl = streamUrl.replace(/:\/([^/])/, '/$1');
+          console.log(`🔧 Fixed malformed URL (removed extra colon): ${streamUrl}`);
+        }
+
         // Convert XUI /ts URLs to /m3u8 for HLS.js compatibility
         // XUI streams ending in /ts are MPEG-TS direct streams, not HLS playlists
         // XUI format is /play/TOKEN/ts -> /play/TOKEN/m3u8 (not .m3u8)
@@ -162,9 +169,14 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
             xhrSetup: function(xhr: XMLHttpRequest, url: string) {
               let finalUrl = url;
               
+              // Fix XUI malformed URLs with extra colon after domain
+              if (finalUrl.includes('://') && finalUrl.match(/:\/\/[^/]+:\/[^/]/)) {
+                finalUrl = finalUrl.replace(/:\/([^/])/, '/$1');
+              }
+              
               // Convert XUI HTTP URLs to HTTPS (segments referenced in manifest)
-              if (url.includes('app.teleunotv.cr:81')) {
-                finalUrl = url.replace('http://app.teleunotv.cr:81', 'https://app.teleunotv.cr');
+              if (finalUrl.includes('app.teleunotv.cr:81')) {
+                finalUrl = finalUrl.replace('http://app.teleunotv.cr:81', 'https://app.teleunotv.cr');
                 xhr.open('GET', finalUrl, true);
               }
               
