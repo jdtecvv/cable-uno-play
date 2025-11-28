@@ -129,12 +129,21 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
           console.log(`🔄 Converted XUI URL from /ts to /m3u8: ${streamUrl}`);
         }
 
-        // Convert XUI HTTP URLs to HTTPS (direct connection without proxy)
+        // Convert ALL XUI URLs (IP or domain, with or without port) to HTTPS
         // This allows XUI to see the real client IP instead of proxy IP
-        // app.teleunotv.cr:81 (HTTP) -> app.teleunotv.cr (HTTPS via System Nginx :443)
-        if (streamUrl.includes('app.teleunotv.cr:81')) {
-          streamUrl = streamUrl.replace('http://app.teleunotv.cr:81', 'https://app.teleunotv.cr');
-          console.log(`🔒 Converted XUI URL to HTTPS: ${streamUrl}`);
+        // Variants: 190.61.110.177:81, 190.61.110.177, app.teleunotv.cr:81, app.teleunotv.cr
+        const xuiPatterns = [
+          /https?:\/\/190\.61\.110\.177:81/g,
+          /https?:\/\/190\.61\.110\.177/g,
+          /http:\/\/app\.teleunotv\.cr:81/g,
+          /http:\/\/app\.teleunotv\.cr(?!:)/g,
+        ];
+        for (const pattern of xuiPatterns) {
+          if (pattern.test(streamUrl)) {
+            streamUrl = streamUrl.replace(pattern, 'https://app.teleunotv.cr');
+            console.log(`🔒 Converted XUI URL to HTTPS: ${streamUrl}`);
+            break;
+          }
         }
 
         // Use proxy only for HTTP streams that are NOT from our XUI server
@@ -168,16 +177,37 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
             // Intercept ALL XHR requests made by HLS.js
             xhrSetup: function(xhr: XMLHttpRequest, url: string) {
               let finalUrl = url;
+              let urlChanged = false;
               
               // Fix XUI malformed URLs with extra colon after domain
               if (finalUrl.includes('://') && finalUrl.match(/:\/\/[^/]+:\/[^/]/)) {
                 finalUrl = finalUrl.replace(/:\/([^/])/, '/$1');
+                urlChanged = true;
               }
               
-              // Convert XUI HTTP URLs to HTTPS (segments referenced in manifest)
-              if (finalUrl.includes('app.teleunotv.cr:81')) {
-                finalUrl = finalUrl.replace('http://app.teleunotv.cr:81', 'https://app.teleunotv.cr');
+              // Convert ALL XUI URLs (IP or domain, with or without port) to HTTPS
+              const xuiPatterns = [
+                /https?:\/\/190\.61\.110\.177:81/g,
+                /https?:\/\/190\.61\.110\.177/g,
+                /http:\/\/app\.teleunotv\.cr:81/g,
+                /http:\/\/app\.teleunotv\.cr(?!:)/g,
+              ];
+              for (const pattern of xuiPatterns) {
+                if (pattern.test(finalUrl)) {
+                  finalUrl = finalUrl.replace(pattern, 'https://app.teleunotv.cr');
+                  urlChanged = true;
+                  break;
+                }
+              }
+              
+              // If URL was changed to HTTPS XUI, re-open with new URL
+              if (urlChanged && finalUrl.startsWith('https://app.teleunotv.cr')) {
                 xhr.open('GET', finalUrl, true);
+                if (username && password) {
+                  const credentials = btoa(`${username}:${password}`);
+                  xhr.setRequestHeader('Authorization', `Basic ${credentials}`);
+                }
+                return;
               }
               
               // Handle HTTP URLs - redirect through proxy to avoid Mixed Content
