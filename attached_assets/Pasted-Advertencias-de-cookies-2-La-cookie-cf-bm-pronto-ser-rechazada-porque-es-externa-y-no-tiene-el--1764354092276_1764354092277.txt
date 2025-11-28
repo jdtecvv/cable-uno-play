@@ -1,0 +1,49 @@
+Advertencias de cookies 2
+La cookie “__cf_bm” pronto será rechazada porque es externa y no tiene el atributo “Partitioned“. replit-dev-banner.js
+La cookie “_cfuvid” pronto será rechazada porque es externa y no tiene el atributo “Partitioned“. replit-dev-banner.js
+Service Worker registered successfully: 
+ServiceWorkerRegistration { installing: null, waiting: null, active: ServiceWorker, navigationPreload: NavigationPreloadManager, scope: "https://demo.teleunotv.cr/", updateViaCache: "imports", onupdatefound: null, pushManager: PushManager, cookies: CookieStoreManager }
+index-Dev44f5G.js:231:144016
+Error loading XUI playlist: Error: fetch failed
+    b https://demo.teleunotv.cr/assets/index-Dev44f5G.js:231
+index-Dev44f5G.js:231:132469
+    b https://demo.teleunotv.cr/assets/index-Dev44f5G.js:231
+Error loading XUI playlist: Error: fetch failed
+    b https://demo.teleunotv.cr/assets/index-Dev44f5G.js:231
+index-Dev44f5G.js:231:132469
+Error loading XUI playlist: Error: fetch failed
+    b https://demo.teleunotv.cr/assets/index-Dev44f5G.js:231
+index-Dev44f5G.js:231:132469
+Error loading XUI playlist: Error: No se encontraron canales válidos en el archivo M3U
+    sy https://demo.teleunotv.cr/assets/index-Dev44f5G.js:192
+    b https://demo.teleunotv.cr/assets/index-Dev44f5G.js:231
+    II https://demo.teleunotv.cr/assets/index-Dev44f5G.js:37
+    PI https://demo.teleunotv.cr/assets/index-Dev44f5G.js:37
+    DI https://demo.teleunotv.cr/assets/index-Dev44f5G.js:37
+    sv https://demo.teleunotv.cr/assets/index-Dev44f5G.js:37
+    kT https://demo.teleunotv.cr/assets/index-Dev44f5G.js:37
+    vh https://demo.teleunotv.cr/assets/index-Dev44f5G.js:37
+    n0 https://demo.teleunotv.cr/assets/index-Dev44f5G.js:40
+    tT https://demo.teleunotv.cr/assets/index-Dev44f5G.js:37
+    vh https://demo.teleunotv.cr/assets/index-Dev44f5G.js:37
+    kg https://demo.teleunotv.cr/assets/index-Dev44f5G.js:37
+    qI https://demo.teleunotv.cr/assets/index-Dev44f5G.js:37
+index-Dev44f5G.js:231:132469
+Error loading XUI playlist: Error: No se encontraron canales válidos en el archivo M3U
+    sy https://demo.teleunotv.cr/assets/index-Dev44f5G.js:192
+    b https://demo.teleunotv.cr/assets/index-Dev44f5G.js:231
+    II https://demo.teleunotv.cr/assets/index-Dev44f5G.js:37
+    PI https://demo.teleunotv.cr/assets/index-Dev44f5G.js:37
+    DI https://demo.teleunotv.cr/assets/index-Dev44f5G.js:37
+    sv https://demo.teleunotv.cr/assets/index-Dev44f5G.js:37
+    kT https://demo.teleunotv.cr/assets/index-Dev44f5G.js:37
+    vh https://demo.teleunotv.cr/assets/index-Dev44f5G.js:37
+    n0 https://demo.teleunotv.cr/assets/index-Dev44f5G.js:40
+    tT https://demo.teleunotv.cr/assets/index-Dev44f5G.js:37
+    vh https://demo.teleunotv.cr/assets/index-Dev44f5G.js:37
+    kg https://demo.teleunotv.cr/assets/index-Dev44f5G.js:37
+    qI https://demo.teleunotv.cr/assets/index-Dev44f5G.js:37
+index-Dev44f5G.js:231:132469
+
+​
+
