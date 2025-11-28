@@ -1,0 +1,99 @@
+notv.cr" "http://127.0.0.1:81/live/demo/12345/1.m3u8"
+HTTP/1.1 204 No Content
+Server: nginx
+Date: Fri, 28 Nov 2025 04:34:50 GMT
+Connection: keep-alive
+Access-Control-Allow-Origin: https://play.teleunotv.cr
+Access-Control-Allow-Methods: GET, POST, OPTIONS
+Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, Authorization, Range
+Access-Control-Expose-Headers: Content-Length, Content-Range
+
+root@cableuno:/home/cableuno# curl -sI -H "Origin: https://play.teleunotv.cr" "http://127.0.0.1:81/live/demo/12345/1.m3u8" | head -20
+HTTP/1.1 200 OK
+Server: nginx
+Date: Fri, 28 Nov 2025 04:35:51 GMT
+Content-Type: application/vnd.apple.mpegurl
+Content-Length: 0
+Connection: keep-alive
+Access-Control-Allow-Origin: https://play.teleunotv.cr
+Access-Control-Allow-Methods: GET, POST, OPTIONS
+Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, Authorization, Range
+Access-Control-Expose-Headers: Content-Length, Content-Range
+
+root@cableuno:/home/cableuno# cd /var/www/cable-uno-play
+git log -1 --oneline
+pm2 restart cable-uno-play
+121358d (HEAD -> main, origin/main, origin/HEAD) Improve video streaming by directly using HTTPS for XUI connections
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [cable-uno-play](ids: [ 0 ])
+[PM2] [cable-uno-play](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ cable-uno-play     │ fork     │ 1    │ online    │ 0%       │ 18.8mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@cableuno:/var/www/cable-uno-play# ^C
+root@cableuno:/var/www/cable-uno-play# cd /var/www/cable-uno-play
+git pull origin main
+npm run build
+pm2 restart cable-uno-play
+remote: Enumerating objects: 52, done.
+remote: Counting objects: 100% (52/52), done.
+remote: Compressing objects: 100% (7/7), done.
+remote: Total 44 (delta 37), reused 44 (delta 37), pack-reused 0 (from 0)
+Desempaquetando objetos: 100% (44/44), 3.56 MiB | 3.49 MiB/s, listo.
+Desde https://github.com/jdtecvv/cable-uno-play
+ * branch            main       -> FETCH_HEAD
+   121358d..1dd70b8  main       -> origin/main
+Actualizando 121358d..1dd70b8
+Fast-forward
+ .replit                                            |   8 +-
+ ...2025-11-27 a la(s) 11.51.24 2_1764265890226.png | Bin 0 -> 1699779 bytes
+ ...a 2025-11-27 a la(s) 11.51.24_1764265890226.png | Bin 0 -> 1808160 bytes
+ ...a 2025-11-27 a la(s) 22.40.57_1764304897080.png | Bin 0 -> 396221 bytes
+ ...e-a-padding-to--1764266476344_1764266476344.txt | 109 ++++++++++
+ ...proxy-set-heade-1764266917788_1764266917789.txt | 224 +++++++++++++++++++++
+ ...-thumb-break-re-1764266529510_1764266529510.txt |  41 ++++
+ ...onents-player-v-1764264495550_1764264495551.txt |  69 +++++++
+ ...CHAR-4446-node--1764266412417_1764266412418.txt |  62 ++++++
+ client/src/components/player/video-player.tsx      |  16 +-
+ 10 files changed, 523 insertions(+), 6 deletions(-)
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-27 a la(s) 11.51.24 2_1764265890226.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-27 a la(s) 11.51.24_1764265890226.png
+ create mode 100644 attached_assets/Captura de pantalla 2025-11-27 a la(s) 22.40.57_1764304897080.png
+ create mode 100644 attached_assets/Pasted--body-html-a-padding-to-disable-MSIE-and-Chrome-friendly-error-page-a-padding-to--1764266476344_1764266476344.txt
+ create mode 100644 attached_assets/Pasted--proxy-pass-http-127-0-0-1-81-proxy-set-header-Host-host-proxy-set-heade-1764266917788_1764266917789.txt
+ create mode 100644 attached_assets/Pasted--rewrite-thumb-d-stream-auth-php-token-1-stream-2-type-thumb-break-re-1764266529510_1764266529510.txt
+ create mode 100644 attached_assets/Pasted-Fast-forward-replit-4-client-src-components-player-v-1764264495550_1764264495551.txt
+ create mode 100644 attached_assets/Pasted-tcp-0-0-127-0-0-1-5000-0-0-0-0-ESCUCHAR-4446-node--1764266412417_1764266412418.txt
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.18 building for production...
+transforming (1) index.htmlBrowserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 2058 modules transformed.
+../dist/public/index.html                     2.37 kB │ gzip:   0.94 kB
+../dist/public/assets/index-BvUB-Oid.css     73.40 kB │ gzip:  12.34 kB
+../dist/public/assets/index-CFThyKMX.js   1,052.41 kB │ gzip: 319.48 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 15.06s
+
+  dist/index.js  49.9kb
+
+⚡ Done in 54ms
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [cable-uno-play](ids: [ 0 ])
+[PM2] [cable-uno-play](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ cable-uno-play     │ fork     │ 2    │ online    │ 0%       │ 18.0mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@cableuno:/var/www/cable-uno-play# 
