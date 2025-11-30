@@ -99,7 +99,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Helper function to convert XUI URLs to internal localhost (for server-side proxy)
   // XUI nginx listens only on 127.0.0.1:81, so we need to route requests internally
+  // ONLY in production - in development (Replit) we don't have local XUI
+  const isProduction = process.env.NODE_ENV === 'production';
+  
   const convertXUIUrlToLocal = (url: string): string => {
+    // Only convert to localhost in production where XUI is available locally
+    if (!isProduction) {
+      console.log(`🔄 Development mode - using original URL: ${url}`);
+      return url;
+    }
+    
     // Convert all XUI variants to localhost:81
     // Patterns: app.teleunotv.cr:81, 190.61.110.177:81, app.teleunotv.cr, 190.61.110.177
     // Note: Don't use /g flag with .test() as it advances lastIndex and causes issues
