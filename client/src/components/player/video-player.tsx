@@ -129,34 +129,17 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
           console.log(`🔄 Converted XUI URL from /ts to /m3u8: ${streamUrl}`);
         }
 
-        // Convert ALL XUI URLs to HTTPS without port 81
-        // XUI now uses HTTPS on port 443, so :81 must be removed
-        // Variants: 190.61.110.177:81, app.teleunotv.cr:81, https://app.teleunotv.cr:81
-        const originalUrl = streamUrl;
+        // Route XUI streams through backend proxy (tokens are port-bound to :81)
+        // The backend proxy converts URLs to localhost:81 for internal access
+        const isXUIStream = streamUrl.includes('app.teleunotv.cr') || 
+                           streamUrl.includes('190.61.110.177');
         
-        // First: Remove :81 from any app.teleunotv.cr URL (http or https)
-        if (streamUrl.includes('app.teleunotv.cr:81')) {
-          streamUrl = streamUrl.replace(/app\.teleunotv\.cr:81/, 'app.teleunotv.cr');
-        }
-        
-        // Then: Convert IP:81 or IP to domain
-        if (streamUrl.includes('190.61.110.177')) {
-          streamUrl = streamUrl.replace(/190\.61\.110\.177(:81)?/, 'app.teleunotv.cr');
-        }
-        
-        // Finally: Ensure HTTPS for app.teleunotv.cr
-        if (streamUrl.includes('http://app.teleunotv.cr')) {
-          streamUrl = streamUrl.replace('http://app.teleunotv.cr', 'https://app.teleunotv.cr');
-        }
-        
-        if (originalUrl !== streamUrl) {
-          console.log(`🔒 Converted XUI URL: ${originalUrl} → ${streamUrl}`);
-        }
-
-        // Use proxy only for HTTP streams that are NOT from our XUI server
-        // (mixed content protection for external streams)
-        if (streamUrl.startsWith('http://')) {
-          // Use normal proxy for HTTP streams (mixed content protection)
+        if (isXUIStream) {
+          console.log(`🔄 Routing XUI stream through proxy: ${streamUrl}`);
+          streamUrl = `/api/proxy/stream?url=${encodeURIComponent(streamUrl)}`;
+        } else if (streamUrl.startsWith('http://')) {
+          // Use proxy for other HTTP streams (mixed content protection)
+          console.log(`🔄 Routing HTTP stream through proxy: ${streamUrl}`);
           streamUrl = `/api/proxy/stream?url=${encodeURIComponent(streamUrl)}`;
         }
         
@@ -184,64 +167,43 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
             // Intercept ALL XHR requests made by HLS.js
             xhrSetup: function(xhr: XMLHttpRequest, url: string) {
               let finalUrl = url;
-              const originalUrl = url;
               
               // Fix XUI malformed URLs with extra colon after domain
               if (finalUrl.includes('://') && finalUrl.match(/:\/\/[^/]+:\/[^/]/)) {
                 finalUrl = finalUrl.replace(/:\/([^/])/, '/$1');
               }
               
-              // Convert ALL XUI URLs to HTTPS without port 81
-              // First: Remove :81 from any app.teleunotv.cr URL
-              if (finalUrl.includes('app.teleunotv.cr:81')) {
-                finalUrl = finalUrl.replace(/app\.teleunotv\.cr:81/, 'app.teleunotv.cr');
-              }
+              // Check if this is an XUI URL that needs to go through the proxy
+              const isXUIStream = finalUrl.includes('app.teleunotv.cr') || 
+                                 finalUrl.includes('190.61.110.177');
               
-              // Then: Convert IP:81 or IP to domain
-              if (finalUrl.includes('190.61.110.177')) {
-                finalUrl = finalUrl.replace(/190\.61\.110\.177(:81)?/, 'app.teleunotv.cr');
-              }
-              
-              // Finally: Ensure HTTPS for app.teleunotv.cr
-              if (finalUrl.includes('http://app.teleunotv.cr')) {
-                finalUrl = finalUrl.replace('http://app.teleunotv.cr', 'https://app.teleunotv.cr');
-              }
-              
-              const urlChanged = originalUrl !== finalUrl;
-              
-              // If URL was changed to HTTPS XUI, re-open with new URL
-              if (urlChanged && finalUrl.startsWith('https://app.teleunotv.cr')) {
-                console.log(`🔒 HLS segment URL converted: ${originalUrl} → ${finalUrl}`);
-                xhr.open('GET', finalUrl, true);
+              if (isXUIStream && !finalUrl.startsWith('/api/proxy/stream')) {
+                // Route XUI segments through proxy (tokens are port-bound)
+                const proxiedUrl = `/api/proxy/stream?url=${encodeURIComponent(finalUrl)}`;
+                console.log(`🔄 HLS segment routed through proxy: ${finalUrl}`);
+                xhr.open('GET', proxiedUrl, true);
+                
                 if (username && password) {
                   const credentials = btoa(`${username}:${password}`);
-                  xhr.setRequestHeader('Authorization', `Basic ${credentials}`);
+                  xhr.setRequestHeader('X-Stream-Auth', credentials);
                 }
                 return;
               }
               
-              // Handle HTTP URLs - redirect through proxy to avoid Mixed Content
-              // (only for non-XUI streams)
+              // Handle other HTTP URLs - redirect through proxy to avoid Mixed Content
               if (finalUrl.startsWith('http://')) {
                 const proxiedUrl = `/api/proxy/stream?url=${encodeURIComponent(finalUrl)}`;
                 xhr.open('GET', proxiedUrl, true);
                 
-                // Send credentials via header for proxy to forward
                 if (username && password) {
                   const credentials = btoa(`${username}:${password}`);
                   xhr.setRequestHeader('X-Stream-Auth', credentials);
                 }
               } else if (finalUrl.startsWith('/api/proxy/stream')) {
-                // Already proxied URL (manifests reference segments via proxy) - add credentials
+                // Already proxied URL - add credentials
                 if (username && password) {
                   const credentials = btoa(`${username}:${password}`);
                   xhr.setRequestHeader('X-Stream-Auth', credentials);
-                }
-              } else if (finalUrl.startsWith('https://')) {
-                // For HTTPS URLs, add Authorization header directly (no proxy needed)
-                if (username && password) {
-                  const credentials = btoa(`${username}:${password}`);
-                  xhr.setRequestHeader('Authorization', `Basic ${credentials}`);
                 }
               }
             },
