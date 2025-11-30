@@ -1,0 +1,64 @@
+play/dist/index.js:394:10)
+0|cable-un |     at async file:///var/www/cable-uno-play/dist/index.js:1015:25 {
+0|cable-un |   length: 75,
+0|cable-un |   severity: 'ERROR',
+0|cable-un |   code: '28P01',
+0|cable-un |   detail: undefined,
+0|cable-un |   hint: undefined,
+0|cable-un |   position: undefined,
+0|cable-un |   internalPosition: undefined,
+0|cable-un |   internalQuery: undefined,
+0|cable-un |   where: undefined,
+0|cable-un |   schema: undefined,
+0|cable-un |   table: undefined,
+0|cable-un |   column: undefined,
+0|cable-un |   dataType: undefined,
+0|cable-un |   constraint: undefined,
+0|cable-un |   file: undefined,
+0|cable-un |   line: undefined,
+0|cable-un |   routine: undefined
+0|cable-un | }
+
+/root/.pm2/logs/cable-uno-play-out.log last 30 lines:
+0|cable-un | 12:10:39 PM [express] GET /api/categories 500 in 820ms :: {"message":"password authentication failed …
+0|cable-un | 12:10:39 PM [express] GET /api/channels/recent 500 in 681ms :: {"message":"password authentication fa…
+0|cable-un | 🔄 XUI URL converted to local: http://app.teleunotv.cr:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 -> http://127.0.0.1:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8
+0|cable-un | 12:11:07 PM [express] POST /api/proxy/m3u 200 in 163ms :: {"content":"#EXTM3U\n#EXT-X-SESSION-DATA:DA…
+0|cable-un | 🔄 XUI URL converted to local: http://app.teleunotv.cr/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 -> http://127.0.0.1:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8
+0|cable-un | 12:11:36 PM [express] POST /api/proxy/m3u 200 in 76ms :: {"content":"#EXTM3U\n#EXT-X-SESSION-DATA:DAT…
+0|cable-un | 
+0|cable-un | > rest-express@1.0.0 start
+0|cable-un | > NODE_ENV=production node dist/index.js
+0|cable-un | 
+0|cable-un | 🚀 Registering API routes with prefix: /api
+0|cable-un | 📡 Registering route: GET /api/proxy/stream
+0|cable-un | 12:19:19 PM [express] serving on port 5000 (host: 127.0.0.1)
+0|cable-un | 
+0|cable-un | > rest-express@1.0.0 start
+0|cable-un | > NODE_ENV=production node dist/index.js
+0|cable-un | 
+0|cable-un | 🚀 Registering API routes with prefix: /api
+0|cable-un | 📡 Registering route: GET /api/proxy/stream
+0|cable-un | 12:33:57 PM [express] serving on port 5000 (host: 127.0.0.1)
+0|cable-un | 12:34:20 PM [express] GET /api/channels/recent 500 in 613ms :: {"message":"password authentication fa…
+0|cable-un | 12:34:20 PM [express] GET /api/categories 500 in 751ms :: {"message":"password authentication failed …
+0|cable-un | 12:34:20 PM [express] GET /api/playlists/active 500 in 641ms :: {"message":"password authentication f…
+0|cable-un | 12:34:20 PM [express] GET /api/channels 500 in 630ms :: {"message":"password authentication failed fo…
+0|cable-un | 12:34:20 PM [express] GET /api/channels/recent 500 in 631ms :: {"message":"password authentication fa…
+0|cable-un | 🔄 XUI URL converted to local: http://app.teleunotv.cr/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 -> http://127.0.0.1:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8
+0|cable-un | 12:34:38 PM [express] POST /api/proxy/m3u 200 in 175ms :: {"content":""}
+0|cable-un | 🔄 XUI URL converted to local: http://app.teleunotv.cr:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 -> http://127.0.0.1:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8
+0|cable-un | 12:34:45 PM [express] POST /api/proxy/m3u 200 in 68ms :: {"content":""}
+0|cable-un | 🔄 XUI URL converted to local: http://app.teleunotv.cr:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 -> http://127.0.0.1:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8
+
+0|cable-uno-play  | 🔄 XUI URL converted to local: http://app.teleunotv.cr/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 -> http://127.0.0.1:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8
+0|cable-uno-play  | 12:39:18 PM [express] POST /api/proxy/m3u 200 in 73ms :: {"content":""}
+0|cable-uno-play  | 🔄 XUI URL converted to local: http://app.teleunotv.cr/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 -> http://127.0.0.1:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8
+0|cable-uno-play  | 12:39:31 PM [express] POST /api/proxy/m3u 200 in 75ms :: {"content":""}
+0|cable-uno-play  | 🔄 XUI URL converted to local: http://app.teleunotv.cr:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 -> http://127.0.0.1:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8
+0|cable-uno-play  | 12:39:38 PM [express] POST /api/proxy/m3u 200 in 68ms :: {"content":""}
+0|cable-uno-play  | 🔄 XUI URL converted to local: http://app.teleunotv.cr:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 -> http://127.0.0.1:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8
+0|cable-uno-play  | 12:39:39 PM [express] POST /api/proxy/m3u 200 in 69ms :: {"content":""}
+0|cable-uno-play  | 🔄 XUI URL converted to local: http://app.teleunotv.cr:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 -> http://127.0.0.1:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8
+0|cable-uno-play  | 12:39:41 PM [express] POST /api/proxy/m3u 200 in 63ms :: {"content":""}
+
