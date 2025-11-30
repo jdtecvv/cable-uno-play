@@ -97,33 +97,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Run cleanup every minute
   setInterval(cleanupStaleSessions, 60 * 1000);
 
-  // Helper function to normalize XUI URLs for server-side proxy
-  // XUI serves content correctly only via HTTPS on port 443
-  // We normalize all variants (IP, :81, etc.) to the canonical HTTPS URL
-  const normalizeXUIUrl = (url: string): string => {
+  // Helper function to convert XUI URLs to localhost for internal access
+  // In production, XUI nginx listens on 127.0.0.1:81 (HTTP) and 127.0.0.1:444 (HTTPS)
+  // We use HTTP on port 81 for internal communication
+  const isProduction = process.env.NODE_ENV === 'production';
+  
+  const convertXUIUrlToLocal = (url: string): { url: string; hostHeader: string | null } => {
+    // Only convert to localhost in production where XUI is available locally
+    if (!isProduction) {
+      console.log(`🔄 Development mode - using original URL: ${url}`);
+      return { url, hostHeader: null };
+    }
+    
     let result = url;
-    const originalUrl = url;
+    let hostHeader: string | null = null;
     
-    // Remove :81 port from XUI URLs (use standard 443)
-    if (result.includes('app.teleunotv.cr:81')) {
-      result = result.replace(/app\.teleunotv\.cr:81/, 'app.teleunotv.cr');
+    // Check if this is an XUI URL
+    const isXUIUrl = url.includes('app.teleunotv.cr') || url.includes('190.61.110.177');
+    
+    if (isXUIUrl) {
+      // Extract the original host for the Host header
+      hostHeader = 'app.teleunotv.cr';
+      
+      // Convert all XUI variants to localhost:81
+      // Pattern 1: http(s)://app.teleunotv.cr:81/...
+      if (result.includes('app.teleunotv.cr:81')) {
+        result = result.replace(/https?:\/\/app\.teleunotv\.cr:81/, 'http://127.0.0.1:81');
+      }
+      // Pattern 2: http(s)://app.teleunotv.cr/... (without port)
+      else if (result.includes('app.teleunotv.cr')) {
+        result = result.replace(/https?:\/\/app\.teleunotv\.cr/, 'http://127.0.0.1:81');
+      }
+      // Pattern 3: http(s)://190.61.110.177:81/...
+      else if (result.includes('190.61.110.177:81')) {
+        result = result.replace(/https?:\/\/190\.61\.110\.177:81/, 'http://127.0.0.1:81');
+      }
+      // Pattern 4: http(s)://190.61.110.177/... (without port)
+      else if (result.includes('190.61.110.177')) {
+        result = result.replace(/https?:\/\/190\.61\.110\.177/, 'http://127.0.0.1:81');
+      }
+      
+      console.log(`🔄 XUI URL converted to local: ${url} -> ${result} (Host: ${hostHeader})`);
     }
     
-    // Convert IP addresses to domain
-    if (result.includes('190.61.110.177')) {
-      result = result.replace(/190\.61\.110\.177(:81)?/, 'app.teleunotv.cr');
-    }
-    
-    // Ensure HTTPS protocol for XUI
-    if (result.includes('http://app.teleunotv.cr')) {
-      result = result.replace('http://app.teleunotv.cr', 'https://app.teleunotv.cr');
-    }
-    
-    if (result !== originalUrl) {
-      console.log(`🔄 XUI URL normalized: ${originalUrl} -> ${result}`);
-    }
-    
-    return result;
+    return { url: result, hostHeader };
   };
 
   // Proxy endpoint to avoid CORS issues when loading M3U from external URLs
@@ -140,10 +157,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid URL format" });
       }
 
-      // Normalize XUI URLs to HTTPS (remove :81, convert IP to domain)
-      const fetchUrl = normalizeXUIUrl(url);
+      // Convert XUI URLs to localhost with proper Host header
+      const { url: fetchUrl, hostHeader } = convertXUIUrlToLocal(url);
+      
+      // Build headers - include Host header for XUI virtual host routing
+      const headers: Record<string, string> = {};
+      if (hostHeader) {
+        headers['Host'] = hostHeader;
+      }
 
-      const response = await fetch(fetchUrl);
+      const response = await fetch(fetchUrl, { headers });
       
       if (!response.ok) {
         return res.status(response.status).json({ 
@@ -433,9 +456,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         upstreamHeaders['If-None-Match'] = req.headers['if-none-match'] as string;
       }
 
-      // Normalize XUI URLs to HTTPS (remove :81, convert IP to domain)
-      const fetchUrl = normalizeXUIUrl(url);
-      console.log(`📡 Fetching from upstream: ${fetchUrl}`);
+      // Convert XUI URLs to localhost with proper Host header
+      const { url: fetchUrl, hostHeader } = convertXUIUrlToLocal(url);
+      
+      // Add Host header for XUI virtual host routing
+      if (hostHeader) {
+        upstreamHeaders['Host'] = hostHeader;
+      }
+      
+      console.log(`📡 Fetching from upstream: ${fetchUrl}${hostHeader ? ` (Host: ${hostHeader})` : ''}`);
       const response = await fetch(fetchUrl, { headers: upstreamHeaders });
       console.log(`📡 Upstream response: ${response.status} ${response.statusText}, Content-Type: ${response.headers.get('content-type')}`)
       

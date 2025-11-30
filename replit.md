@@ -45,43 +45,38 @@ Progressive Web App (PWA) features are implemented for mobile installation, incl
 
 ### XUI Streaming - Root Cause Analysis (November 30, 2025)
 
-**Problem**: Videos play in XUI panel (app.teleunotv.cr) but not in Cable Uno Play (play.teleunotv.cr/xui). Channels load but playback stalls at "Loading stream..."
+**Problem**: Videos play in XUI panel (app.teleunotv.cr) but not in Cable Uno Play (play.teleunotv.cr/xui). Channels load but playback stalls at "Loading stream..." or M3U proxy returns `{"content":""}`.
 
 **Root Cause Identified**:
-The backend proxy was converting XUI URLs to `http://127.0.0.1:81` (internal HTTP), but XUI **only serves content correctly via HTTPS on port 443**. When the proxy fetched from localhost:81, XUI returned empty responses or 404 errors.
+The backend proxy was converting XUI URLs to `http://127.0.0.1:81` but **without the Host header**. XUI nginx uses virtual host routing based on the `Host` header. Without it, XUI doesn't know which domain the request is for and returns empty responses.
 
 **Architecture Understanding**:
 ```
-XUI Panel Direct Access (WORKS):
-  Browser → https://app.teleunotv.cr (443) → XUI → Video plays
+XUI Nginx Internal Ports:
+  - Port 81: HTTP
+  - Port 444: HTTPS
 
 Cable Uno Play via Proxy (BROKEN before fix):
   Browser → play.teleunotv.cr → /api/proxy/stream 
-    → http://127.0.0.1:81 (internal HTTP) 
-    → XUI returns empty/404 ❌
+    → fetch("http://127.0.0.1:81/...") // NO Host header!
+    → XUI returns empty ❌ (doesn't know which vhost)
 
 Cable Uno Play via Proxy (FIXED):
   Browser → play.teleunotv.cr → /api/proxy/stream 
-    → https://app.teleunotv.cr (443 HTTPS)
+    → fetch("http://127.0.0.1:81/...", { headers: { Host: "app.teleunotv.cr" }})
     → XUI returns content ✓
 ```
 
 **Technical Fix Applied**:
-- Renamed `convertXUIUrlToLocal()` to `normalizeXUIUrl()`
-- Changed behavior: Instead of converting to `http://127.0.0.1:81`, now normalizes to `https://app.teleunotv.cr`
-- Removes `:81` port, converts IP to domain, ensures HTTPS protocol
-- File: `server/routes.ts` lines 103-130
-
-**Why XUI only works on HTTPS (443)**:
-1. XUI generates tokens bound to the connection port
-2. Token validation fails when accessed via different port
-3. XUI's vhost configuration prioritizes HTTPS for content delivery
-4. HTTP on port 81 is primarily for admin redirect, not stream content
+- Modified `convertXUIUrlToLocal()` to return both URL and Host header
+- Proxy endpoints now send `Host: app.teleunotv.cr` header when fetching from localhost:81
+- This tells XUI nginx which virtual host to serve
+- File: `server/routes.ts` lines 103-147
 
 **Deployment Required**:
 After making changes in Replit:
 ```bash
-git add . && git commit -m "Fix XUI proxy to use HTTPS" && git push
+git add . && git commit -m "Fix XUI proxy with Host header" && git push
 # On production server:
 cd /var/www/cable-uno-play
 git pull
