@@ -119,7 +119,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Extract the original host for the Host header
       hostHeader = 'app.teleunotv.cr';
       
-      // Convert all XUI variants to localhost:81
+      // Convert all XUI variants to localhost:81 (always use HTTP for internal)
       // Pattern 1: http(s)://app.teleunotv.cr:81/...
       if (result.includes('app.teleunotv.cr:81')) {
         result = result.replace(/https?:\/\/app\.teleunotv\.cr:81/, 'http://127.0.0.1:81');
@@ -141,6 +141,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
     
     return { url: result, hostHeader };
+  };
+
+  // Helper to fetch XUI URLs with manual redirect handling
+  // XUI returns 302 redirects to https://....:81 which is invalid (port 81 is HTTP)
+  // We need to manually follow redirects and convert each Location URL to localhost:81 HTTP
+  const fetchXuiWithRedirectHandling = async (
+    url: string, 
+    headers: Record<string, string> = {},
+    maxRedirects: number = 5
+  ): Promise<Response> => {
+    let currentUrl = url;
+    let redirectCount = 0;
+    
+    while (redirectCount < maxRedirects) {
+      // Convert URL to localhost if it's XUI
+      const { url: fetchUrl, hostHeader } = convertXUIUrlToLocal(currentUrl);
+      
+      // Build headers with Host header for XUI
+      const fetchHeaders = { ...headers };
+      if (hostHeader) {
+        fetchHeaders['Host'] = hostHeader;
+      }
+      
+      console.log(`📡 Fetching (attempt ${redirectCount + 1}): ${fetchUrl}${hostHeader ? ` (Host: ${hostHeader})` : ''}`);
+      
+      // Fetch with redirect: 'manual' to handle redirects ourselves
+      const response = await fetch(fetchUrl, { 
+        headers: fetchHeaders,
+        redirect: 'manual'
+      });
+      
+      // Check for redirect responses (301, 302, 303, 307, 308)
+      if (response.status >= 300 && response.status < 400) {
+        const location = response.headers.get('location');
+        if (!location) {
+          console.log(`⚠️ Redirect without Location header, returning response`);
+          return response;
+        }
+        
+        console.log(`🔀 Redirect ${response.status} -> ${location}`);
+        
+        // Update URL for next iteration
+        currentUrl = location;
+        redirectCount++;
+        continue;
+      }
+      
+      // Not a redirect, return the response
+      console.log(`📡 Final response: ${response.status} ${response.statusText}`);
+      return response;
+    }
+    
+    throw new Error(`Too many redirects (max ${maxRedirects})`);
   };
 
   // Proxy endpoint to avoid CORS issues when loading M3U from external URLs
@@ -456,16 +509,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         upstreamHeaders['If-None-Match'] = req.headers['if-none-match'] as string;
       }
 
-      // Convert XUI URLs to localhost with proper Host header
-      const { url: fetchUrl, hostHeader } = convertXUIUrlToLocal(url);
-      
-      // Add Host header for XUI virtual host routing
-      if (hostHeader) {
-        upstreamHeaders['Host'] = hostHeader;
-      }
-      
-      console.log(`📡 Fetching from upstream: ${fetchUrl}${hostHeader ? ` (Host: ${hostHeader})` : ''}`);
-      const response = await fetch(fetchUrl, { headers: upstreamHeaders });
+      // Use helper that handles XUI redirects manually
+      // XUI returns 302 to https://...:81 which fails because port 81 is HTTP
+      const response = await fetchXuiWithRedirectHandling(url, upstreamHeaders);
       console.log(`📡 Upstream response: ${response.status} ${response.statusText}, Content-Type: ${response.headers.get('content-type')}`)
       
       // Accept 200, 206 (Partial Content), and 304 (Not Modified)

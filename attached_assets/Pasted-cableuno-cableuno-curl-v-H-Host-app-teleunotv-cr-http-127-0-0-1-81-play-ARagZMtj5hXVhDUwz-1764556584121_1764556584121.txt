@@ -1,0 +1,51 @@
+cableuno@cableuno:~$ curl -v -H "Host: app.teleunotv.cr" "http://127.0.0.1:81/play/ARagZMtj5hXVhDUwz-BExu7itmRcdSq8FyLFTA9igLk/m3u8"
+*   Trying 127.0.0.1:81...
+* Connected to 127.0.0.1 (127.0.0.1) port 81
+> GET /play/ARagZMtj5hXVhDUwz-BExu7itmRcdSq8FyLFTA9igLk/m3u8 HTTP/1.1
+> Host: app.teleunotv.cr
+> User-Agent: curl/8.5.0
+> Accept: */*
+> 
+< HTTP/1.1 302 Found
+< Server: nginx
+< Date: Mon, 01 Dec 2025 02:33:41 GMT
+< Content-Type: text/html; charset=UTF-8
+< Connection: close
+< Cache-Control: no-store, no-cache, must-revalidate
+< Access-Control-Allow-Origin: *
+< Location: https://app.teleunotv.cr:81/auth/RapcdyerhS40EdTNDNKgjrJxX2MvP3sfyHRtwrrer998-CRjs9FiV4pP_YwjPKyQuczICj3C5uKZ3YpH0uHOROzgTdoAocZz_-hV7mopLkq10eeUo26hvsLEfm1U8RmNblj2sucNkAh-p9ZNwMkrLsQf5S2VINw0altLHyy7QtK2Ok5OOtYbVP4VJQWNFOcwdesdp29Pkb5BiF6iw19Ak3wdeItXo4FsWvmG9nFEzzHvcT8V_QuDS6ua9VdV9kBD4EfbNhK-uJChNTFcZgfI49Llpp768w4WAeuAMsgltVAveOeIpfGaTfOJw0GZWHmthmXKFRZ2adBqf_cfFV-CubagDyLdJwEfvjHN2tV-LZK60RhiAevgyG5yRqRYwlZqDSDqqHMeT6jE-x7lUGYJrd9aiaa8wvsUW9Ur9QveEQ5Y90WWWk9iIJPQBBvbU1rZbrUiunzOU210i9AywLe3ndNDXfS2dau-84bll50DONZGOPjX0W37MqQUyp7sjR2UU1qufYXRVrhsGr5-9vUGqTfp_WrKCIdNQXexY_d8JusmVZ1jXLec4GP45a-B4XmVBWOYqugToShtK9A62smHow
+< Access-Control-Allow-Origin: https://play.teleunotv.cr
+< Access-Control-Allow-Methods: GET, POST, OPTIONS
+< Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, Authorization, Range
+< Access-Control-Expose-Headers: Content-Length, Content-Range
+< 
+* Closing connection
+cableuno@cableuno:~$ curl -v -H "Host: app.teleunotv.cr" "http://127.0.0.1:81/play/ARagZMtj5hXVhDUwz-BExu7itmRcdSq8FyLFTA9igLk/m3u8"
+*   Trying 127.0.0.1:81...
+* Connected to 127.0.0.1 (127.0.0.1) port 81
+> GET /play/ARagZMtj5hXVhDUwz-BExu7itmRcdSq8FyLFTA9igLk/m3u8 HTTP/1.1
+> Host: app.teleunotv.cr
+> User-Agent: curl/8.5.0
+> Accept: */*
+> 
+< HTTP/1.1 302 Found
+< Server: nginx
+< Date: Mon, 01 Dec 2025 02:35:42 GMT
+< Content-Type: text/html; charset=UTF-8
+< Connection: close
+< Cache-Control: no-store, no-cache, must-revalidate
+< Access-Control-Allow-Origin: *
+< Location: https://app.teleunotv.cr:81/auth/RapcdyerhS40EdTNDNKgjrJxX2MvP3sfyHRtwrrer998-CRjs9FiV4pP_YwjPKyQuczICj3C5uKZ3YpH0uHOROzgTdoAocZz_-hV7mopLkrsLuzHbQ5Y8IhnCLaI4Fd3hnvdZeUhpbVcHsGKq6XstYVzNSAAijFLEErF2T_ovdaWH4L1hZzZnaIfqV5_iPw0gqHUomaKtNnpNVU0NI0sGmzIUJehW0lfS62lYLN6ONAEbVeqcGf4E9OdDcMSndrZhtDKzrR5oqDk7klQH-YEszU3mtY3IsrI9ytTU75v4d98gYQpI5JH0MEKy2kRZUwCIsO5QbdY2VTNMHJ_ks4d5CdMmxx8EcPLSYS4H4qKA2lQWvAHa45Z5NLoJagKxZ9qxlcAdAwabKGs0Wv0ZlR9IMAtlxCD5mQZBWVhlJvjw8FpoR0pN1W6ltieg8AtxbCttW0gDotUJO5YgHN--VX0Det2dGwCVXynHzqL8BefsQSIsKjwbgMw-BJI6gGxAKJXRJcL1Ao5VDZF5qM0oATqeyC6sQyLsJlZ_ahUWccAo1xH5tSTpDjZEY8Bm2XbIIJPqgz5J0sAi4lf5LVTV2VW2w
+< Access-Control-Allow-Origin: https://play.teleunotv.cr
+< Access-Control-Allow-Methods: GET, POST, OPTIONS
+< Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, Authorization, Range
+< Access-Control-Expose-Headers: Content-Length, Content-Range
+< 
+* Closing connection
+cableuno@cableuno:~$ cd /var/www/cable-uno-play
+git log --oneline -3
+fatal: detected dubious ownership in repository at '/var/www/cable-uno-play'
+To add an exception for this directory, call:
+
+	git config --global --add safe.directory /var/www/cable-uno-play
+cableuno@cableuno:/var/www/cable-uno-play$ 
