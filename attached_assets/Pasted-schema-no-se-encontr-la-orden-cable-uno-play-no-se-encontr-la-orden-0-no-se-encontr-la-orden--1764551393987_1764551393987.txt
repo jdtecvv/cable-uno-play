@@ -1,0 +1,56 @@
+schema:: no se encontró la orden
+cable-uno-play: no se encontró la orden
+0: no se encontró la orden
+Orden «table:» no encontrada. Quizá quiso decir:
+  la orden «table» del paquete snap «table (1.0.5)»
+Consulte «snap info <nombre del snap>» para ver más versiones.
+cable-uno-play: no se encontró la orden
+0: no se encontró la orden
+cable-uno-play: no se encontró la orden
+Orden «column:» no encontrada. Quizá quiso decir:
+  la orden «column» del paquete deb «bsdextrautils (2.39.3-9ubuntu6.3)»
+  la orden «columns» del paquete deb «autogen (1:5.18.16-5)»
+Pruebe con: apt install <nombre del paquete deb>
+0: no se encontró la orden
+dataType:: no se encontró la orden
+cable-uno-play: no se encontró la orden
+0: no se encontró la orden
+constraint:: no se encontró la orden
+cable-uno-play: no se encontró la orden
+Orden «file:» no encontrada. Quizá quiso decir:
+  la orden «file2» del paquete deb «file-kanji (1.1-20)»
+  la orden «file» del paquete deb «file (1:5.45-2)»
+Pruebe con: apt install <nombre del paquete deb>
+0: no se encontró la orden
+cable-uno-play: no se encontró la orden
+0: no se encontró la orden
+Orden «line:» no encontrada. Quizá quiso decir:
+  la orden «linex» del paquete snap «linex (0.1.6)»
+Consulte «snap info <nombre del snap>» para ver más versiones.
+cable-uno-play: no se encontró la orden
+cable-uno-play: no se encontró la orden
+0: no se encontró la orden
+routine:: no se encontró la orden
+bash: error sintáctico cerca del elemento inesperado `}'
+> ^C
+root@cableuno:/var/www/cable-uno-play# curl -v "http://127.0.0.1:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8"
+*   Trying 127.0.0.1:81...
+* Connected to 127.0.0.1 (127.0.0.1) port 81
+> GET /get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 HTTP/1.1
+> Host: 127.0.0.1:81
+> User-Agent: curl/8.5.0
+> Accept: */*
+> 
+< HTTP/1.1 200 OK
+< Server: nginx
+< Date: Mon, 01 Dec 2025 01:09:38 GMT
+< Content-Type: text/html; charset=UTF-8
+< Connection: close
+< Access-Control-Allow-Origin: *
+< Access-Control-Allow-Origin: https://play.teleunotv.cr
+< Access-Control-Allow-Methods: GET, POST, OPTIONS
+< Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, Authorization, Range
+< Access-Control-Expose-Headers: Content-Length, Content-Range
+< 
+* Closing connection
+root@cableuno:/var/www/cable-uno-play# 

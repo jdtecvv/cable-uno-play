@@ -1,0 +1,434 @@
+|cable-uno-play  | 7:05:50 PM [express] POST /api/proxy/m3u 200 in 75ms :: {"content":""}
+0|cable-uno-play  | 🔄 XUI URL converted to local: http://app.teleunotv.cr:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 -> http://127.0.0.1:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 (Host: app.teleunotv.cr)
+0|cable-uno-play  | 7:05:50 PM [express] POST /api/proxy/m3u 200 in 76ms :: {"content":""}
+0|cable-uno-play  | 🔄 XUI URL converted to local: http://app.teleunotv.cr:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 -> http://127.0.0.1:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 (Host: app.teleunotv.cr)
+0|cable-uno-play  | 7:05:50 PM [express] POST /api/proxy/m3u 200 in 67ms :: {"content":""}
+0|cable-uno-play  | 🔄 XUI URL converted to local: http://app.teleunotv.cr:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 -> http://127.0.0.1:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 (Host: app.teleunotv.cr)
+0|cable-uno-play  | 7:05:50 PM [express] POST /api/proxy/m3u 200 in 76ms :: {"content":""}
+0|cable-uno-play  | 🔄 XUI URL converted to local: http://app.teleunotv.cr:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 -> http://127.0.0.1:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 (Host: app.teleunotv.cr)
+0|cable-uno-play  | 7:05:51 PM [express] POST /api/proxy/m3u 200 in 71ms :: {"content":""}
+0|cable-uno-play  | 🔄 XUI URL converted to local: http://app.teleunotv.cr/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 -> http://127.0.0.1:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 (Host: app.teleunotv.cr)
+0|cable-uno-play  | 7:06:14 PM [express] POST /api/proxy/m3u 200 in 73ms :: {"content":""}
+0|cable-uno-play  | 🔄 XUI URL converted to local: http://app.teleunotv.cr/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 -> http://127.0.0.1:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 (Host: app.teleunotv.cr)
+0|cable-uno-play  | 7:06:17 PM [express] POST /api/proxy/m3u 200 in 75ms :: {"content":""}
+^C
+root@cableuno:/var/www/cable-uno-play# ths old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 2058 modules transformed.
+../dist/public/index.html                     2.37 kB │ gzip:   0.94 kB
+../dist/public/assets/index-BvUB-Oid.css     73.40 kB │ gzip:  12.34 kB
+../dist/public/assets/index-D_60ofO_.js   1,052.56 kB │ gzip: 319.49 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 8.59s
+
+  dist/index.js  51.4kb
+
+⚡ Done in 21ms
+[PM2] Applying action restartProcessId on app [cable-uno-play](ids: [ 0 ])
+[PM2] [cable-uno-play](0) ✓
+[PM2] Process successfully started
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+ntent":""}o-play  | 7:06:17 PM [express] POST /api/proxy/m3u 200 in 75ms :: {"co
+Orden «ths» no encontrada. Quizá quiso decir:
+  la orden «thg» del paquete snap «tortoisehg (6.5.1)»
+  la orden «tqs» del paquete deb «ssake (4.0.1-1)»
+  la orden «tcs» del paquete deb «tcs (1-11.1)»
+  la orden «ts» del paquete deb «moreutils (0.67-1)»
+  la orden «hts» del paquete deb «httptunnel (3.3+dfsg-4)»
+  la orden «trs» del paquete deb «konwert (1.8-13.2)»
+  la orden «thd» del paquete deb «triggerhappy (0.5.0-1.1)»
+  la orden «the» del paquete deb «the (3.3~rc1-3.2)»
+  la orden «thb» del paquete deb «pvm-examples (3.4.6-5)»
+  la orden «thg» del paquete deb «tortoisehg (6.5.1-2)»
+Consulte «snap info <nombre del snap>» para ver más versiones.
+Need to install the following packages:
+update-browserslist-db@1.1.4
+Ok to proceed? (y) y
+
+Latest version:     1.0.30001757
+Installed version:  1.0.30001713
+Removing old caniuse-lite from lock file
+Installing new caniuse-lite version
+$ npm install caniuse-lite
+Cleaning package.json dependencies from caniuse-lite
+$ npm uninstall caniuse-lite
+caniuse-lite has been successfully updated
+
+No target browser changes
+Orden «Why» no encontrada. Quizá quiso decir:
+  la orden «hy» del paquete deb «hy (0.27.0-1)»
+Pruebe con: apt install <nombre del paquete deb>
+✓: no se encontró la orden
+bash: ../dist/public/index.html: No existe el archivo o el directorio
+bash: ../dist/public/assets/index-BvUB-Oid.css: No existe el archivo o el directorio
+bash: ../dist/public/assets/index-D_60ofO_.js: No existe el archivo o el directorio
+bash: !: event not found
+bash: error sintáctico cerca del elemento inesperado `('
+-: no se encontró la orden
+-: no se encontró la orden
+✓: no se encontró la orden
+bash: dist/index.js: Permiso denegado
+⚡: no se encontró la orden
+bash: error sintáctico cerca del elemento inesperado `('
+bash: error sintáctico cerca del elemento inesperado `('
+[PM2]: no se encontró la orden
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐: no se encontró la orden
+│: no se encontró la orden
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤: no se encontró la orden
+│: no se encontró la orden
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘: no se encontró la orden
+bash: root@cableuno:/var/www/cable-uno-play#: No existe el archivo o el directorio
+bash: error sintáctico cerca del elemento inesperado `('
+bash: /root/.pm2/logs/cable-uno-play-error.log: Permiso denegado
+bash: error sintáctico cerca del elemento inesperado `('
+0: no se encontró la orden
+^: no se encontró la orden
+cable-un: no se encontró la orden
+bash: error sintáctico cerca del elemento inesperado `void'
+No se ha encontrado la orden «at», pero se puede instalar con:
+apt install at
+0: no se encontró la orden
+cable-un: no se encontró la orden
+bash: error sintáctico cerca del elemento inesperado `('
+bash: error sintáctico cerca del elemento inesperado `('
+bash: error sintáctico cerca del elemento inesperado `('
+Node.js: no se encontró la orden
+0: no se encontró la orden
+cable-un: no se encontró la orden
+0: no se encontró la orden
+cable-un: no se encontró la orden
+bash: /root/.pm2/logs/cable-uno-play-out.log: Permiso denegado
+cable-un: no se encontró la orden
+Orden «start» no encontrada. Quizá quiso decir:
+  la orden «stars» del paquete snap «stars (2.7jrc3)»
+  la orden «kstart» del paquete deb «kde-cli-tools (4:5.27.12-0ubuntu0.1)»
+  la orden «startx» del paquete deb «xinit (1.4.1-0ubuntu4)»
+  la orden «stat» del paquete deb «coreutils (9.4-3ubuntu6.1)»
+  la orden «rstart» del paquete deb «x11-session-utils (7.7+6)»
+Consulte «snap info <nombre del snap>» para ver más versiones.
+0: no se encontró la orden
+0: no se encontró la orden
+cable-un: no se encontró la orden
+⚠️  Running in development mode WITHOUT database (Simple Player only)
+   Only /api/proxy/* endpoints will work
+   To use full features, set DATABASE_URL environment variable
+node:events:502
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use 0.0.0.0:5000
+    at Server.setupListenHandle [as _listen2] (node:net:1908:16)
+    at listenInCluster (node:net:1965:12)
+    at doListen (node:net:2139:7)
+    at process.processTicksAndRejections (node:internal/process/task_queues:83:21)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:1944:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 5000
+}
+
+Node.js v20.19.6
+0: no se encontró la orden
+0: no se encontró la orden
+0: no se encontró la orden
+cable-un: no se encontró la orden
+Orden «start» no encontrada. Quizá quiso decir:
+  la orden «stars» del paquete snap «stars (2.7jrc3)»
+  la orden «stat» del paquete deb «coreutils (9.4-3ubuntu6.1)»
+  la orden «startx» del paquete deb «xinit (1.4.1-0ubuntu4)»
+  la orden «rstart» del paquete deb «x11-session-utils (7.7+6)»
+  la orden «kstart» del paquete deb «kde-cli-tools (4:5.27.12-0ubuntu0.1)»
+Consulte «snap info <nombre del snap>» para ver más versiones.
+cable-un: no se encontró la orden
+cable-un: no se encontró la orden
+0: no se encontró la orden
+cable-un: no se encontró la orden
+⚠️  Running in development mode WITHOUT database (Simple Player only)
+   Only /api/proxy/* endpoints will work
+   To use full features, set DATABASE_URL environment variable
+node:events:502
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use 0.0.0.0:5000
+    at Server.setupListenHandle [as _listen2] (node:net:1908:16)
+    at listenInCluster (node:net:1965:12)
+    at doListen (node:net:2139:7)
+    at process.processTicksAndRejections (node:internal/process/task_queues:83:21)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:1944:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 5000
+}
+
+Node.js v20.19.6
+0: no se encontró la orden
+🚀: no se encontró la orden
+cable-un: no se encontró la orden
+0: no se encontró la orden
+cable-un: no se encontró la orden
+📡: no se encontró la orden
+0: no se encontró la orden
+cable-un: no se encontró la orden
+bash: error sintáctico cerca del elemento inesperado `('
+API: no se encontró la orden
+0: no se encontró la orden
+cable-uno-play: no se encontró la orden
+cable-uno-play: no se encontró la orden
+No se ha encontrado la orden «at», pero se puede instalar con:
+apt install at
+0: no se encontró la orden
+bash: error sintáctico cerca del elemento inesperado `('
+bash: error sintáctico cerca del elemento inesperado `('
+bash: error sintáctico cerca del elemento inesperado `('
+No se ha encontrado la orden «at», pero se puede instalar con:
+apt install at
+0: no se encontró la orden
+cable-uno-play: no se encontró la orden
+cable-uno-play: no se encontró la orden
+0: no se encontró la orden
+length:: no se encontró la orden
+0: no se encontró la orden
+cable-uno-play: no se encontró la orden
+severity:: no se encontró la orden
+0: no se encontró la orden
+Orden «code:» no encontrada. Quizá quiso decir:
+  la orden «codec» del paquete snap «codec (1.0.0)»
+  la orden «coder» del paquete snap «coder (2.24.2)»
+  la orden «code» del paquete snap «code (bf9252a2)»
+Consulte «snap info <nombre del snap>» para ver más versiones.
+cable-uno-play: no se encontró la orden
+cable-uno-play: no se encontró la orden
+0: no se encontró la orden
+detail:: no se encontró la orden
+0: no se encontró la orden
+hint:: no se encontró la orden
+cable-uno-play: no se encontró la orden
+0: no se encontró la orden
+cable-uno-play: no se encontró la orden
+position:: no se encontró la orden
+internalPosition:: no se encontró la orden
+0: no se encontró la orden
+cable-uno-play: no se encontró la orden
+0: no se encontró la orden
+internalQuery:: no se encontró la orden
+cable-uno-play: no se encontró la orden
+0: no se encontró la orden
+cable-uno-play: no se encontró la orden
+where:: no se encontró la orden
+0: no se encontró la orden
+schema:: no se encontró la orden
+cable-uno-play: no se encontró la orden
+0: no se encontró la orden
+Orden «table:» no encontrada. Quizá quiso decir:
+  la orden «table» del paquete snap «table (1.0.5)»
+Consulte «snap info <nombre del snap>» para ver más versiones.
+cable-uno-play: no se encontró la orden
+0: no se encontró la orden
+Orden «column:» no encontrada. Quizá quiso decir:
+  la orden «columns» del paquete deb «autogen (1:5.18.16-5)»
+  la orden «column» del paquete deb «bsdextrautils (2.39.3-9ubuntu6.3)»
+Pruebe con: apt install <nombre del paquete deb>
+cable-uno-play: no se encontró la orden
+0: no se encontró la orden
+dataType:: no se encontró la orden
+cable-uno-play: no se encontró la orden
+0: no se encontró la orden
+cable-uno-play: no se encontró la orden
+constraint:: no se encontró la orden
+0: no se encontró la orden
+Orden «file:» no encontrada. Quizá quiso decir:
+  la orden «file» del paquete deb «file (1:5.45-2)»
+  la orden «file2» del paquete deb «file-kanji (1.1-20)»
+Pruebe con: apt install <nombre del paquete deb>
+cable-uno-play: no se encontró la orden
+0: no se encontró la orden
+Orden «line:» no encontrada. Quizá quiso decir:
+  la orden «linex» del paquete snap «linex (0.1.6)»
+Consulte «snap info <nombre del snap>» para ver más versiones.
+cable-uno-play: no se encontró la orden
+0: no se encontró la orden
+routine:: no se encontró la orden
+cable-uno-play: no se encontró la orden
+bash: error sintáctico cerca del elemento inesperado `}'
+0: no se encontró la orden
+7:05:25: no se encontró la orden
+cable-uno-play: no se encontró la orden
+API: no se encontró la orden
+0: no se encontró la orden
+cable-uno-play: no se encontró la orden
+No se ha encontrado la orden «at», pero se puede instalar con:
+apt install at
+0: no se encontró la orden
+cable-uno-play: no se encontró la orden
+bash: error sintáctico cerca del elemento inesperado `('
+bash: error sintáctico cerca del elemento inesperado `('
+bash: error sintáctico cerca del elemento inesperado `('
+No se ha encontrado la orden «at», pero se puede instalar con:
+apt install at
+0: no se encontró la orden
+cable-uno-play: no se encontró la orden
+0: no se encontró la orden
+length:: no se encontró la orden
+cable-uno-play: no se encontró la orden
+0: no se encontró la orden
+cable-uno-play: no se encontró la orden
+severity:: no se encontró la orden
+0: no se encontró la orden
+Orden «code:» no encontrada. Quizá quiso decir:
+  la orden «coder» del paquete snap «coder (2.24.2)»
+  la orden «code» del paquete snap «code (bf9252a2)»
+  la orden «codec» del paquete snap «codec (1.0.0)»
+Consulte «snap info <nombre del snap>» para ver más versiones.
+cable-uno-play: no se encontró la orden
+detail:: no se encontró la orden
+0: no se encontró la orden
+cable-uno-play: no se encontró la orden
+0: no se encontró la orden
+hint:: no se encontró la orden
+cable-uno-play: no se encontró la orden
+0: no se encontró la orden
+cable-uno-play: no se encontró la orden
+position:: no se encontró la orden
+0: no se encontró la orden
+cable-uno-play: no se encontró la orden
+internalPosition:: no se encontró la orden
+0: no se encontró la orden
+cable-uno-play: no se encontró la orden
+internalQuery:: no se encontró la orden
+0: no se encontró la orden
+cable-uno-play: no se encontró la orden
+where:: no se encontró la orden
+0: no se encontró la orden
+schema:: no se encontró la orden
+cable-uno-play: no se encontró la orden
+0: no se encontró la orden
+Orden «table:» no encontrada. Quizá quiso decir:
+  la orden «table» del paquete snap «table (1.0.5)»
+Consulte «snap info <nombre del snap>» para ver más versiones.
+cable-uno-play: no se encontró la orden
+0: no se encontró la orden
+Orden «column:» no encontrada. Quizá quiso decir:
+  la orden «column» del paquete deb «bsdextrautils (2.39.3-9ubuntu6.3)»
+  la orden «columns» del paquete deb «autogen (1:5.18.16-5)»
+Pruebe con: apt install <nombre del paquete deb>
+cable-uno-play: no se encontró la orden
+cable-uno-play: no se encontró la orden
+0: no se encontró la orden
+dataType:: no se encontró la orden
+0: no se encontró la orden
+constraint:: no se encontró la orden
+cable-uno-play: no se encontró la orden
+Orden «file:» no encontrada. Quizá quiso decir:
+  la orden «file2» del paquete deb «file-kanji (1.1-20)»
+  la orden «file» del paquete deb «file (1:5.45-2)»
+Pruebe con: apt install <nombre del paquete deb>
+0: no se encontró la orden
+cable-uno-play: no se encontró la orden
+0: no se encontró la orden
+Orden «line:» no encontrada. Quizá quiso decir:
+  la orden «linex» del paquete snap «linex (0.1.6)»
+Consulte «snap info <nombre del snap>» para ver más versiones.
+cable-uno-play: no se encontró la orden
+0: no se encontró la orden
+cable-uno-play: no se encontró la orden
+routine:: no se encontró la orden
+bash: error sintáctico cerca del elemento inesperado `}'
+0: no se encontró la orden
+7:05:25: no se encontró la orden
+cable-uno-play: no se encontró la orden
+0: no se encontró la orden
+cable-uno-play: no se encontró la orden
+API: no se encontró la orden
+0: no se encontró la orden
+No se ha encontrado la orden «at», pero se puede instalar con:
+apt install at
+cable-uno-play: no se encontró la orden
+bash: error sintáctico cerca del elemento inesperado `('
+bash: error sintáctico cerca del elemento inesperado `('
+bash: error sintáctico cerca del elemento inesperado `('
+0: no se encontró la orden
+No se ha encontrado la orden «at», pero se puede instalar con:
+apt install at
+cable-uno-play: no se encontró la orden
+cable-uno-play: no se encontró la orden
+0: no se encontró la orden
+length:: no se encontró la orden
+cable-uno-play: no se encontró la orden
+0: no se encontró la orden
+severity:: no se encontró la orden
+0: no se encontró la orden
+Orden «code:» no encontrada. Quizá quiso decir:
+  la orden «coder» del paquete snap «coder (2.24.2)»
+  la orden «code» del paquete snap «code (bf9252a2)»
+  la orden «codec» del paquete snap «codec (1.0.0)»
+Consulte «snap info <nombre del snap>» para ver más versiones.
+cable-uno-play: no se encontró la orden
+0: no se encontró la orden
+cable-uno-play: no se encontró la orden
+detail:: no se encontró la orden
+0: no se encontró la orden
+hint:: no se encontró la orden
+cable-uno-play: no se encontró la orden
+0: no se encontró la orden
+position:: no se encontró la orden
+cable-uno-play: no se encontró la orden
+0: no se encontró la orden
+cable-uno-play: no se encontró la orden
+internalPosition:: no se encontró la orden
+0: no se encontró la orden
+cable-uno-play: no se encontró la orden
+internalQuery:: no se encontró la orden
+where:: no se encontró la orden
+0: no se encontró la orden
+cable-uno-play: no se encontró la orden
+0: no se encontró la orden
+schema:: no se encontró la orden
+cable-uno-play: no se encontró la orden
+0: no se encontró la orden
+Orden «table:» no encontrada. Quizá quiso decir:
+  la orden «table» del paquete snap «table (1.0.5)»
+Consulte «snap info <nombre del snap>» para ver más versiones.
+cable-uno-play: no se encontró la orden
+0: no se encontró la orden
+cable-uno-play: no se encontró la orden
+Orden «column:» no encontrada. Quizá quiso decir:
+  la orden «column» del paquete deb «bsdextrautils (2.39.3-9ubuntu6.3)»
+  la orden «columns» del paquete deb «autogen (1:5.18.16-5)»
+Pruebe con: apt install <nombre del paquete deb>
+0: no se encontró la orden
+dataType:: no se encontró la orden
+cable-uno-play: no se encontró la orden
+0: no se encontró la orden
+constraint:: no se encontró la orden
+cable-uno-play: no se encontró la orden
+Orden «file:» no encontrada. Quizá quiso decir:
+  la orden «file2» del paquete deb «file-kanji (1.1-20)»
+  la orden «file» del paquete deb «file (1:5.45-2)»
+Pruebe con: apt install <nombre del paquete deb>
+0: no se encontró la orden
+cable-uno-play: no se encontró la orden
+0: no se encontró la orden
+Orden «line:» no encontrada. Quizá quiso decir:
+  la orden «linex» del paquete snap «linex (0.1.6)»
+Consulte «snap info <nombre del snap>» para ver más versiones.
+cable-uno-play: no se encontró la orden
+cable-uno-play: no se encontró la orden
+0: no se encontró la orden
+routine:: no se encontró la orden
+bash: error sintáctico cerca del elemento inesperado `}'
+> 
