@@ -1,0 +1,197 @@
+ths old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 2058 modules transformed.
+../dist/public/index.html                     2.37 kB │ gzip:   0.94 kB
+../dist/public/assets/index-BvUB-Oid.css     73.40 kB │ gzip:  12.34 kB
+../dist/public/assets/index-D_60ofO_.js   1,052.56 kB │ gzip: 319.49 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 8.59s
+
+  dist/index.js  51.4kb
+
+⚡ Done in 21ms
+[PM2] Applying action restartProcessId on app [cable-uno-play](ids: [ 0 ])
+[PM2] [cable-uno-play](0) ✓
+[PM2] Process successfully started
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ cable-uno-play     │ fork     │ 184  │ online    │ 0%       │ 14.3mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@cableuno:/var/www/cable-uno-play# pm2 logs cable-uno-play --lines 10
+[TAILING] Tailing last 10 lines for [cable-uno-play] process (change the value with --lines option)
+/root/.pm2/logs/cable-uno-play-error.log last 10 lines:
+0|cable-un | var vite_config_default = (void 0)({
+0|cable-un |                                   ^
+0|cable-un | 
+0|cable-un | TypeError: (void 0) is not a function
+0|cable-un |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-un |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-un |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-un |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-un | 
+0|cable-un | Node.js v20.19.6
+
+/root/.pm2/logs/cable-uno-play-out.log last 10 lines:
+0|cable-un | > rest-express@1.0.0 start
+0|cable-un | > NODE_ENV=production node dist/index.js
+0|cable-un | 
+0|cable-un | 
+0|cable-un | > rest-express@1.0.0 start
+0|cable-un | > NODE_ENV=production node dist/index.js
+0|cable-un | 
+0|cable-un | 🚀 Registering API routes with prefix: /api
+0|cable-un | 📡 Registering route: GET /api/proxy/stream
+0|cable-un | 7:03:17 PM [express] serving on port 5000 (host: 127.0.0.1)
+
+0|cable-uno-play  | API Error: error: password authentication failed for user 'neondb_owner'
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/node_modules/@neondatabase/serverless/index.mjs:1345:74
+0|cable-uno-play  |     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+0|cable-uno-play  |     at async NeonPreparedQuery.execute (file:///var/www/cable-uno-play/node_modules/drizzle-orm/neon-serverless/session.js:76:20)
+0|cable-uno-play  |     at async getRecentlyWatchedChannels (file:///var/www/cable-uno-play/dist/index.js:394:10)
+0|cable-uno-play  |     at async file:///var/www/cable-uno-play/dist/index.js:1029:25 {
+0|cable-uno-play  |   length: 75,
+0|cable-uno-play  |   severity: 'ERROR',
+0|cable-uno-play  |   code: '28P01',
+0|cable-uno-play  |   detail: undefined,
+0|cable-uno-play  |   hint: undefined,
+0|cable-uno-play  |   position: undefined,
+0|cable-uno-play  |   internalPosition: undefined,
+0|cable-uno-play  |   internalQuery: undefined,
+0|cable-uno-play  |   where: undefined,
+0|cable-uno-play  |   schema: undefined,
+0|cable-uno-play  |   table: undefined,
+0|cable-uno-play  |   column: undefined,
+0|cable-uno-play  |   dataType: undefined,
+0|cable-uno-play  |   constraint: undefined,
+0|cable-uno-play  |   file: undefined,
+0|cable-uno-play  |   line: undefined,
+0|cable-uno-play  |   routine: undefined
+0|cable-uno-play  | }
+0|cable-uno-play  | 7:05:25 PM [express] GET /api/channels/recent 500 in 608ms :: {"message":"password authentication fa…
+0|cable-uno-play  | API Error: error: password authentication failed for user 'neondb_owner'
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/node_modules/@neondatabase/serverless/index.mjs:1345:74
+0|cable-uno-play  |     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+0|cable-uno-play  |     at async NeonPreparedQuery.execute (file:///var/www/cable-uno-play/node_modules/drizzle-orm/neon-serverless/session.js:76:20)
+0|cable-uno-play  |     at async getActivePlaylist (file:///var/www/cable-uno-play/dist/index.js:346:10)
+0|cable-uno-play  |     at async file:///var/www/cable-uno-play/dist/index.js:938:30 {
+0|cable-uno-play  |   length: 75,
+0|cable-uno-play  |   severity: 'ERROR',
+0|cable-uno-play  |   code: '28P01',
+0|cable-uno-play  |   detail: undefined,
+0|cable-uno-play  |   hint: undefined,
+0|cable-uno-play  |   position: undefined,
+0|cable-uno-play  |   internalPosition: undefined,
+0|cable-uno-play  |   internalQuery: undefined,
+0|cable-uno-play  |   where: undefined,
+0|cable-uno-play  |   schema: undefined,
+0|cable-uno-play  |   table: undefined,
+0|cable-uno-play  |   column: undefined,
+0|cable-uno-play  |   dataType: undefined,
+0|cable-uno-play  |   constraint: undefined,
+0|cable-uno-play  |   file: undefined,
+0|cable-uno-play  |   line: undefined,
+0|cable-uno-play  |   routine: undefined
+0|cable-uno-play  | }
+0|cable-uno-play  | 7:05:25 PM [express] GET /api/playlists/active 500 in 643ms :: {"message":"password authentication f…
+0|cable-uno-play  | API Error: error: password authentication failed for user 'neondb_owner'
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/node_modules/@neondatabase/serverless/index.mjs:1345:74
+0|cable-uno-play  |     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+0|cable-uno-play  |     at async NeonPreparedQuery.execute (file:///var/www/cable-uno-play/node_modules/drizzle-orm/neon-serverless/session.js:76:20)
+0|cable-uno-play  |     at async getCategories (file:///var/www/cable-uno-play/dist/index.js:437:10)
+0|cable-uno-play  |     at async file:///var/www/cable-uno-play/dist/index.js:1143:27 {
+0|cable-uno-play  |   length: 75,
+0|cable-uno-play  |   severity: 'ERROR',
+0|cable-uno-play  |   code: '28P01',
+0|cable-uno-play  |   detail: undefined,
+0|cable-uno-play  |   hint: undefined,
+0|cable-uno-play  |   position: undefined,
+0|cable-uno-play  |   internalPosition: undefined,
+0|cable-uno-play  |   internalQuery: undefined,
+0|cable-uno-play  |   where: undefined,
+0|cable-uno-play  |   schema: undefined,
+0|cable-uno-play  |   table: undefined,
+0|cable-uno-play  |   column: undefined,
+0|cable-uno-play  |   dataType: undefined,
+0|cable-uno-play  |   constraint: undefined,
+0|cable-uno-play  |   file: undefined,
+0|cable-uno-play  |   line: undefined,
+0|cable-uno-play  |   routine: undefined
+0|cable-uno-play  | }
+0|cable-uno-play  | 7:05:25 PM [express] GET /api/categories 500 in 806ms :: {"message":"password authentication failed …
+0|cable-uno-play  | API Error: error: password authentication failed for user 'neondb_owner'
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/node_modules/@neondatabase/serverless/index.mjs:1345:74
+0|cable-uno-play  |     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+0|cable-uno-play  |     at async NeonPreparedQuery.execute (file:///var/www/cable-uno-play/node_modules/drizzle-orm/neon-serverless/session.js:76:20)
+0|cable-uno-play  |     at async getRecentlyWatchedChannels (file:///var/www/cable-uno-play/dist/index.js:394:10)
+0|cable-uno-play  |     at async file:///var/www/cable-uno-play/dist/index.js:1029:25 {
+0|cable-uno-play  |   length: 75,
+0|cable-uno-play  |   severity: 'ERROR',
+0|cable-uno-play  |   code: '28P01',
+0|cable-uno-play  |   detail: undefined,
+0|cable-uno-play  |   hint: undefined,
+0|cable-uno-play  |   position: undefined,
+0|cable-uno-play  |   internalPosition: undefined,
+0|cable-uno-play  |   internalQuery: undefined,
+0|cable-uno-play  |   where: undefined,
+0|cable-uno-play  |   schema: undefined,
+0|cable-uno-play  |   table: undefined,
+0|cable-uno-play  |   column: undefined,
+0|cable-uno-play  |   dataType: undefined,
+0|cable-uno-play  |   constraint: undefined,
+0|cable-uno-play  |   file: undefined,
+0|cable-uno-play  |   line: undefined,
+0|cable-uno-play  |   routine: undefined
+0|cable-uno-play  | }
+0|cable-uno-play  | 7:05:25 PM [express] GET /api/channels/recent 500 in 646ms :: {"message":"password authentication fa…
+0|cable-uno-play  | API Error: error: password authentication failed for user 'neondb_owner'
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/node_modules/@neondatabase/serverless/index.mjs:1345:74
+0|cable-uno-play  |     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+0|cable-uno-play  |     at async NeonPreparedQuery.execute (file:///var/www/cable-uno-play/node_modules/drizzle-orm/neon-serverless/session.js:76:20)
+0|cable-uno-play  |     at async getChannels (file:///var/www/cable-uno-play/dist/index.js:369:10)
+0|cable-uno-play  |     at async file:///var/www/cable-uno-play/dist/index.js:1011:21 {
+0|cable-uno-play  |   length: 75,
+0|cable-uno-play  |   severity: 'ERROR',
+0|cable-uno-play  |   code: '28P01',
+0|cable-uno-play  |   detail: undefined,
+0|cable-uno-play  |   hint: undefined,
+0|cable-uno-play  |   position: undefined,
+0|cable-uno-play  |   internalPosition: undefined,
+0|cable-uno-play  |   internalQuery: undefined,
+0|cable-uno-play  |   where: undefined,
+0|cable-uno-play  |   schema: undefined,
+0|cable-uno-play  |   table: undefined,
+0|cable-uno-play  |   column: undefined,
+0|cable-uno-play  |   dataType: undefined,
+0|cable-uno-play  |   constraint: undefined,
+0|cable-uno-play  |   file: undefined,
+0|cable-uno-play  |   line: undefined,
+0|cable-uno-play  |   routine: undefined
+0|cable-uno-play  | }
+0|cable-uno-play  | 7:05:25 PM [express] GET /api/channels 500 in 961ms :: {"message":"password authentication failed fo…
+0|cable-uno-play  | 🔄 XUI URL converted to local: http://app.teleunotv.cr/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 -> http://127.0.0.1:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 (Host: app.teleunotv.cr)
+0|cable-uno-play  | 7:05:43 PM [express] POST /api/proxy/m3u 200 in 207ms :: {"content":""}
+0|cable-uno-play  | 🔄 XUI URL converted to local: http://app.teleunotv.cr:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 -> http://127.0.0.1:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 (Host: app.teleunotv.cr)
+0|cable-uno-play  | 7:05:48 PM [express] POST /api/proxy/m3u 200 in 78ms :: {"content":""}
+0|cable-uno-play  | 🔄 XUI URL converted to local: http://app.teleunotv.cr:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 -> http://127.0.0.1:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 (Host: app.teleunotv.cr)
+0|cable-uno-play  | 7:05:49 PM [express] POST /api/proxy/m3u 200 in 76ms :: {"content":""}
+0|cable-uno-play  | 🔄 XUI URL converted to local: http://app.teleunotv.cr:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 -> http://127.0.0.1:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 (Host: app.teleunotv.cr)
+0|cable-uno-play  | 7:05:50 PM [express] POST /api/proxy/m3u 200 in 75ms :: {"content":""}
+0|cable-uno-play  | 🔄 XUI URL converted to local: http://app.teleunotv.cr:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 -> http://127.0.0.1:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 (Host: app.teleunotv.cr)
+0|cable-uno-play  | 7:05:50 PM [express] POST /api/proxy/m3u 200 in 76ms :: {"content":""}
+0|cable-uno-play  | 🔄 XUI URL converted to local: http://app.teleunotv.cr:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 -> http://127.0.0.1:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 (Host: app.teleunotv.cr)
+0|cable-uno-play  | 7:05:50 PM [express] POST /api/proxy/m3u 200 in 67ms :: {"content":""}
+0|cable-uno-play  | 🔄 XUI URL converted to local: http://app.teleunotv.cr:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 -> http://127.0.0.1:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 (Host: app.teleunotv.cr)
+0|cable-uno-play  | 7:05:50 PM [express] POST /api/proxy/m3u 200 in 76ms :: {"content":""}
+0|cable-uno-play  | 🔄 XUI URL converted to local: http://app.teleunotv.cr:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 -> http://127.0.0.1:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 (Host: app.teleunotv.cr)
+0|cable-uno-play  | 7:05:51 PM [express] POST /api/proxy/m3u 200 in 71ms :: {"content":""}
+0|cable-uno-play  | 🔄 XUI URL converted to local: http://app.teleunotv.cr/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 -> http://127.0.0.1:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 (Host: app.teleunotv.cr)
+0|cable-uno-play  | 7:06:14 PM [express] POST /api/proxy/m3u 200 in 73ms :: {"content":""}
+0|cable-uno-play  | 🔄 XUI URL converted to local: http://app.teleunotv.cr/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 -> http://127.0.0.1:81/get.php?username=demo&password=12345&type=m3u_plus&output=m3u8 (Host: app.teleunotv.cr)
+0|cable-uno-play  | 7:06:17 PM [express] POST /api/proxy/m3u 200 in 75ms :: {"content":""}
+
