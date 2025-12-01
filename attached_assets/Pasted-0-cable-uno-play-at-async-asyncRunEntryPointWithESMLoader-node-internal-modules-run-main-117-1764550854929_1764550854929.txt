@@ -1,0 +1,853 @@
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+^C
+root@cableuno:/var/www/cable-uno-play# 
