@@ -1,0 +1,54 @@
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.18 building for production...
+transforming (3) src/main.tsxBrowserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 2058 modules transformed.
+../dist/public/index.html                     2.37 kB │ gzip:   0.94 kB
+../dist/public/assets/index-BvUB-Oid.css     73.40 kB │ gzip:  12.34 kB
+../dist/public/assets/index-D_60ofO_.js   1,052.56 kB │ gzip: 319.49 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 8.59s
+
+  dist/index.js  51.4kb
+
+⚡ Done in 21ms
+[PM2] Applying action restartProcessId on app [cable-uno-play](ids: [ 0 ])
+[PM2] [cable-uno-play](0) ✓
+[PM2] Process successfully started
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ cable-uno-play     │ fork     │ 184  │ online    │ 0%       │ 14.3mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@cableuno:/var/www/cable-uno-play# pm2 logs cable-uno-play --lines 10
+[TAILING] Tailing last 10 lines for [cable-uno-play] process (change the value with --lines option)
+/root/.pm2/logs/cable-uno-play-error.log last 10 lines:
+0|cable-un | var vite_config_default = (void 0)({
+0|cable-un |                                   ^
+0|cable-un | 
+0|cable-un | TypeError: (void 0) is not a function
+0|cable-un |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-un |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-un |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-un |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-un | 
+0|cable-un | Node.js v20.19.6
+
+/root/.pm2/logs/cable-uno-play-out.log last 10 lines:
+0|cable-un | > rest-express@1.0.0 start
+0|cable-un | > NODE_ENV=production node dist/index.js
+0|cable-un | 
+0|cable-un | 
+0|cable-un | > rest-express@1.0.0 start
+0|cable-un | > NODE_ENV=production node dist/index.js
+0|cable-un | 
+0|cable-un | 🚀 Registering API routes with prefix: /api
+0|cable-un | 📡 Registering route: GET /api/proxy/stream
+0|cable-un | 7:03:17 PM [express] serving on port 5000 (host: 127.0.0.1)
