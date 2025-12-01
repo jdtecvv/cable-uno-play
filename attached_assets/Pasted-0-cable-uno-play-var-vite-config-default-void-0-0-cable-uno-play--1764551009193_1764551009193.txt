@@ -1,0 +1,123 @@
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+0|cable-uno-play  | file:///var/www/cable-uno-play/dist/index.js:1288
+0|cable-uno-play  | var vite_config_default = (void 0)({
+0|cable-uno-play  |                                   ^
+0|cable-uno-play  | TypeError: (void 0) is not a function
+0|cable-uno-play  |     at file:///var/www/cable-uno-play/dist/index.js:1288:35
+0|cable-uno-play  |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|cable-uno-play  |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|cable-uno-play  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+0|cable-uno-play  | Node.js v20.19.6
+0|cable-uno-play  | > rest-express@1.0.0 start
+0|cable-uno-play  | > NODE_ENV=production node dist/index.js
+^C
+root@cableuno:/var/www/cable-uno-play# pm2 stop cable-uno-play
+[PM2] Applying action stopProcessId on app [cable-uno-play](ids: [ 0 ])
+[PM2] [cable-uno-play](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ cable-uno-play     │ fork     │ 184  │ stopped   │ 0%       │ 0b       │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@cableuno:/var/www/cable-uno-play# cd /var/www/cable-uno-play
+git log --oneline -5
+b737040 (HEAD -> main, origin/main, origin/HEAD) Add Host header to stream proxy requests
+b6dde57 Add Host header to XUI proxy requests for correct video playback
+97b520f Saved progress at the end of the loop
+21d9746 Fix streaming issues by correctly handling XUI URLs via HTTPS
+1828e86 Fix streaming issues by correctly handling external URLs
+root@cableuno:/var/www/cable-uno-play# git checkout HEAD~1
+Nota: cambiando a 'HEAD~1'.
+
+Te encuentras en estado 'detached HEAD'. Puedes revisar por aquí, hacer
+cambios experimentales y hacer commits, y puedes descartar cualquier
+commit que hayas hecho en este estado sin impactar a tu rama realizando
+otro checkout.
+
+Si quieres crear una nueva rama para mantener los commits que has creado,
+puedes hacerlo (ahora o después) usando -c con el comando checkout. Ejemplo:
+
+  git switch -c <nombre-de-nueva-rama>
+
+O deshacer la operación con:
+
+  git switch -
+
+Desactiva este aviso poniendo la variable de config advice.detachedHead en false
+
+HEAD está ahora en b6dde57 Add Host header to XUI proxy requests for correct video playback
+root@cableuno:/var/www/cable-uno-play# npm run build
+pm2 start cable-uno-play
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.18 building for production...
+transforming (3) src/main.tsxBrowserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 2058 modules transformed.
+../dist/public/index.html                     2.37 kB │ gzip:   0.94 kB
+../dist/public/assets/index-BvUB-Oid.css     73.40 kB │ gzip:  12.34 kB
+../dist/public/assets/index-D_60ofO_.js   1,052.56 kB │ gzip: 319.49 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 8.59s
+
+  dist/index.js  51.4kb
+
+⚡ Done in 21ms
+[PM2] Applying action restartProcessId on app [cable-uno-play](ids: [ 0 ])
+[PM2] [cable-uno-play](0) ✓
+[PM2] Process successfully started
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ cable-uno-play     │ fork     │ 184  │ online    │ 0%       │ 14.3mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@cableuno:/var/www/cable-uno-play# 
