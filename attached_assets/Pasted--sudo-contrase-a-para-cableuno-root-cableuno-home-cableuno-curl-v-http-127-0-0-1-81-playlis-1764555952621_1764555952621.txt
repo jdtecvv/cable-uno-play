@@ -1,0 +1,61 @@
+[sudo] contraseña para cableuno: 
+root@cableuno:/home/cableuno# curl -v "http://127.0.0.1:81/playlist/demo/12345/m3u?output=hls"
+*   Trying 127.0.0.1:81...
+* Connected to 127.0.0.1 (127.0.0.1) port 81
+> GET /playlist/demo/12345/m3u?output=hls HTTP/1.1
+> Host: 127.0.0.1:81
+> User-Agent: curl/8.5.0
+> Accept: */*
+> 
+< HTTP/1.1 200 OK
+< Server: nginx
+< Date: Mon, 01 Dec 2025 02:25:13 GMT
+< Content-Type: application/octet-stream
+< Connection: close
+< Access-Control-Allow-Origin: *
+< Content-Description: File Transfer
+< Expires: 0
+< Cache-Control: must-revalidate
+< Pragma: public
+< Content-Disposition: attachment; filename="playlist_demo.m3u"
+< Access-Control-Allow-Origin: https://play.teleunotv.cr
+< Access-Control-Allow-Methods: GET, POST, OPTIONS
+< Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, Authorization, Range
+< Access-Control-Expose-Headers: Content-Length, Content-Range
+< 
+#EXTM3U
+#EXT-X-SESSION-DATA:DATA-ID="com.xui.1_5_13"
+#EXTINF:-1,COLOSAL
+https://app.teleunotv.cr:81/play/ARagZMtj5hXVhDUwz-BExu7itmRcdSq8FyLFTA9igLk/m3u8
+* Closing connection
+root@cableuno:/home/cableuno# curl -v -H "Host: app.teleunotv.cr" "http://127.0.0.1:81/playlist/demo/12345/m3u?output=hls"
+*   Trying 127.0.0.1:81...
+* Connected to 127.0.0.1 (127.0.0.1) port 81
+> GET /playlist/demo/12345/m3u?output=hls HTTP/1.1
+> Host: app.teleunotv.cr
+> User-Agent: curl/8.5.0
+> Accept: */*
+> 
+< HTTP/1.1 200 OK
+< Server: nginx
+< Date: Mon, 01 Dec 2025 02:25:29 GMT
+< Content-Type: application/octet-stream
+< Connection: close
+< Access-Control-Allow-Origin: *
+< Content-Description: File Transfer
+< Expires: 0
+< Cache-Control: must-revalidate
+< Pragma: public
+< Content-Disposition: attachment; filename="playlist_demo.m3u"
+< Access-Control-Allow-Origin: https://play.teleunotv.cr
+< Access-Control-Allow-Methods: GET, POST, OPTIONS
+< Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, Authorization, Range
+< Access-Control-Expose-Headers: Content-Length, Content-Range
+< 
+#EXTM3U
+#EXT-X-SESSION-DATA:DATA-ID="com.xui.1_5_13"
+#EXTINF:-1,COLOSAL
+https://app.teleunotv.cr:81/play/ARagZMtj5hXVhDUwz-BExu7itmRcdSq8FyLFTA9igLk/m3u8
+* Closing connection
+root@cableuno:/home/cableuno# 
+
