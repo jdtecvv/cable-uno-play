@@ -4,10 +4,9 @@
 
 ### Mínimos:
 - Ubuntu 20.04+ / Debian 11+ / CentOS 8+
-- 2 GB RAM
-- 20 GB disco
+- 1 GB RAM
+- 10 GB disco
 - Node.js 20+
-- PostgreSQL 14+
 - Nginx (opcional, recomendado)
 
 ---
@@ -51,36 +50,7 @@ npm --version
 
 ---
 
-## 🗄️ PASO 3: Instalar PostgreSQL
-
-```bash
-# Instalar PostgreSQL
-sudo apt install -y postgresql postgresql-contrib
-
-# Iniciar servicio
-sudo systemctl start postgresql
-sudo systemctl enable postgresql
-
-# Verificar
-sudo systemctl status postgresql
-```
-
-### Crear base de datos y usuario:
-
-```bash
-# Entrar a PostgreSQL
-sudo -u postgres psql
-
-# Dentro de psql:
-CREATE DATABASE cableuno_play;
-CREATE USER cableuno WITH PASSWORD 'tu_password_seguro';
-GRANT ALL PRIVILEGES ON DATABASE cableuno_play TO cableuno;
-\q
-```
-
----
-
-## 🚀 PASO 4: Subir Proyecto al Servidor
+## 🚀 PASO 3: Subir Proyecto al Servidor
 
 ### Opción A: Git (Recomendada)
 
@@ -115,7 +85,7 @@ tar -xzf /tmp/cable-uno-play.tar.gz
 
 ---
 
-## ⚙️ PASO 5: Configurar Proyecto
+## ⚙️ PASO 4: Configurar Proyecto
 
 ### 1. Instalar dependencias:
 
@@ -133,14 +103,6 @@ nano .env
 **Contenido:**
 
 ```env
-# Base de datos
-DATABASE_URL=postgresql://cableuno:tu_password_seguro@localhost:5432/cableuno_play
-PGHOST=localhost
-PGPORT=5432
-PGUSER=cableuno
-PGPASSWORD=tu_password_seguro
-PGDATABASE=cableuno_play
-
 # Node
 NODE_ENV=production
 PORT=5000
@@ -149,10 +111,10 @@ PORT=5000
 HOST=0.0.0.0
 ```
 
-### 3. Crear tablas en base de datos:
+### 3. Crear base de datos local:
 
 ```bash
-npm run db:push
+npm run db:migrate
 ```
 
 ### 4. (Opcional) Poblar con datos de prueba:
@@ -169,7 +131,7 @@ npm run build
 
 ---
 
-## 🔧 PASO 6: Configurar PM2 (Process Manager)
+## 🔧 PASO 5: Configurar PM2 (Process Manager)
 
 PM2 mantiene tu app corriendo 24/7:
 
@@ -202,7 +164,7 @@ pm2 monit                      # Monitor en tiempo real
 
 ---
 
-## 🌐 PASO 7: Configurar Nginx (Reverse Proxy)
+## 🌐 PASO 6: Configurar Nginx (Reverse Proxy)
 
 ### Instalar Nginx:
 
@@ -278,7 +240,7 @@ sudo systemctl restart nginx
 
 ---
 
-## 🔒 PASO 8: Configurar SSL (HTTPS)
+## 🔒 PASO 7: Configurar SSL (HTTPS)
 
 ### Instalar Certbot:
 
@@ -308,7 +270,7 @@ sudo certbot renew --dry-run
 
 ---
 
-## 🔥 PASO 9: Configurar Firewall
+## 🔥 PASO 8: Configurar Firewall
 
 ```bash
 # Habilitar UFW
@@ -322,16 +284,13 @@ sudo ufw allow 22
 sudo ufw allow 80
 sudo ufw allow 443
 
-# Permitir PostgreSQL (solo localhost)
-sudo ufw allow from 127.0.0.1 to any port 5432
-
 # Ver reglas
 sudo ufw status
 ```
 
 ---
 
-## 📊 PASO 10: Monitoreo y Logs
+## 📊 PASO 9: Monitoreo y Logs
 
 ### Ver logs de la aplicación:
 
@@ -365,7 +324,7 @@ free -h
 
 ---
 
-## 🔄 PASO 11: Actualizar la Aplicación
+## 🔄 PASO 10: Actualizar la Aplicación
 
 ### Método automático (Git):
 
@@ -382,7 +341,7 @@ npm install
 npm run build
 
 # Actualizar base de datos (si hay cambios en schema)
-npm run db:push
+npm run db:migrate
 
 # Reiniciar aplicación
 pm2 restart cable-uno-play
@@ -414,7 +373,7 @@ echo "🏗️  Compilando..."
 npm run build
 
 echo "🗄️  Actualizando base de datos..."
-npm run db:push
+npm run db:migrate
 
 echo "🔄 Reiniciando aplicación..."
 pm2 restart cable-uno-play
@@ -437,7 +396,7 @@ chmod +x update.sh
 
 ---
 
-## 🔐 PASO 12: Seguridad Adicional
+## 🔐 PASO 11: Seguridad Adicional
 
 ### 1. Cambiar puerto SSH:
 
@@ -476,14 +435,15 @@ nano /home/usuario/backup-db.sh
 #!/bin/bash
 BACKUP_DIR="/home/usuario/backups"
 DATE=$(date +%Y%m%d_%H%M%S)
+DB_FILE="/var/www/cable-uno-play/local.db"
 mkdir -p $BACKUP_DIR
 
-pg_dump -U cableuno cableuno_play > "$BACKUP_DIR/backup_$DATE.sql"
+cp $DB_FILE "$BACKUP_DIR/backup_$DATE.db"
 
 # Mantener solo últimos 7 días
-find $BACKUP_DIR -name "backup_*.sql" -mtime +7 -delete
+find $BACKUP_DIR -name "backup_*.db" -mtime +7 -delete
 
-echo "✅ Backup completado: backup_$DATE.sql"
+echo "✅ Backup completado: backup_$DATE.db"
 ```
 
 **Hacer ejecutable:**
@@ -503,61 +463,14 @@ crontab -e
 
 ---
 
-## 🎯 PASO 13: Optimizaciones de Performance
-
-### 1. Configurar caché de Nginx:
-
-```bash
-sudo nano /etc/nginx/nginx.conf
-```
-
-**Agregar en `http {`:**
-
-```nginx
-# Cache
-proxy_cache_path /var/cache/nginx levels=1:2 keys_zone=my_cache:10m max_size=1g inactive=60m use_temp_path=off;
-
-# Compresión gzip
-gzip on;
-gzip_vary on;
-gzip_proxied any;
-gzip_comp_level 6;
-gzip_types text/plain text/css text/xml text/javascript application/json application/javascript application/xml+rss application/rss+xml font/truetype font/opentype application/vnd.ms-fontobject image/svg+xml;
-```
-
-### 2. Optimizar PostgreSQL:
-
-```bash
-sudo nano /etc/postgresql/14/main/postgresql.conf
-```
-
-**Ajustar según RAM disponible:**
-
-```conf
-shared_buffers = 256MB           # 25% de RAM
-effective_cache_size = 1GB       # 50-75% de RAM
-maintenance_work_mem = 64MB
-work_mem = 16MB
-```
-
-**Reiniciar:**
-
-```bash
-sudo systemctl restart postgresql
-```
-
----
-
 ## ✅ Checklist Deployment
 
 - [ ] Servidor Linux preparado
 - [ ] Node.js 20 instalado
-- [ ] PostgreSQL instalado y configurado
-- [ ] Base de datos creada
 - [ ] Proyecto subido al servidor
 - [ ] Variables de entorno configuradas (.env)
 - [ ] Dependencias instaladas (npm install)
-- [ ] Base de datos sincronizada (npm run db:push)
+- [ ] Base de datos creada (npm run db:migrate)
 - [ ] Build de producción (npm run build)
 - [ ] PM2 instalado y configurado
 - [ ] Aplicación corriendo con PM2
@@ -584,12 +497,10 @@ Después de completar todos los pasos:
 ```bash
 # Estado de servicios
 sudo systemctl status nginx
-sudo systemctl status postgresql
 pm2 status
 
 # Reiniciar servicios
 sudo systemctl restart nginx
-sudo systemctl restart postgresql
 pm2 restart cable-uno-play
 
 # Ver logs
@@ -622,14 +533,8 @@ sudo netstat -tulpn | grep 5000
 ### Error de base de datos:
 
 ```bash
-# Verificar PostgreSQL
-sudo systemctl status postgresql
-
-# Probar conexión
-psql -U cableuno -d cableuno_play -h localhost
-
-# Ver logs PostgreSQL
-sudo tail -f /var/log/postgresql/postgresql-14-main.log
+# Verificar que el archivo de base de datos existe
+ls -l /var/www/cable-uno-play/local.db
 ```
 
 ### Nginx error:
@@ -661,5 +566,5 @@ Tu aplicación **Cable Uno Play** está ahora:
 **Tu servidor Linux ahora sirve:**
 - 🌐 Web app (React + Express)
 - 📺 Streaming IPTV
-- 🗄️ Base de datos PostgreSQL
+- 🗄️ Base de datos SQLite local
 - 🔒 Conexión segura HTTPS
