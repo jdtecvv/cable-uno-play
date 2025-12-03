@@ -4,3 +4,9 @@ dist
 server/public
 vite.config.ts.*
 *.tar.gz
+*.tar.xz
+libsql-server-x86_64-unknown-linux-gnu/
+bin/
+local.db
+data.sqld/
+sqld.log

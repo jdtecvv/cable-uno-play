@@ -1,11 +1,11 @@
-import { pgTable, text, serial, integer, boolean, timestamp, jsonb } from "drizzle-orm/pg-core";
+import { sqliteTable, text, integer, blob } from 'drizzle-orm/sqlite-core';
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 import { relations } from "drizzle-orm";
 
 // Playlists table - Extended for premium features
-export const playlists = pgTable("playlists", {
-  id: serial("id").primaryKey(),
+export const playlists = sqliteTable("playlists", {
+  id: integer("id").primaryKey(),
   name: text("name").notNull(),
   url: text("url").notNull(),
   username: text("username"),
@@ -13,71 +13,71 @@ export const playlists = pgTable("playlists", {
   providerType: text("provider_type").notNull().default("m3u"), // "m3u" or "xtream"
   accessLevel: text("access_level").notNull().default("free"), // "free" or "premium"
   apiEndpoint: text("api_endpoint"), // For Xtream Codes API
-  expiresAt: timestamp("expires_at"), // Subscription expiration
-  isActive: boolean("is_active").default(false),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  expiresAt: text("expires_at"), // Subscription expiration
+  isActive: integer("is_active", { mode: 'boolean' }).default(false),
+  createdAt: text("created_at").default('CURRENT_TIMESTAMP').notNull(),
+  updatedAt: text("updated_at").default('CURRENT_TIMESTAMP').notNull(),
 });
 
 // Channels table
-export const channels = pgTable("channels", {
-  id: serial("id").primaryKey(),
+export const channels = sqliteTable("channels", {
+  id: integer("id").primaryKey(),
   playlistId: integer("playlist_id").references(() => playlists.id).notNull(),
   name: text("name").notNull(),
   url: text("url").notNull(),
   categoryId: integer("category_id").references(() => categories.id),
   logo: text("logo"),
   epgId: text("epg_id"),
-  isFavorite: boolean("is_favorite").default(false),
-  lastWatched: timestamp("last_watched"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  isFavorite: integer("is_favorite", { mode: 'boolean' }).default(false),
+  lastWatched: text("last_watched"),
+  createdAt: text("created_at").default('CURRENT_TIMESTAMP').notNull(),
+  updatedAt: text("updated_at").default('CURRENT_TIMESTAMP').notNull(),
 });
 
 // Categories table
-export const categories = pgTable("categories", {
-  id: serial("id").primaryKey(),
+export const categories = sqliteTable("categories", {
+  id: integer("id").primaryKey(),
   name: text("name").notNull().unique(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  createdAt: text("created_at").default('CURRENT_TIMESTAMP').notNull(),
+  updatedAt: text("updated_at").default('CURRENT_TIMESTAMP').notNull(),
 });
 
 // EPG Programs table
-export const programs = pgTable("programs", {
-  id: serial("id").primaryKey(),
+export const programs = sqliteTable("programs", {
+  id: integer("id").primaryKey(),
   channelEpgId: text("channel_epg_id").notNull(),
   title: text("title").notNull(),
   description: text("description"),
-  startTime: timestamp("start_time").notNull(),
-  endTime: timestamp("end_time").notNull(),
+  startTime: text("start_time").notNull(),
+  endTime: text("end_time").notNull(),
   category: text("category"),
   imageUrl: text("image_url"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  createdAt: text("created_at").default('CURRENT_TIMESTAMP').notNull(),
+  updatedAt: text("updated_at").default('CURRENT_TIMESTAMP').notNull(),
 });
 
 // EPG Sources table
-export const epgSources = pgTable("epg_sources", {
-  id: serial("id").primaryKey(),
+export const epgSources = sqliteTable("epg_sources", {
+  id: integer("id").primaryKey(),
   name: text("name").notNull(),
   url: text("url").notNull(),
-  lastUpdated: timestamp("last_updated"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  lastUpdated: text("last_updated"),
+  createdAt: text("created_at").default('CURRENT_TIMESTAMP').notNull(),
+  updatedAt: text("updated_at").default('CURRENT_TIMESTAMP').notNull(),
 });
 
 // User settings table
-export const settings = pgTable("settings", {
-  id: serial("id").primaryKey(),
+export const settings = sqliteTable("settings", {
+  id: integer("id").primaryKey(),
   key: text("key").notNull().unique(),
-  value: jsonb("value"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  value: blob("value", { mode: 'json' }),
+  createdAt: text("created_at").default('CURRENT_TIMESTAMP').notNull(),
+  updatedAt: text("updated_at").default('CURRENT_TIMESTAMP').notNull(),
 });
 
 // VOD (Video on Demand) - Movies
-export const vodItems = pgTable("vod_items", {
-  id: serial("id").primaryKey(),
+export const vodItems = sqliteTable("vod_items", {
+  id: integer("id").primaryKey(),
   playlistId: integer("playlist_id").references(() => playlists.id).notNull(),
   name: text("name").notNull(),
   streamUrl: text("stream_url").notNull(),
@@ -93,13 +93,13 @@ export const vodItems = pgTable("vod_items", {
   coverBig: text("cover_big"), // Poster image
   backdropPath: text("backdrop_path"),
   tmdbId: text("tmdb_id"), // The Movie Database ID
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  createdAt: text("created_at").default('CURRENT_TIMESTAMP').notNull(),
+  updatedAt: text("updated_at").default('CURRENT_TIMESTAMP').notNull(),
 });
 
 // Series
-export const series = pgTable("series", {
-  id: serial("id").primaryKey(),
+export const series = sqliteTable("series", {
+  id: integer("id").primaryKey(),
   playlistId: integer("playlist_id").references(() => playlists.id).notNull(),
   name: text("name").notNull(),
   categoryId: integer("category_id").references(() => categories.id),
@@ -112,26 +112,26 @@ export const series = pgTable("series", {
   cover: text("cover"),
   backdropPath: text("backdrop_path"),
   tmdbId: text("tmdb_id"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  createdAt: text("created_at").default('CURRENT_TIMESTAMP').notNull(),
+  updatedAt: text("updated_at").default('CURRENT_TIMESTAMP').notNull(),
 });
 
 // Seasons
-export const seasons = pgTable("seasons", {
-  id: serial("id").primaryKey(),
+export const seasons = sqliteTable("seasons", {
+  id: integer("id").primaryKey(),
   seriesId: integer("series_id").references(() => series.id).notNull(),
   seasonNumber: integer("season_number").notNull(),
   name: text("name"),
   coverBig: text("cover_big"),
   plot: text("plot"),
   airDate: text("air_date"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  createdAt: text("created_at").default('CURRENT_TIMESTAMP').notNull(),
+  updatedAt: text("updated_at").default('CURRENT_TIMESTAMP').notNull(),
 });
 
 // Episodes
-export const episodes = pgTable("episodes", {
-  id: serial("id").primaryKey(),
+export const episodes = sqliteTable("episodes", {
+  id: integer("id").primaryKey(),
   seasonId: integer("season_id").references(() => seasons.id).notNull(),
   seriesId: integer("series_id").references(() => series.id).notNull(),
   episodeNum: integer("episode_num").notNull(),
@@ -143,50 +143,50 @@ export const episodes = pgTable("episodes", {
   coverBig: text("cover_big"),
   airDate: text("air_date"),
   rating: text("rating"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  createdAt: text("created_at").default('CURRENT_TIMESTAMP').notNull(),
+  updatedAt: text("updated_at").default('CURRENT_TIMESTAMP').notNull(),
 });
 
 // Favorites (can be channels, vod, or series)
-export const favorites = pgTable("favorites", {
-  id: serial("id").primaryKey(),
+export const favorites = sqliteTable("favorites", {
+  id: integer("id").primaryKey(),
   itemType: text("item_type").notNull(), // "channel", "vod", "series"
   itemId: integer("item_id").notNull(), // ID of channel/vod/series
   playlistId: integer("playlist_id").references(() => playlists.id),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
+  createdAt: text("created_at").default('CURRENT_TIMESTAMP').notNull(),
 });
 
 // Viewing History
-export const viewingHistory = pgTable("viewing_history", {
-  id: serial("id").primaryKey(),
+export const viewingHistory = sqliteTable("viewing_history", {
+  id: integer("id").primaryKey(),
   itemType: text("item_type").notNull(), // "channel", "vod", "episode"
   itemId: integer("item_id").notNull(),
   playlistId: integer("playlist_id").references(() => playlists.id),
-  watchedAt: timestamp("watched_at").defaultNow().notNull(),
+  watchedAt: text("watched_at").default('CURRENT_TIMESTAMP').notNull(),
   progress: integer("progress").default(0), // Seconds watched
   duration: integer("duration"), // Total duration in seconds
 });
 
 // Parental Controls
-export const parentalControls = pgTable("parental_controls", {
-  id: serial("id").primaryKey(),
+export const parentalControls = sqliteTable("parental_controls", {
+  id: integer("id").primaryKey(),
   pinCode: text("pin_code").notNull(),
-  isEnabled: boolean("is_enabled").default(false),
-  restrictedCategories: jsonb("restricted_categories"), // Array of category IDs
-  restrictedRatings: jsonb("restricted_ratings"), // Array of ratings (PG, PG-13, R, etc.)
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  isEnabled: integer("is_enabled", { mode: 'boolean' }).default(false),
+  restrictedCategories: blob("restricted_categories", { mode: 'json' }), // Array of category IDs
+  restrictedRatings: blob("restricted_ratings", { mode: 'json' }), // Array of ratings (PG, PG-13, R, etc.)
+  createdAt: text("created_at").default('CURRENT_TIMESTAMP').notNull(),
+  updatedAt: text("updated_at").default('CURRENT_TIMESTAMP').notNull(),
 });
 
 // Catch-Up Windows (for time-shift TV)
-export const catchupWindows = pgTable("catchup_windows", {
-  id: serial("id").primaryKey(),
+export const catchupWindows = sqliteTable("catchup_windows", {
+  id: integer("id").primaryKey(),
   channelId: integer("channel_id").references(() => channels.id).notNull(),
   programId: integer("program_id").references(() => programs.id),
-  startTime: timestamp("start_time").notNull(),
-  endTime: timestamp("end_time").notNull(),
+  startTime: text("start_time").notNull(),
+  endTime: text("end_time").notNull(),
   catchupUrl: text("catchup_url"), // URL to archived stream
-  createdAt: timestamp("created_at").defaultNow().notNull(),
+  createdAt: text("created_at").default('CURRENT_TIMESTAMP').notNull(),
 });
 
 // Establish relationships
