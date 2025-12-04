@@ -102,45 +102,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // We use HTTP on port 81 for internal communication
   const isProduction = process.env.NODE_ENV === 'production';
   
-  const convertXUIUrlToLocal = (url: string): { url: string; hostHeader: string | null } => {
+  const convertXUIUrlToLocal = (urlString: string): { url: string; hostHeader: string | null } => {
     // Only convert to localhost in production where XUI is available locally
     if (!isProduction) {
-      console.log(`🔄 Development mode - using original URL: ${url}`);
-      return { url, hostHeader: null };
+      console.log(`🔄 Development mode - using original URL: ${urlString}`);
+      return { url: urlString, hostHeader: null };
+    }
+
+    try {
+      const targetDomains = ["app.teleunotv.cr", "190.61.110.177"];
+      // Basic check before parsing to avoid unnecessary work
+      if (!targetDomains.some(d => urlString.includes(d))) {
+        return { url: urlString, hostHeader: null };
+      }
+
+      const urlObj = new URL(urlString);
+      
+      if (targetDomains.includes(urlObj.hostname)) {
+        const hostHeader = urlObj.hostname;
+
+        // Force protocol to http for local connection
+        urlObj.protocol = "http:";
+        // Point to localhost
+        urlObj.hostname = "127.0.0.1";
+
+        // If no port is specified, default to 81 (as per original logic for XUI).
+        // If a port IS specified (like 2728), it will be preserved.
+        if (!urlObj.port) {
+          urlObj.port = "81";
+        }
+
+        const result = urlObj.toString();
+        console.log(`🔄 Local URL converted: ${urlString} -> ${result} (Host: ${hostHeader})`);
+        return { url: result, hostHeader };
+      }
+    } catch (error) {
+      console.error("Error converting URL:", error);
     }
     
-    let result = url;
-    let hostHeader: string | null = null;
-    
-    // Check if this is an XUI URL
-    const isXUIUrl = url.includes('app.teleunotv.cr') || url.includes('190.61.110.177');
-    
-    if (isXUIUrl) {
-      // Extract the original host for the Host header
-      hostHeader = 'app.teleunotv.cr';
-      
-      // Convert all XUI variants to localhost:81 (always use HTTP for internal)
-      // Pattern 1: http(s)://app.teleunotv.cr:81/...
-      if (result.includes('app.teleunotv.cr:81')) {
-        result = result.replace(/https?:\/\/app\.teleunotv\.cr:81/, 'http://127.0.0.1:81');
-      }
-      // Pattern 2: http(s)://app.teleunotv.cr/... (without port)
-      else if (result.includes('app.teleunotv.cr')) {
-        result = result.replace(/https?:\/\/app\.teleunotv\.cr/, 'http://127.0.0.1:81');
-      }
-      // Pattern 3: http(s)://190.61.110.177:81/...
-      else if (result.includes('190.61.110.177:81')) {
-        result = result.replace(/https?:\/\/190\.61\.110\.177:81/, 'http://127.0.0.1:81');
-      }
-      // Pattern 4: http(s)://190.61.110.177/... (without port)
-      else if (result.includes('190.61.110.177')) {
-        result = result.replace(/https?:\/\/190\.61\.110\.177/, 'http://127.0.0.1:81');
-      }
-      
-      console.log(`🔄 XUI URL converted to local: ${url} -> ${result} (Host: ${hostHeader})`);
-    }
-    
-    return { url: result, hostHeader };
+    return { url: urlString, hostHeader: null };
   };
 
   // Helper to fetch XUI URLs with manual redirect handling
