@@ -94,8 +94,38 @@ export default function SimplePlayer() {
                              urlToLoad.includes('/playlist.m3u8') ||
                              urlToLoad.includes(':1935/');
       
-      if (isDirectStream) {
-        // Direct stream URL - create a single channel entry
+      // ALWAYS try to fetch and parse as playlist first, unless we are sure it's a stream
+      // We removed the aggressive "isDirectStream" check because it was incorrectly flagging
+      // playlists ending in .m3u8 as streams.
+
+      // M3U playlist - fetch and parse
+      const response = await fetch('/api/proxy/m3u', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url: urlToLoad }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "No se pudo cargar la URL");
+      }
+
+      const { content } = await response.json();
+
+      // Check if the content is an HLS playlist (media playlist) vs a Master Playlist (channel list)
+      // Media playlists usually have #EXT-X-TARGETDURATION or #EXT-X-MEDIA-SEQUENCE
+      // Master playlists usually have #EXTINF or #EXT-X-STREAM-INF (but adaptive streams also have this)
+
+      // Better heuristic: Does it contain #EXTINF:? If so, it's likely a channel list (or a very weird media playlist)
+      // If it contains #EXT-X-TARGETDURATION, it is definitely a media segment list (a stream).
+
+      const isMediaPlaylist = content.includes('#EXT-X-TARGETDURATION') ||
+                              content.includes('#EXT-X-MEDIA-SEQUENCE');
+
+      if (isMediaPlaylist) {
+        // It's a single stream
         simpleChannels = [{
           name: playlistName.trim() || "Canal Directo",
           url: urlToLoad,
@@ -103,47 +133,28 @@ export default function SimplePlayer() {
           group: "Directo",
         }];
       } else {
-        // M3U playlist - fetch and parse
-        const response = await fetch('/api/proxy/m3u', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ url: urlToLoad }),
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.message || "No se pudo cargar la URL");
-        }
-
-        const { content } = await response.json();
+        // It's a channel list (Master Playlist or M3U list)
+        const playlist = parseM3U(content);
         
-        // Check if the content is an HLS playlist (not a channel list)
-        const isHLSPlaylist = content.includes('#EXT-X-STREAM-INF') || 
-                              content.includes('#EXT-X-TARGETDURATION') ||
-                              content.includes('#EXT-X-MEDIA-SEQUENCE');
+        simpleChannels = playlist.items.map(item => ({
+          name: item.name,
+          url: item.url,
+          logo: item.tvg?.logo || undefined,
+          group: item.group?.title || undefined,
+          username: item.username || undefined,
+          password: item.password || undefined,
+        }));
         
-        if (isHLSPlaylist) {
-          // HLS stream disguised as M3U - treat as single channel
-          simpleChannels = [{
+        // Fallback: If parsing found 0 items but we have content, maybe it failed to parse?
+        // Or maybe it IS a master playlist for a single stream (adaptive bitrate)?
+        if (simpleChannels.length === 0 && content.length > 0) {
+           // Treat as single stream as fallback
+           simpleChannels = [{
             name: playlistName.trim() || "Canal Directo",
             url: urlToLoad,
             logo: undefined,
             group: "Directo",
           }];
-        } else {
-          // Regular M3U channel list
-          const playlist = parseM3U(content);
-          
-          simpleChannels = playlist.items.map(item => ({
-            name: item.name,
-            url: item.url,
-            logo: item.tvg?.logo || undefined,
-            group: item.group?.title || undefined,
-            username: item.username || undefined,
-            password: item.password || undefined,
-          }));
         }
       }
 

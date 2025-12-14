@@ -60,15 +60,24 @@ export function parseM3U(content: string): M3UPlaylist {
     
     // Info de un canal (línea que comienza con #EXTINF)
     if (line.startsWith('#EXTINF:')) {
-      currentEntry = {}; // Reset current entry
+      // If we already have a pending entry (missing URL), push it as is or discard?
+      // M3U standard usually has EXTINF then URL. If we have multiple EXTINF in a row, the previous one was likely malformed or missing URL.
+      // But we'll just reset for the new one.
+      currentEntry = {};
       
-      const infoMatch = line.match(/#EXTINF:(.*?),(.*)/);
-      if (infoMatch) {
-        const [, , name] = infoMatch;
+      // Some M3Us have the name separated by comma, but the duration might be -1 or 0
+      // Format: #EXTINF:-1 tvg-id="..." group-title="...",Channel Name
+
+      // We look for the LAST comma, as the attributes might contain commas in quotes
+      const lastCommaIndex = line.lastIndexOf(',');
+
+      if (lastCommaIndex !== -1) {
+        const name = line.substring(lastCommaIndex + 1);
         currentEntry.name = name.trim() || `Canal ${channelCounter}`;
         
-        // Parse attributes like group-title, tvg-id, etc (optional)
-        const attributes = parseAttributes(line);
+        // Attributes are everything before the comma, excluding #EXTINF:duration
+        const attributesPart = line.substring(0, lastCommaIndex);
+        const attributes = parseAttributes(attributesPart);
         
         // Extraer grupo (opcional)
         currentEntry.group = {
@@ -101,12 +110,16 @@ export function parseM3U(content: string): M3UPlaylist {
           };
         }
       } else {
-        // Si no se puede parsear #EXTINF, crear entrada básica
-        currentEntry.name = `Canal ${channelCounter}`;
+        // Fallback: no comma found, use the whole line after #EXTINF: as name or just default
+        // Try to extract attributes even if comma is missing (rare but possible)
+        const attributes = parseAttributes(line);
+        currentEntry.name = attributes['tvg-name'] || `Canal ${channelCounter}`;
       }
     } 
     // URL de stream (línea que no comienza con #)
-    else if (!line.startsWith('#') && (line.startsWith('http://') || line.startsWith('https://'))) {
+    // ADDED: Support for lines that are just URLs, even if they don't start with http (some M3Us use relative paths or other protocols)
+    // But for safety, we'll check for http/https OR if the line looks like a file path/url
+    else if (!line.startsWith('#') && line.length > 5) {
       // Extraer credenciales de la URL si existen
       const { url, username, password } = extractCredentialsFromUrl(line);
       
