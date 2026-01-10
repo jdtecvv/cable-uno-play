@@ -67,10 +67,10 @@ app.use((req, res, next) => {
   const defaultPort = process.platform === "darwin" ? 3000 : 5000;
   const port = process.env.PORT ? parseInt(process.env.PORT) : defaultPort;
   
-  // CRITICAL: Host binding depends on environment
-  // - Production (NODE_ENV=production): Use 127.0.0.1 because Nginx reverse proxy expects localhost
-  // - Development: Use 0.0.0.0 to allow iOS Simulator access via local network IP
-  const host = process.env.NODE_ENV === "production" ? "127.0.0.1" : "0.0.0.0";
+  // CRITICAL: Host binding
+  // Use 0.0.0.0 in production to avoid IPv4/IPv6 ambiguity with 'localhost' in Nginx
+  // This ensures Nginx can connect regardless of how /etc/hosts is configured
+  const host = "0.0.0.0";
   
   server.listen({
     port,
