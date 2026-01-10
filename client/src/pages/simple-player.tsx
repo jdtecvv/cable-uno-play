@@ -136,33 +136,50 @@ export default function SimplePlayer() {
 
       let isSingleStream = false;
 
-      if (content.includes('#EXT-X-STREAM-INF')) {
-        isSingleStream = true;
-      } else if (content.includes('#EXT-X-TARGETDURATION') || content.includes('#EXT-X-MEDIA-SEQUENCE')) {
-         // It's a Media Playlist (segments)
-         isSingleStream = true;
-      } else {
-         // It might be a Channel List. Let's check for #EXTINF
-         // If it has no #EXTINF, assume it's not a valid list, maybe a raw stream or error.
-         if (!content.includes('#EXTINF')) {
-            // Some very simple m3u lists might just be URLs, but strictly they should have header.
-            // If it has neither standard HLS tags nor EXTINF, treat as single stream if extension matches, else error.
-            if (urlToLoad.match(/\.(m3u8|ts|mp4)(\?.*)?$/i)) {
-              isSingleStream = true;
-            }
-         }
+      // 1. Check for Explicit List Markers
+      if (content.includes('#EXTINF')) {
+        isSingleStream = false;
       }
+      // 2. Check for Explicit Stream Markers
+      else if (content.includes('#EXT-X-STREAM-INF') || content.includes('#EXT-X-TARGETDURATION') || content.includes('#EXT-X-MEDIA-SEQUENCE')) {
+        isSingleStream = true;
+      }
+      // 3. Ambiguous Case - Try to parse as list
+      else {
+        try {
+          // Attempt to parse. m3u-parser handles simple lists of URLs even without headers
+          const playlist = parseM3U(content);
 
-      // Override: If the content parses as a valid M3U list with > 1 item, treat as list.
-      // If parseM3U fails or returns 1 item that looks like a segment, treat as stream.
+          if (playlist.items.length > 1) {
+            // Multiple items -> Definitely a list
+            isSingleStream = false;
+          } else if (playlist.items.length === 1) {
+             // Single item.
+             // If the item URL is the same as input URL, it's a recursion loop -> Treat as stream
+             // If the item looks like a segment (relative path), it's likely a stream.
+             // Otherwise, it's a list with 1 channel.
+             const itemUrl = playlist.items[0].url;
+             if (itemUrl === urlToLoad || itemUrl.includes(urlToLoad)) {
+                isSingleStream = true;
+             } else if (!itemUrl.startsWith('http')) {
+                // Relative URL -> Stream segment or sub-playlist
+                isSingleStream = true;
+             } else {
+                isSingleStream = false;
+             }
+          } else {
+             // 0 items -> Stream or Empty
+             isSingleStream = true;
+          }
+        } catch (e) {
+           // Parse failed -> Likely a raw stream or binary
+           isSingleStream = true;
+        }
+      }
 
       if (!isSingleStream) {
         try {
           const playlist = parseM3U(content);
-          // If we successfully parsed multiple items, it's definitely a list.
-          // If we parsed 1 item, it could be a list of 1 channel, or a misidentified stream.
-          // Users usually don't load a "list" just for 1 channel unless it's a test.
-          // But if the URL in that 1 item is relative, it was likely a stream segment.
           
           if (playlist.items.length > 0) {
              // It's a list
@@ -175,6 +192,7 @@ export default function SimplePlayer() {
               password: item.password || undefined,
             }));
           } else {
+            // Should not happen if logic above is correct, but safety fallback
             isSingleStream = true;
           }
         } catch (e) {

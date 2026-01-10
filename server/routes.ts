@@ -294,7 +294,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         '-i', inputUrl,
         '-map', '0:v:0',
         '-map', '0:a:0',
-        '-c:v', 'copy',
+        '-c:v', 'libx264',
+        '-preset', 'ultrafast',
+        '-tune', 'zerolatency',
+        '-pix_fmt', 'yuv420p',
         '-c:a', 'aac',
         '-b:a', '192k',
         '-ac', '2',  // Downmix to stereo

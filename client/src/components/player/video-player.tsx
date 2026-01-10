@@ -122,8 +122,13 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
 
         // Determine if transcoding is required based on file extension OR fallback state
         // We transcode legacy/non-web formats like MPG, MPEG, MKV, AVI, FLV, WMV
-        const nonWebFormatRegex = /\.(mpg|mpeg|mkv|avi|flv|wmv)(\?.*)?$/i;
-        const shouldTranscode = (useTranscoding && nonWebFormatRegex.test(streamUrl)) || forceTranscode;
+        const nonWebFormatRegex = /\.(mpg|mpeg|mkv|avi|flv|wmv|mov|rmvb|ts)(\?.*)?$/i;
+
+        // Special case: XUI streams ending in /ts are handled via optimization (replaced with /m3u8),
+        // so they don't need general transcoding unless they are generic .ts files from other providers
+        const isXuiTs = streamUrl.includes('/ts') && (streamUrl.includes('app.teleunotv.cr') || streamUrl.includes('190.61.110.177'));
+
+        const shouldTranscode = (!isXuiTs && (useTranscoding && nonWebFormatRegex.test(streamUrl))) || forceTranscode;
 
         if (shouldTranscode) {
           console.log(`🔄 Format requires transcoding: ${streamUrl}`);
