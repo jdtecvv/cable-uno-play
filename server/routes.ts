@@ -508,6 +508,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (req.headers['if-none-match']) {
         upstreamHeaders['If-None-Match'] = req.headers['if-none-match'] as string;
       }
+      // Forward User-Agent and Referer (important for some streams)
+      if (req.headers['user-agent']) {
+        upstreamHeaders['User-Agent'] = req.headers['user-agent'] as string;
+      }
+      if (req.headers['referer']) {
+        upstreamHeaders['Referer'] = req.headers['referer'] as string;
+      }
 
       // Use helper that handles XUI redirects manually
       // XUI returns 302 to https://...:81 which fails because port 81 is HTTP
@@ -624,6 +631,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // For non-M3U8 content (segments, etc.), stream directly
         const reader = response.body.getReader();
         
+        // Handle client disconnect to prevent zombies
+        res.on('close', () => {
+          reader.cancel().catch(e => console.error("Error canceling reader on disconnect:", e));
+        });
+
         const pump = async () => {
           try {
             while (true) {
@@ -634,13 +646,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 break;
               }
               
+              // Stop if response is closed
+              if (res.writableEnded || res.closed) {
+                 break;
+              }
+
               if (value) {
-                res.write(Buffer.from(value));
+                // Handle backpressure
+                const canWrite = res.write(Buffer.from(value));
+                if (!canWrite) {
+                    await new Promise(resolve => res.once('drain', resolve));
+                }
               }
             }
           } catch (error) {
-            console.error('Stream pump error:', error);
-            res.end();
+            // Ignore abort errors caused by disconnects
+            if (error instanceof Error && (error.name === 'AbortError' || error.message.includes('aborted'))) {
+                 // Normal behavior on disconnect
+            } else {
+                 console.error('Stream pump error:', error);
+            }
+            if (!res.writableEnded && !res.closed) res.end();
           }
         };
         

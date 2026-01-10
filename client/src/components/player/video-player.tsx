@@ -345,10 +345,22 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
         
         // Destroy HLS.js instance
         if (hlsRef.current) {
-          hlsRef.current.destroy();
+          try {
+            hlsRef.current.stopLoad(); // Stop loading segments immediately
+            hlsRef.current.destroy();  // Destroy the instance
+          } catch (e) {
+            console.error("Error destroying HLS instance:", e);
+          }
           hlsRef.current = null;
         }
         
+        // Clear video source to stop browser buffering
+        if (videoRef.current) {
+          videoRef.current.pause();
+          videoRef.current.removeAttribute('src');
+          videoRef.current.load(); // Required to release the decoder
+        }
+
         if (controlsTimerRef.current) {
           window.clearTimeout(controlsTimerRef.current);
         }
