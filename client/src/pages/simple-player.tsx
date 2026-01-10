@@ -29,7 +29,7 @@ export default function SimplePlayer() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [showLoadForm, setShowLoadForm] = useState(false);
   // Transcodificación SIEMPRE activada por defecto (automática para usuarios)
-  const [useTranscoding] = useState<boolean>(true);
+  const [useTranscoding] = useState<boolean>(false);
   const { toast } = useToast();
 
   // Cargar canales guardados al inicio
