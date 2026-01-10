@@ -114,33 +114,64 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
       const setupHls = async () => {
         let streamUrl = channel.url;
 
-        // Fix XUI malformed URLs with extra colon after domain
-        // Example: https://app.teleunotv.cr:/play/... -> https://app.teleunotv.cr/play/...
-        if (streamUrl.includes('://') && streamUrl.match(/:\/\/[^/]+:\/[^/]/)) {
-          streamUrl = streamUrl.replace(/:\/([^/])/, '/$1');
-          console.log(`🔧 Fixed malformed URL (removed extra colon): ${streamUrl}`);
-        }
+        // Determine if transcoding is required based on file extension
+        // We transcode legacy/non-web formats like MPG, MPEG, MKV, AVI, FLV, WMV
+        const nonWebFormatRegex = /\.(mpg|mpeg|mkv|avi|flv|wmv)(\?.*)?$/i;
+        const shouldTranscode = useTranscoding && nonWebFormatRegex.test(streamUrl);
 
-        // Convert XUI /ts URLs to /m3u8 for HLS.js compatibility
-        // XUI streams ending in /ts are MPEG-TS direct streams, not HLS playlists
-        // XUI format is /play/TOKEN/ts -> /play/TOKEN/m3u8 (not .m3u8)
-        if (streamUrl.endsWith('/ts')) {
-          streamUrl = streamUrl.replace(/\/ts$/, '/m3u8');
-          console.log(`🔄 Converted XUI URL from /ts to /m3u8: ${streamUrl}`);
-        }
+        if (shouldTranscode) {
+          console.log(`🔄 Format requires transcoding: ${streamUrl}`);
+          setIsBuffering(true);
+          try {
+             // Create transcoding session
+             const transcodeRes = await fetch('/api/proxy/stream-transcode/sessions', {
+               method: 'POST',
+               headers: { 'Content-Type': 'application/json' },
+               body: JSON.stringify({ url: streamUrl })
+             });
 
-        // Route XUI streams through backend proxy (tokens are port-bound to :81)
-        // The backend proxy converts URLs to localhost:81 for internal access
-        const isXUIStream = streamUrl.includes('app.teleunotv.cr') || 
-                           streamUrl.includes('190.61.110.177');
-        
-        if (isXUIStream) {
-          console.log(`🔄 Routing XUI stream through proxy: ${streamUrl}`);
-          streamUrl = `/api/proxy/stream?url=${encodeURIComponent(streamUrl)}`;
-        } else if (streamUrl.startsWith('http://')) {
-          // Use proxy for other HTTP streams (mixed content protection)
-          console.log(`🔄 Routing HTTP stream through proxy: ${streamUrl}`);
-          streamUrl = `/api/proxy/stream?url=${encodeURIComponent(streamUrl)}`;
+             if (transcodeRes.ok) {
+               const data = await transcodeRes.json();
+               transcodingSessionIdRef.current = data.sessionId;
+               streamUrl = data.playlistUrl;
+               console.log(`✅ Transcoding session created: ${streamUrl}`);
+             } else {
+               console.error("Failed to create transcoding session, falling back to direct play");
+             }
+          } catch (e) {
+            console.error("Error creating transcoding session:", e);
+          }
+        } else {
+            // Standard URL processing (XUI fixes, Proxying)
+
+            // Fix XUI malformed URLs with extra colon after domain
+            // Example: https://app.teleunotv.cr:/play/... -> https://app.teleunotv.cr/play/...
+            if (streamUrl.includes('://') && streamUrl.match(/:\/\/[^/]+:\/[^/]/)) {
+              streamUrl = streamUrl.replace(/:\/([^/])/, '/$1');
+              console.log(`🔧 Fixed malformed URL (removed extra colon): ${streamUrl}`);
+            }
+
+            // Convert XUI /ts URLs to /m3u8 for HLS.js compatibility
+            // XUI streams ending in /ts are MPEG-TS direct streams, not HLS playlists
+            // XUI format is /play/TOKEN/ts -> /play/TOKEN/m3u8 (not .m3u8)
+            if (streamUrl.endsWith('/ts')) {
+              streamUrl = streamUrl.replace(/\/ts$/, '/m3u8');
+              console.log(`🔄 Converted XUI URL from /ts to /m3u8: ${streamUrl}`);
+            }
+
+            // Route XUI streams through backend proxy (tokens are port-bound to :81)
+            // The backend proxy converts URLs to localhost:81 for internal access
+            const isXUIStream = streamUrl.includes('app.teleunotv.cr') ||
+                               streamUrl.includes('190.61.110.177');
+
+            if (isXUIStream) {
+              console.log(`🔄 Routing XUI stream through proxy: ${streamUrl}`);
+              streamUrl = `/api/proxy/stream?url=${encodeURIComponent(streamUrl)}`;
+            } else if (streamUrl.startsWith('http://') && !streamUrl.startsWith('http://localhost') && !streamUrl.startsWith('http://127.0.0.1')) {
+              // Use proxy for other HTTP streams (mixed content protection) - skip for localhost/transcoded
+              console.log(`🔄 Routing HTTP stream through proxy: ${streamUrl}`);
+              streamUrl = `/api/proxy/stream?url=${encodeURIComponent(streamUrl)}`;
+            }
         }
         
         // Check again before creating HLS instance
