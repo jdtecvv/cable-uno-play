@@ -127,14 +127,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         urlObj.hostname = '127.0.0.1';
 
         // Handle port logic:
-        // If no port is specified (port is ''), default to 81
-        // If port is specified (e.g. '2728' or '81'), keep it
+        // CRITICAL FIX: If the URL already has a port, PRESERVE IT.
+        // Only default to 81 if NO port is specified.
+        // Note: urlObj.port is an empty string if it's the default port for the protocol (80/443)
+        // or if explicitly not present.
         if (!urlObj.port) {
           urlObj.port = '81';
         }
 
         const result = urlObj.toString();
-        console.log(`🔄 XUI URL converted to local: ${url} -> ${result} (Host: ${hostHeader})`);
+        console.log(`🔄 XUI URL Rewrite [SAFE]: ${url} -> ${result} (Host: ${hostHeader})`);
         return { url: result, hostHeader };
       }
     } catch (e) {
