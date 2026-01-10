@@ -62,6 +62,7 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [isBuffering, setIsBuffering] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [forceTranscode, setForceTranscode] = useState(false); // Fallback state
     const controlsTimerRef = useRef<number | null>(null);
     const isMobile = useMobile();
     const { toast } = useToast();
@@ -101,6 +102,11 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
     // Generate unique session ID for this player instance (persists across segment requests)
     const sessionIdRef = useRef<string>(`${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
 
+    // Reset forceTranscode when channel changes
+    useEffect(() => {
+      setForceTranscode(false);
+    }, [channel?.url]);
+
     // Initialize HLS.js
     useEffect(() => {
       if (!videoRef.current || !channel?.url) return;
@@ -114,10 +120,10 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
       const setupHls = async () => {
         let streamUrl = channel.url;
 
-        // Determine if transcoding is required based on file extension
+        // Determine if transcoding is required based on file extension OR fallback state
         // We transcode legacy/non-web formats like MPG, MPEG, MKV, AVI, FLV, WMV
         const nonWebFormatRegex = /\.(mpg|mpeg|mkv|avi|flv|wmv)(\?.*)?$/i;
-        const shouldTranscode = useTranscoding && nonWebFormatRegex.test(streamUrl);
+        const shouldTranscode = (useTranscoding && nonWebFormatRegex.test(streamUrl)) || forceTranscode;
 
         if (shouldTranscode) {
           console.log(`🔄 Format requires transcoding: ${streamUrl}`);
@@ -275,6 +281,20 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
                   break;
                 default:
                   console.error("Fatal error", data);
+                  // Try to fallback to transcoding if not already using it
+                  if (!forceTranscode && useTranscoding) {
+                    console.log("⚠️ Playback failed, attempting to recover with transcoding...");
+                    if (hlsInstance) {
+                      hlsInstance.destroy();
+                    }
+                    setForceTranscode(true);
+                    toast({
+                      title: "Optimizando reproducción",
+                      description: "Intentando modo de compatibilidad...",
+                    });
+                    return;
+                  }
+
                   setError("Cannot play this stream. Please try another channel.");
                   toast({
                     title: "Playback Error",
@@ -346,7 +366,7 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
           });
         }
       };
-    }, [channel?.url, autoplay, toast, username, password, useTranscoding]);
+    }, [channel?.url, autoplay, toast, username, password, useTranscoding, forceTranscode]);
 
     // Expose functions via ref
     useImperativeHandle(ref, () => ({
