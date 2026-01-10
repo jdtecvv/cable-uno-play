@@ -132,11 +132,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Note: urlObj.port is an empty string if it's the default port for the protocol (80/443)
         // or if explicitly not present.
         if (!urlObj.port) {
+          console.log(`[XUI-FIX-V3] No port detected in ${url}, defaulting to 81.`);
           urlObj.port = '81';
+        } else {
+          console.log(`[XUI-FIX-V3] Preserving existing port ${urlObj.port} in ${url}`);
         }
 
         const result = urlObj.toString();
-        console.log(`🔄 XUI URL Rewrite [SAFE]: ${url} -> ${result} (Host: ${hostHeader})`);
+        console.log(`[XUI-FIX-V3] Rewrite Result: ${url} -> ${result} (Host: ${hostHeader})`);
         return { url: result, hostHeader };
       }
     } catch (e) {
