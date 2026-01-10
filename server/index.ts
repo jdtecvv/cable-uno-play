@@ -1,6 +1,12 @@
+import "dotenv/config"; // Load env vars first
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+
+// Allow self-signed certificates for internal connections in production
+if (process.env.NODE_ENV === 'production') {
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+}
 
 const app = express();
 app.use(express.json());
@@ -61,10 +67,10 @@ app.use((req, res, next) => {
   const defaultPort = process.platform === "darwin" ? 3000 : 5000;
   const port = process.env.PORT ? parseInt(process.env.PORT) : defaultPort;
   
-  // CRITICAL: Host binding depends on environment
-  // - Production (NODE_ENV=production): Use 127.0.0.1 because Nginx reverse proxy expects localhost
-  // - Development: Use 0.0.0.0 to allow iOS Simulator access via local network IP
-  const host = process.env.NODE_ENV === "production" ? "127.0.0.1" : "0.0.0.0";
+  // CRITICAL: Host binding
+  // Use 0.0.0.0 in production to avoid IPv4/IPv6 ambiguity with 'localhost' in Nginx
+  // This ensures Nginx can connect regardless of how /etc/hosts is configured
+  const host = "0.0.0.0";
   
   server.listen({
     port,
