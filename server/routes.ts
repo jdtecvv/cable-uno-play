@@ -109,38 +109,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return { url, hostHeader: null };
     }
     
-    let result = url;
-    let hostHeader: string | null = null;
-    
-    // Check if this is an XUI URL
-    const isXUIUrl = url.includes('app.teleunotv.cr') || url.includes('190.61.110.177');
-    
-    if (isXUIUrl) {
-      // Extract the original host for the Host header
-      hostHeader = 'app.teleunotv.cr';
+    try {
+      const urlObj = new URL(url);
+      const host = urlObj.hostname;
       
-      // Convert all XUI variants to localhost:81 (always use HTTP for internal)
-      // Pattern 1: http(s)://app.teleunotv.cr:81/...
-      if (result.includes('app.teleunotv.cr:81')) {
-        result = result.replace(/https?:\/\/app\.teleunotv\.cr:81/, 'http://127.0.0.1:81');
+      // Check if this is an XUI URL
+      const isXUIUrl = host === 'app.teleunotv.cr' || host === '190.61.110.177';
+
+      if (isXUIUrl) {
+        // Extract the original host for the Host header
+        const hostHeader = 'app.teleunotv.cr';
+
+        // Change protocol to http (internal)
+        urlObj.protocol = 'http:';
+
+        // Change hostname to localhost
+        urlObj.hostname = '127.0.0.1';
+
+        // Handle port logic:
+        // If no port is specified (port is ''), default to 81
+        // If port is specified (e.g. '2728' or '81'), keep it
+        if (!urlObj.port) {
+          urlObj.port = '81';
+        }
+
+        const result = urlObj.toString();
+        console.log(`🔄 XUI URL converted to local: ${url} -> ${result} (Host: ${hostHeader})`);
+        return { url: result, hostHeader };
       }
-      // Pattern 2: http(s)://app.teleunotv.cr/... (without port)
-      else if (result.includes('app.teleunotv.cr')) {
-        result = result.replace(/https?:\/\/app\.teleunotv\.cr/, 'http://127.0.0.1:81');
-      }
-      // Pattern 3: http(s)://190.61.110.177:81/...
-      else if (result.includes('190.61.110.177:81')) {
-        result = result.replace(/https?:\/\/190\.61\.110\.177:81/, 'http://127.0.0.1:81');
-      }
-      // Pattern 4: http(s)://190.61.110.177/... (without port)
-      else if (result.includes('190.61.110.177')) {
-        result = result.replace(/https?:\/\/190\.61\.110\.177/, 'http://127.0.0.1:81');
-      }
-      
-      console.log(`🔄 XUI URL converted to local: ${url} -> ${result} (Host: ${hostHeader})`);
+    } catch (e) {
+      console.error('Error parsing URL in convertXUIUrlToLocal:', e);
+      // Fallback to original URL if parsing fails
     }
     
-    return { url: result, hostHeader };
+    return { url, hostHeader: null };
   };
 
   // Helper to fetch XUI URLs with manual redirect handling
