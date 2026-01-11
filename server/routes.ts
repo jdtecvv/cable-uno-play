@@ -117,31 +117,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const isXUIUrl = host === 'app.teleunotv.cr' || host === '190.61.110.177';
 
       if (isXUIUrl) {
-        // Extract the original host for the Host header
+        // [XUI-FIX-V5-EXTERNAL] CRITICAL ARCHITECTURE CHANGE:
+        // DO NOT FORCE LOCALHOST (127.0.0.1) IF THE IP IS EXTERNAL.
+        // The user confirmed XUI is on a different physical machine (190.x.x.x).
+        // Rewriting to 127.0.0.1 causes ECONNREFUSED because port 2728/etc are not open locally.
+
+        console.log(`[XUI-FIX-V5-EXTERNAL] Detected XUI Host: ${host}. Preserving original remote connection.`);
+
+        // We still return the hostHeader for virtual hosting if needed, but we do NOT change the URL hostname.
         const hostHeader = 'app.teleunotv.cr';
 
-        // Change protocol to http (internal)
-        urlObj.protocol = 'http:';
-
-        // Change hostname to localhost
-        urlObj.hostname = '127.0.0.1';
-
-        // Handle port logic:
-        // CRITICAL FIX: If the URL already has a port, PRESERVE IT.
-        // Only default to 81 if NO port is specified.
-        // Note: urlObj.port is an empty string if it's the default port for the protocol (80/443)
-        // or if explicitly not present.
-        // [PRODUCTION FIX V4] - Explicitly confirmed port preservation logic
-        if (!urlObj.port) {
-          console.log(`[XUI-FIX-V4] No port detected in ${url}, defaulting to 81.`);
-          urlObj.port = '81';
-        } else {
-          console.log(`[XUI-FIX-V4] Preserving existing port ${urlObj.port} in ${url}`);
-        }
-
-        const result = urlObj.toString();
-        console.log(`[XUI-FIX-V4] Rewrite Result: ${url} -> ${result} (Host: ${hostHeader})`);
-        return { url: result, hostHeader };
+        return { url, hostHeader };
       }
     } catch (e) {
       console.error('Error parsing URL in convertXUIUrlToLocal:', e);
@@ -491,13 +477,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const upstreamHeaders: Record<string, string> = {};
       
       // Get real client IP and forward it to upstream (XUI needs this to count connections correctly)
+      // [XUI-FIX-V5-EXTERNAL] Get real client IP for Geo-blocking support
       const clientIp = req.headers['x-forwarded-for'] as string || 
                        req.headers['x-real-ip'] as string || 
                        req.socket.remoteAddress || 
                        'unknown';
-      // Send the original client IP to XUI server
-      upstreamHeaders['X-Forwarded-For'] = clientIp.split(',')[0].trim();
-      upstreamHeaders['X-Real-IP'] = clientIp.split(',')[0].trim();
+
+      // Send the original client IP to XUI server (Critical for security/geo-blocking)
+      // Extract the first IP if it's a list (standard practice)
+      const realIp = clientIp.split(',')[0].trim();
+      upstreamHeaders['X-Forwarded-For'] = realIp;
+      upstreamHeaders['X-Real-IP'] = realIp;
       
       // Extract credentials from custom header (secure approach)
       const streamAuth = req.headers['x-stream-auth'] as string | undefined;
