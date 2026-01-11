@@ -8,6 +8,16 @@ import { spawn, spawnSync } from "child_process";
 import * as schema from "@shared/schema";
 import { randomUUID } from "crypto";
 import { promisify } from "util";
+import { Agent, fetch as undiciFetch } from "undici";
+
+// Configure persistent Agent for XUI proxy to avoid connection spam
+const proxyAgent = new Agent({
+  keepAliveTimeout: 20000,
+  keepAliveMaxTimeout: 20000,
+  connect: {
+    keepAlive: true
+  }
+});
 
 const mkdtemp = promisify(fs.mkdtemp);
 const mkdir = promisify(fs.mkdir);
@@ -109,38 +119,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return { url, hostHeader: null };
     }
     
-    let result = url;
-    let hostHeader: string | null = null;
-    
-    // Check if this is an XUI URL
-    const isXUIUrl = url.includes('app.teleunotv.cr') || url.includes('190.61.110.177');
-    
-    if (isXUIUrl) {
-      // Extract the original host for the Host header
-      hostHeader = 'app.teleunotv.cr';
+    try {
+      const urlObj = new URL(url);
+      const host = urlObj.hostname;
       
-      // Convert all XUI variants to localhost:81 (always use HTTP for internal)
-      // Pattern 1: http(s)://app.teleunotv.cr:81/...
-      if (result.includes('app.teleunotv.cr:81')) {
-        result = result.replace(/https?:\/\/app\.teleunotv\.cr:81/, 'http://127.0.0.1:81');
+      // Check if this is an XUI URL
+      const isXUIUrl = host === 'app.teleunotv.cr' || host === '190.61.110.177';
+
+      if (isXUIUrl) {
+        // [XUI-FIX-V5-EXTERNAL] CRITICAL ARCHITECTURE CHANGE:
+        // DO NOT FORCE LOCALHOST (127.0.0.1) IF THE IP IS EXTERNAL.
+        // The user confirmed XUI is on a different physical machine (190.x.x.x).
+        // Rewriting to 127.0.0.1 causes ECONNREFUSED because port 2728/etc are not open locally.
+
+        console.log(`[XUI-FIX-V5-EXTERNAL] Detected XUI Host: ${host}. Preserving original remote connection.`);
+
+        // We still return the hostHeader for virtual hosting if needed, but we do NOT change the URL hostname.
+        const hostHeader = 'app.teleunotv.cr';
+
+        return { url, hostHeader };
       }
-      // Pattern 2: http(s)://app.teleunotv.cr/... (without port)
-      else if (result.includes('app.teleunotv.cr')) {
-        result = result.replace(/https?:\/\/app\.teleunotv\.cr/, 'http://127.0.0.1:81');
-      }
-      // Pattern 3: http(s)://190.61.110.177:81/...
-      else if (result.includes('190.61.110.177:81')) {
-        result = result.replace(/https?:\/\/190\.61\.110\.177:81/, 'http://127.0.0.1:81');
-      }
-      // Pattern 4: http(s)://190.61.110.177/... (without port)
-      else if (result.includes('190.61.110.177')) {
-        result = result.replace(/https?:\/\/190\.61\.110\.177/, 'http://127.0.0.1:81');
-      }
-      
-      console.log(`🔄 XUI URL converted to local: ${url} -> ${result} (Host: ${hostHeader})`);
+    } catch (e) {
+      console.error('Error parsing URL in convertXUIUrlToLocal:', e);
+      // Fallback to original URL if parsing fails
     }
     
-    return { url: result, hostHeader };
+    return { url, hostHeader: null };
   };
 
   // Helper to fetch XUI URLs with manual redirect handling
@@ -150,7 +154,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     url: string, 
     headers: Record<string, string> = {},
     maxRedirects: number = 5
-  ): Promise<Response> => {
+  ): Promise<any> => {
     let currentUrl = url;
     let redirectCount = 0;
     
@@ -166,10 +170,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.log(`📡 Fetching (attempt ${redirectCount + 1}): ${fetchUrl}${hostHeader ? ` (Host: ${hostHeader})` : ''}`);
       
-      // Fetch with redirect: 'manual' to handle redirects ourselves
-      const response = await fetch(fetchUrl, { 
-        headers: fetchHeaders,
-        redirect: 'manual'
+      // Fetch with persistent agent to ensure Keep-Alive
+      // Note: We use undiciFetch instead of global fetch to use the dispatcher
+      const response = await undiciFetch(fetchUrl, {
+        headers: fetchHeaders as any,
+        redirect: 'manual',
+        dispatcher: proxyAgent
       });
       
       // Check for redirect responses (301, 302, 303, 307, 308)
@@ -294,7 +300,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         '-i', inputUrl,
         '-map', '0:v:0',
         '-map', '0:a:0',
-        '-c:v', 'copy',
+        '-c:v', 'libx264',
+        '-preset', 'ultrafast',
+        '-tune', 'zerolatency',
+        '-pix_fmt', 'yuv420p',
         '-c:a', 'aac',
         '-b:a', '192k',
         '-ac', '2',  // Downmix to stereo
@@ -480,13 +489,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const upstreamHeaders: Record<string, string> = {};
       
       // Get real client IP and forward it to upstream (XUI needs this to count connections correctly)
+      // [XUI-FIX-V5-EXTERNAL] Get real client IP for Geo-blocking support
       const clientIp = req.headers['x-forwarded-for'] as string || 
                        req.headers['x-real-ip'] as string || 
                        req.socket.remoteAddress || 
                        'unknown';
-      // Send the original client IP to XUI server
-      upstreamHeaders['X-Forwarded-For'] = clientIp.split(',')[0].trim();
-      upstreamHeaders['X-Real-IP'] = clientIp.split(',')[0].trim();
+
+      // Send the original client IP to XUI server (Critical for security/geo-blocking)
+      // Extract the first IP if it's a list (standard practice)
+      const realIp = clientIp.split(',')[0].trim();
+      upstreamHeaders['X-Forwarded-For'] = realIp;
+      upstreamHeaders['X-Real-IP'] = realIp;
       
       // Extract credentials from custom header (secure approach)
       const streamAuth = req.headers['x-stream-auth'] as string | undefined;
@@ -507,6 +520,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       if (req.headers['if-none-match']) {
         upstreamHeaders['If-None-Match'] = req.headers['if-none-match'] as string;
+      }
+      // Forward User-Agent and Referer (important for some streams)
+      if (req.headers['user-agent']) {
+        upstreamHeaders['User-Agent'] = req.headers['user-agent'] as string;
+      }
+      if (req.headers['referer']) {
+        upstreamHeaders['Referer'] = req.headers['referer'] as string;
       }
 
       // Use helper that handles XUI redirects manually
@@ -624,6 +644,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // For non-M3U8 content (segments, etc.), stream directly
         const reader = response.body.getReader();
         
+        // Handle client disconnect to prevent zombies
+        res.on('close', () => {
+          reader.cancel().catch(e => console.error("Error canceling reader on disconnect:", e));
+        });
+
         const pump = async () => {
           try {
             while (true) {
@@ -634,13 +659,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 break;
               }
               
+              // Stop if response is closed
+              if (res.writableEnded || res.closed) {
+                 break;
+              }
+
               if (value) {
-                res.write(Buffer.from(value));
+                // Handle backpressure
+                const canWrite = res.write(Buffer.from(value));
+                if (!canWrite) {
+                    await new Promise(resolve => res.once('drain', resolve));
+                }
               }
             }
           } catch (error) {
-            console.error('Stream pump error:', error);
-            res.end();
+            // Ignore abort errors caused by disconnects
+            if (error instanceof Error && (error.name === 'AbortError' || error.message.includes('aborted'))) {
+                 // Normal behavior on disconnect
+            } else {
+                 console.error('Stream pump error:', error);
+            }
+            if (!res.writableEnded && !res.closed) res.end();
           }
         };
         
