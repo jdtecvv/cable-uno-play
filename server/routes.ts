@@ -8,6 +8,16 @@ import { spawn, spawnSync } from "child_process";
 import * as schema from "@shared/schema";
 import { randomUUID } from "crypto";
 import { promisify } from "util";
+import { Agent, fetch as undiciFetch } from "undici";
+
+// Configure persistent Agent for XUI proxy to avoid connection spam
+const proxyAgent = new Agent({
+  keepAliveTimeout: 20000,
+  keepAliveMaxTimeout: 20000,
+  connect: {
+    keepAlive: true
+  }
+});
 
 const mkdtemp = promisify(fs.mkdtemp);
 const mkdir = promisify(fs.mkdir);
@@ -144,7 +154,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     url: string, 
     headers: Record<string, string> = {},
     maxRedirects: number = 5
-  ): Promise<Response> => {
+  ): Promise<any> => {
     let currentUrl = url;
     let redirectCount = 0;
     
@@ -160,10 +170,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.log(`📡 Fetching (attempt ${redirectCount + 1}): ${fetchUrl}${hostHeader ? ` (Host: ${hostHeader})` : ''}`);
       
-      // Fetch with redirect: 'manual' to handle redirects ourselves
-      const response = await fetch(fetchUrl, { 
-        headers: fetchHeaders,
-        redirect: 'manual'
+      // Fetch with persistent agent to ensure Keep-Alive
+      // Note: We use undiciFetch instead of global fetch to use the dispatcher
+      const response = await undiciFetch(fetchUrl, {
+        headers: fetchHeaders as any,
+        redirect: 'manual',
+        dispatcher: proxyAgent
       });
       
       // Check for redirect responses (301, 302, 303, 307, 308)
