@@ -196,32 +196,24 @@ export default function XUIPlayer() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black">
-      {/* Header fijo */}
-      <div className="sticky top-0 z-40 bg-black/95 backdrop-blur-lg border-b border-red-900/20">
-        <div className="max-w-7xl mx-auto px-6 py-6">
-          <div className="flex items-center justify-between">
-            <div className="flex-1 flex flex-col items-center gap-3">
-              <img
-                src="/images/cable-uno-logo.png"
-                alt="Cable Uno"
-                className="h-20 w-auto"
-              />
-              <h1 className="text-2xl font-bold text-white tracking-wide" style={{ fontFamily: 'Inter, system-ui, sans-serif', letterSpacing: '0.05em' }}>
-                CABLE UNO PLAY
-              </h1>
-              <Badge variant="outline" className="border-blue-600/50 text-blue-400">
-                Versión XUI
-              </Badge>
-              {credentials.playlistName && channels.length > 0 && (
-                <p className="text-sm font-medium text-gray-300">
-                  {credentials.playlistName}
-                </p>
-              )}
-            </div>
+    <div className="h-full w-full bg-gradient-to-br from-gray-950 via-gray-900 to-black overflow-y-auto">
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        {/* Header content moved inline */}
+        <div className="flex flex-col items-center gap-3 mb-8">
+            <h1 className="text-2xl font-bold text-white tracking-wide" style={{ fontFamily: 'Inter, system-ui, sans-serif', letterSpacing: '0.05em' }}>
+              XUI CLIENT
+            </h1>
+            <Badge variant="outline" className="border-blue-600/50 text-blue-400">
+              Versión XUI
+            </Badge>
+            {credentials.playlistName && channels.length > 0 && (
+              <p className="text-sm font-medium text-gray-300">
+                {credentials.playlistName}
+              </p>
+            )}
             
             {channels.length > 0 && (
-              <div className="absolute right-6 flex items-center gap-3">
+              <div className="flex items-center gap-3 mt-2">
                 <Badge variant="outline" className="border-red-600/50 text-red-500">
                   {channels.length} canales
                 </Badge>
@@ -235,11 +227,7 @@ export default function XUIPlayer() {
                 </Button>
               </div>
             )}
-          </div>
         </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 py-6">
         {/* Link al Simple Player */}
         <div className="mb-4 flex justify-center">
           <Link href="/simple" className="text-gray-400 hover:text-red-500 text-sm transition-colors">
