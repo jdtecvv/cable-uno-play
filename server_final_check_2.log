@@ -1,0 +1,6 @@
+⚠️  Running in development mode WITHOUT database (Simple Player only)
+   Only /api/proxy/* endpoints will work
+   To use full features, set DATABASE_URL environment variable
+🚀 Registering API routes with prefix: /api
+📡 Registering route: GET /api/proxy/stream
+5:51:00 PM [express] serving on port 5000 (host: 127.0.0.1)

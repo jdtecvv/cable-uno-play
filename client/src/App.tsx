@@ -21,10 +21,18 @@ function Router() {
       <Route path="/setup" component={Setup} />
       
       {/* Simple Player - modo standalone sin base de datos */}
-      <Route path="/simple" component={SimplePlayer} />
+      <Route path="/simple">
+        <Layout>
+          <SimplePlayer />
+        </Layout>
+      </Route>
       
       {/* XUI Player - versión full con credenciales XUI */}
-      <Route path="/xui" component={XUIPlayer} />
+      <Route path="/xui">
+        <Layout>
+          <XUIPlayer />
+        </Layout>
+      </Route>
       
       {/* Aplicación completa con layout y base de datos */}
       <Route path="/">

@@ -9,6 +9,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { DEFAULT_IMAGES, API_ENDPOINTS } from "@/lib/constants";
 import { useToast } from "@/hooks/use-toast";
 import { useKeyNavigation } from "@/hooks/use-key-navigation";
+import { getProxiedImageUrl } from "@/lib/utils";
 
 interface ChannelCardProps {
   channel: ChannelWithCategory;
@@ -94,7 +95,7 @@ export default function ChannelCard({
   };
   
   // Use logo or default image
-  const logoUrl = channelData.logo || DEFAULT_IMAGES.CHANNEL_THUMBNAIL;
+  const logoUrl = getProxiedImageUrl(channelData.logo) || DEFAULT_IMAGES.CHANNEL_THUMBNAIL;
   
   return (
     <Card 
