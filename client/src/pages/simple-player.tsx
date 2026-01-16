@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { parseM3U } from "@/lib/utils/m3u-parser";
+import { getProxiedImageUrl } from "@/lib/utils";
 import VideoPlayer from "@/components/player/video-player";
 import { PlayIcon, TvIcon, SearchIcon, Trash2Icon, DownloadIcon, GridIcon, ListIcon, XIcon, UserIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -408,7 +409,7 @@ export default function SimplePlayer() {
                       <div className="aspect-video bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center relative overflow-hidden">
                         {channel.logo ? (
                           <img
-                            src={channel.logo}
+                            src={getProxiedImageUrl(channel.logo)}
                             alt={channel.name}
                             className="w-full h-full object-contain p-4 group-hover:scale-110 transition-transform duration-300"
                             onError={(e) => {
@@ -446,7 +447,7 @@ export default function SimplePlayer() {
                       <div className="flex items-center gap-4">
                         {channel.logo ? (
                           <img
-                            src={channel.logo}
+                            src={getProxiedImageUrl(channel.logo)}
                             alt={channel.name}
                             className="w-14 h-14 object-contain rounded-lg"
                             onError={(e) => {

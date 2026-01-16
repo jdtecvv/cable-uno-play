@@ -461,6 +461,79 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Proxy endpoint for images to avoid Mixed Content issues
+  console.log(`📡 Registering route: GET ${apiPrefix}/proxy/image`);
+  app.get(`${apiPrefix}/proxy/image`, async (req, res) => {
+    const url = req.query.url as string;
+
+    try {
+      if (!url) {
+        return res.status(400).send("URL is required");
+      }
+
+      // Validate URL format
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        return res.status(400).send("Invalid URL format");
+      }
+
+      // Fetch the image
+      const response = await fetch(url, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        }
+      });
+
+      if (!response.ok) {
+        return res.status(response.status).send(`Failed to fetch image: ${response.statusText}`);
+      }
+
+      const contentType = response.headers.get('content-type');
+
+      // Verify it's an image
+      if (!contentType || !contentType.startsWith('image/')) {
+        // Some servers might not return correct content type, or it might be octet-stream
+        // We'll warn but proceed if we can't be sure
+        console.warn(`⚠️ Proxying content with type ${contentType} from ${url}`);
+      }
+
+      // Set caching headers (cache for 1 hour)
+      res.setHeader('Cache-Control', 'public, max-age=3600');
+      res.setHeader('Access-Control-Allow-Origin', '*');
+
+      if (contentType) {
+        res.setHeader('Content-Type', contentType);
+      }
+
+      // Pipe the response
+      if (response.body) {
+        // @ts-ignore - ReadableStream/Node stream mismatch
+        const reader = response.body.getReader();
+        const pump = async () => {
+          try {
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) {
+                res.end();
+                break;
+              }
+              res.write(Buffer.from(value));
+            }
+          } catch (e) {
+            console.error('Image stream error:', e);
+            res.end();
+          }
+        };
+        await pump();
+      } else {
+        res.end();
+      }
+
+    } catch (error) {
+      console.error("Image proxy error:", error);
+      res.status(500).send("Failed to proxy image");
+    }
+  });
+
   // Proxy endpoint for video streams to avoid Mixed Content issues
   console.log(`📡 Registering route: GET ${apiPrefix}/proxy/stream`);
   app.get(`${apiPrefix}/proxy/stream`, async (req, res) => {
