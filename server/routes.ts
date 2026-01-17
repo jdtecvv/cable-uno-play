@@ -211,7 +211,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         headers['Host'] = hostHeader;
       }
 
-      const response = await fetch(fetchUrl, { headers });
+      // Disable SSL verification for M3U proxy requests as well
+      const needsInsecure = true;
+      if (needsInsecure) {
+         process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+      }
+
+      let response;
+      try {
+        response = await fetch(fetchUrl, { headers });
+      } finally {
+        if (needsInsecure) {
+           process.env.NODE_TLS_REJECT_UNAUTHORIZED = '1';
+        }
+      }
       
       if (!response.ok) {
         return res.status(response.status).json({ 
@@ -546,7 +559,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Proxy endpoint for video streams to avoid Mixed Content issues
   console.log(`📡 Registering route: GET ${apiPrefix}/proxy/stream`);
   app.get(`${apiPrefix}/proxy/stream`, async (req, res) => {
-    const url = req.query.url as string;
+    let url = req.query.url as string;
+
+    // Unwrap recursive proxy URLs to prevent loops
+    // Example: .../stream?url=.../stream?url=http://real-source
+    while (url && url.includes('/api/proxy/stream')) {
+      const match = url.match(/[?&]url=([^&]+)/);
+      if (match && match[1]) {
+        try {
+          const unwrapped = decodeURIComponent(match[1]);
+          if (unwrapped.startsWith('http')) {
+             console.log(`🔄 Unwrapping recursive proxy URL: ${url} -> ${unwrapped}`);
+             url = unwrapped;
+             continue;
+          }
+        } catch (e) {
+          console.warn("Failed to decode recursive URL:", e);
+        }
+      }
+      break;
+    }
+
     console.log(`🎯 Proxy stream request: ${url}`);
     try {
       if (!url) {
@@ -690,6 +723,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           // If it's already an absolute URL, proxy it
           if (trimmedLine.startsWith('http://') || trimmedLine.startsWith('https://')) {
+            // Prevent recursive wrapping if it's already pointing to our proxy
+            if (trimmedLine.includes('/api/proxy/stream')) {
+              return trimmedLine;
+            }
             return `/api/proxy/stream?url=${encodeURIComponent(trimmedLine)}`;
           }
           
