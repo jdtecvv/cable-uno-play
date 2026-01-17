@@ -97,77 +97,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Run cleanup every minute
   setInterval(cleanupStaleSessions, 60 * 1000);
 
-  // Helper function to convert XUI URLs to localhost for internal access
-  // In production, XUI nginx listens on 127.0.0.1:81 (HTTP) and 127.0.0.1:444 (HTTPS)
-  // We use HTTP on port 81 for internal communication
-  const isProduction = process.env.NODE_ENV === 'production';
-  
+  // Helper function is now a pass-through to ensure TRANSPARENT proxying
+  // as requested by user. We do NOT rewrite IPs to localhost.
   const convertXUIUrlToLocal = (url: string): { url: string; hostHeader: string | null } => {
-    // Only convert to localhost in production where XUI is available locally
-    if (!isProduction) {
-      console.log(`🔄 Development mode - using original URL: ${url}`);
-      return { url, hostHeader: null };
-    }
-    
-    let result = url;
-    let hostHeader: string | null = null;
-    
-    // Check if this is an XUI URL
-    const isXUIUrl = url.includes('app.teleunotv.cr') || url.includes('190.61.110.177');
-    
-    if (isXUIUrl) {
-      // Extract the original host for the Host header
-      hostHeader = 'app.teleunotv.cr';
-      
-      // Convert all XUI variants to localhost:81 (always use HTTP for internal)
-      // Only force port 81 if no specific port is defined or if the port is 81
-      // If a different port is specified (e.g. 2728), keep it!
-
-      // Check if URL has a port that is NOT 81 and NOT standard (80/443)
-      // Regex looks for :port where port is not 81
-      const hasCustomPort = /:(\d+)/.exec(result);
-      const customPort = hasCustomPort ? hasCustomPort[1] : null;
-
-      // Pattern 1: http(s)://app.teleunotv.cr:81/...
-      if (result.includes('app.teleunotv.cr:81')) {
-        result = result.replace(/https?:\/\/app\.teleunotv\.cr:81/, 'http://127.0.0.1:81');
-      }
-      // Pattern 2: http(s)://app.teleunotv.cr/... (without port or with custom port)
-      else if (result.includes('app.teleunotv.cr')) {
-        // If it has a custom port that isn't 81, preserve it
-        if (customPort && customPort !== '81' && customPort !== '80' && customPort !== '443') {
-           result = result.replace(/https?:\/\/app\.teleunotv\.cr/, 'http://127.0.0.1');
-        } else {
-           // Otherwise default to 81
-           result = result.replace(/https?:\/\/app\.teleunotv\.cr/, 'http://127.0.0.1:81');
-        }
-      }
-      // Pattern 3: http(s)://190.61.110.177:81/...
-      else if (result.includes('190.61.110.177:81')) {
-        result = result.replace(/https?:\/\/190\.61\.110\.177:81/, 'http://127.0.0.1:81');
-      }
-      // Pattern 4: http(s)://190.61.110.177/... (without port or with custom port)
-      else if (result.includes('190.61.110.177')) {
-         // If it has a custom port that isn't 81, preserve it
-        if (customPort && customPort !== '81' && customPort !== '80' && customPort !== '443') {
-           result = result.replace(/https?:\/\/190\.61\.110\.177/, 'http://127.0.0.1');
-        } else {
-           // Otherwise default to 81
-           result = result.replace(/https?:\/\/190\.61\.110\.177/, 'http://127.0.0.1:81');
-        }
-      }
-      
-      console.log(`🔄 XUI URL converted to local: ${url} -> ${result} (Host: ${hostHeader})`);
-    }
-
-    // FINAL SAFETY CHECK: If URL is https://127.0.0.1, downgrade to http to avoid SSL errors
-    // (Self-signed certs for localhost often fail in Node)
-    if (result.startsWith('https://127.0.0.1')) {
-      console.log(`⚠️ Detected HTTPS localhost request, downgrading to HTTP to avoid SSL errors: ${result}`);
-      result = result.replace('https://127.0.0.1', 'http://127.0.0.1');
-    }
-    
-    return { url: result, hostHeader };
+    // Return original URL without modification
+    return { url, hostHeader: null };
   };
 
   // Helper to fetch XUI URLs with manual redirect handling
@@ -198,8 +132,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.log(`📡 Fetching (attempt ${redirectCount + 1}): ${fetchUrl}${hostHeader ? ` (Host: ${hostHeader})` : ''}`);
       
-      // Determine if we need to disable SSL verification
-      const isLocalhost = fetchUrl.includes('127.0.0.1') || fetchUrl.includes('localhost');
+      // Disable SSL verification for all proxy requests to ensure connectivity
+      // regardless of self-signed certs on localhost or external servers
+      const needsInsecure = true;
 
       // @ts-ignore - Undici specific options for fetch
       const fetchOptions: RequestInit & { dispatcher?: any } = {
@@ -207,10 +142,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         redirect: 'manual',
       };
 
-      // In Node environment we might need to rely on the environment variable or custom agent
-      // Since we can't easily import undici here without adding it to package.json,
-      // we'll rely on a temporary env var set if it's localhost
-      if (isLocalhost) {
+      // Set environment variable to allow insecure SSL connections
+      if (needsInsecure) {
          process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
       }
 
@@ -219,7 +152,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const response = await fetch(fetchUrl, fetchOptions);
 
         // Reset env var immediately
-        if (isLocalhost) {
+        if (needsInsecure) {
            process.env.NODE_TLS_REJECT_UNAUTHORIZED = '1';
         }
 
@@ -245,7 +178,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       } catch (error) {
         // Ensure env var is reset even on error
-        if (isLocalhost) {
+        if (needsInsecure) {
            process.env.NODE_TLS_REJECT_UNAUTHORIZED = '1';
         }
         throw error;
