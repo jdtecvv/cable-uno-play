@@ -1,14 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { parseM3U } from "@/lib/utils/m3u-parser";
-import { getProxiedImageUrl } from "@/lib/utils";
 import VideoPlayer from "@/components/player/video-player";
-import { PlayIcon, TvIcon, SearchIcon, Trash2Icon, DownloadIcon, GridIcon, ListIcon, XIcon, UserIcon } from "lucide-react";
+import { TvIcon, SearchIcon, Trash2Icon, DownloadIcon, XIcon, UserIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
+import ChannelGrid from "@/components/channels/channel-grid";
+import CategoryFilter from "@/components/channels/category-filter";
+import { ChannelWithCategory } from "@/lib/types";
+import { Category } from "@shared/schema";
 
 interface SimpleChannel {
   name: string;
@@ -26,8 +29,7 @@ export default function SimplePlayer() {
   const [currentChannel, setCurrentChannel] = useState<SimpleChannel | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [showLoadForm, setShowLoadForm] = useState(false);
   // Transcodificación SIEMPRE activada por defecto (automática para usuarios)
   const [useTranscoding] = useState<boolean>(true);
@@ -56,6 +58,7 @@ export default function SimplePlayer() {
     setM3uUrl("");
     setPlaylistName("");
     setShowLoadForm(true);
+    setSelectedCategoryId(null);
     localStorage.removeItem('simple-channels');
     localStorage.removeItem('simple-playlist-name');
     toast({
@@ -152,6 +155,7 @@ export default function SimplePlayer() {
       localStorage.setItem('simple-channels', JSON.stringify(simpleChannels));
       localStorage.setItem('simple-playlist-name', playlistName);
       setShowLoadForm(false);
+      setSelectedCategoryId(null);
 
       toast({
         title: "¡Éxito!",
@@ -169,18 +173,66 @@ export default function SimplePlayer() {
     }
   };
 
-  // Obtener categorías únicas
-  const categories = ["all", ...Array.from(new Set(channels.map(ch => ch.group).filter(Boolean)))];
-  
-  const filteredChannels = channels.filter(ch => {
-    const matchesSearch = ch.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === "all" || ch.group === selectedCategory;
+  // Memoize mapped channels to avoid recalculation
+  const { mappedChannels, categories } = useMemo(() => {
+    const categoryMap = new Map<string, Category>();
+    const mapped: ChannelWithCategory[] = [];
+
+    channels.forEach((ch, index) => {
+      const groupName = ch.group || "Sin categoría";
+
+      let category = categoryMap.get(groupName);
+      if (!category) {
+        // Create fake category
+        category = {
+          id: -(categoryMap.size + 1), // Negative ID to avoid conflict with DB
+          name: groupName,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        };
+        categoryMap.set(groupName, category);
+      }
+
+      mapped.push({
+        channel: {
+            id: -(index + 1), // Negative ID based on index
+            name: ch.name,
+            url: ch.url,
+            logo: ch.logo || null,
+            playlistId: 0,
+            categoryId: category.id,
+            epgId: null,
+            isFavorite: false,
+            lastWatched: null,
+            createdAt: new Date(),
+            updatedAt: new Date()
+        },
+        category: category
+      });
+    });
+
+    return {
+        mappedChannels: mapped,
+        categories: Array.from(categoryMap.values())
+    };
+  }, [channels]);
+
+  const filteredChannels = mappedChannels.filter(item => {
+    const matchesSearch = item.channel.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategoryId === null || item.category?.id === selectedCategoryId;
     return matchesSearch && matchesCategory;
   });
 
+  const handlePlay = (channel: ChannelWithCategory) => {
+    const index = Math.abs(channel.channel.id) - 1;
+    if (channels[index]) {
+      setCurrentChannel(channels[index]);
+    }
+  };
+
   if (currentChannel) {
     return (
-      <div className="h-screen w-screen bg-black">
+      <div className="h-full w-full bg-black">
         <VideoPlayer
           channel={{
             id: 0,
@@ -206,286 +258,161 @@ export default function SimplePlayer() {
   }
 
   return (
-    <div className="h-full w-full bg-gradient-to-br from-gray-950 via-gray-900 to-black overflow-y-auto">
-      <div className="max-w-7xl mx-auto px-4 py-6">
-        {/* Header content moved inline */}
-        <div className="flex flex-col items-center gap-3 mb-8">
-            <h1 className="text-2xl font-bold text-white tracking-wide" style={{ fontFamily: 'Inter, system-ui, sans-serif', letterSpacing: '0.05em' }}>
+    <div className="h-full w-full overflow-y-auto px-4 py-6">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-4">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-2xl md:text-3xl font-bold">
               DIRECT PLAYER
-            </h1>
-            {playlistName && (
-              <p className="text-sm font-medium text-gray-300">
+          </h1>
+          {playlistName && (
+              <p className="text-sm font-medium text-muted-foreground">
                 {playlistName}
               </p>
-            )}
-            
-            {channels.length > 0 && (
-              <div className="flex items-center gap-3 mt-2">
-                <Badge variant="outline" className="border-red-600/50 text-red-500">
-                  {channels.length} canales
-                </Badge>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowLoadForm(true)}
-                  className="border-gray-700 text-gray-300 hover:bg-red-950/30 hover:border-red-800"
-                >
-                  Cargar otra lista
-                </Button>
-              </div>
-            )}
-        </div>
-        {/* Link a versión XUI - Solo Clientes */}
-        <div className="mb-6 flex justify-center">
-          <Link href="/xui">
-            <Button
-              variant="outline"
-              className="border-blue-600/50 bg-blue-950/30 hover:bg-blue-900/50 hover:border-blue-500 text-blue-400 hover:text-blue-300 transition-all px-6 py-5 rounded-xl shadow-lg shadow-blue-900/20"
-            >
-              <UserIcon className="w-5 h-5 mr-2" />
-              <span className="font-semibold">Solo Clientes</span>
-            </Button>
-          </Link>
+          )}
         </div>
         
-        {channels.length === 0 && !showLoadForm && (
-          <div className="text-center py-16">
-            <div className="w-20 h-20 bg-gradient-to-br from-red-600 to-red-800 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
-              <TvIcon className="w-10 h-10 text-white" />
-            </div>
-            <h2 className="text-2xl font-bold text-white mb-2">Bienvenido a Cable Uno Play</h2>
-            <p className="text-gray-400 mb-8">Carga tu lista M3U para comenzar a ver televisión</p>
-            <Button
-              onClick={() => setShowLoadForm(true)}
-              className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white shadow-lg shadow-red-900/50"
-            >
-              <DownloadIcon className="w-4 h-4 mr-2" />
-              Cargar Lista M3U
-            </Button>
+        {channels.length > 0 && (
+          <div className="flex items-center gap-3">
+             <div className="relative w-full md:w-64">
+                <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  type="text"
+                  placeholder="Buscar canal..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+             </div>
+             <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowLoadForm(true)}
+              >
+                Cargar otra
+              </Button>
           </div>
         )}
+      </div>
 
-        {showLoadForm && (
-          <Card className="bg-gradient-to-br from-gray-900/90 to-gray-950/90 border-red-900/30 backdrop-blur-sm shadow-2xl mb-6">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <DownloadIcon className="w-5 h-5 text-red-500" />
-                  <CardTitle className="text-white">
-                    {channels.length > 0 ? "Cargar Nueva Lista" : "Cargar Lista M3U"}
-                  </CardTitle>
-                </div>
-                {channels.length > 0 && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setShowLoadForm(false)}
-                    className="text-gray-400 hover:text-white"
-                  >
-                    <XIcon className="w-4 h-4" />
-                  </Button>
-                )}
+      {/* Link a versión XUI - Solo Clientes */}
+      <div className="mb-6">
+        <Link href="/xui">
+          <Button
+            variant="outline"
+            className="w-full sm:w-auto"
+          >
+            <UserIcon className="w-4 h-4 mr-2" />
+            <span className="font-semibold">Ir a Versión Clientes (XUI)</span>
+          </Button>
+        </Link>
+      </div>
+
+      {channels.length === 0 && !showLoadForm && (
+        <div className="text-center py-16">
+          <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+            <TvIcon className="w-10 h-10 text-primary" />
+          </div>
+          <h2 className="text-2xl font-bold mb-2">Bienvenido a Cable Uno Play</h2>
+          <p className="text-muted-foreground mb-8">Carga tu lista M3U para comenzar a ver televisión</p>
+          <Button
+            onClick={() => setShowLoadForm(true)}
+            size="lg"
+          >
+            <DownloadIcon className="w-4 h-4 mr-2" />
+            Cargar Lista M3U
+          </Button>
+        </div>
+      )}
+
+      {showLoadForm && (
+        <Card className="mb-6 max-w-2xl mx-auto">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <DownloadIcon className="w-5 h-5 text-primary" />
+                <CardTitle>
+                  {channels.length > 0 ? "Cargar Nueva Lista" : "Cargar Lista M3U"}
+                </CardTitle>
               </div>
-              <CardDescription className="text-gray-400">
-                {channels.length > 0 
-                  ? "Esto reemplazará la lista actual" 
-                  : "Ingresa la información de tu lista IPTV"}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
+              {channels.length > 0 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowLoadForm(false)}
+                >
+                  <XIcon className="w-4 h-4" />
+                </Button>
+              )}
+            </div>
+            <CardDescription>
+              {channels.length > 0
+                ? "Esto reemplazará la lista actual"
+                : "Ingresa la información de tu lista IPTV"}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="space-y-2">
                 <Input
                   type="text"
                   placeholder="Nombre de la lista (ej: Mi IPTV Casa)"
                   value={playlistName}
                   onChange={(e) => setPlaylistName(e.target.value)}
-                  className="bg-gray-950/80 border-gray-800 text-white focus:border-red-600 transition-colors"
                 />
-                
+              </div>
+
+              <div className="space-y-2">
                 <Input
                   type="text"
                   placeholder="URL del archivo M3U8"
                   value={m3uUrl}
                   onChange={(e) => setM3uUrl(e.target.value)}
-                  className="bg-gray-950/80 border-gray-800 text-white focus:border-red-600 transition-colors"
                 />
-                
-                <div className="flex gap-2">
-                  <Button
-                    onClick={loadM3U}
-                    disabled={isLoading}
-                    className="flex-1 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white shadow-lg shadow-red-900/50 transition-all"
-                  >
-                    {isLoading ? "Cargando..." : "Cargar Lista"}
-                  </Button>
-                  {channels.length > 0 && (
-                    <Button
-                      onClick={clearChannels}
-                      variant="outline"
-                      className="border-gray-700 text-gray-300 hover:bg-red-950/30 hover:border-red-800 transition-all"
-                    >
-                      <Trash2Icon className="w-4 h-4 mr-2" />
-                      Eliminar actual
-                    </Button>
-                  )}
-                </div>
-                
-                <p className="text-gray-500 text-xs">
+                <p className="text-xs text-muted-foreground">
                   Ingresa la URL de tu archivo M3U o M3U8
                 </p>
               </div>
-            </CardContent>
-          </Card>
-        )}
 
-        {channels.length > 0 && (
-          <>
-            {/* Barra de búsqueda y filtros */}
-            <div className="mb-6 space-y-4">
               <div className="flex gap-2">
-                <div className="relative flex-1">
-                  <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-                  <Input
-                    type="text"
-                    placeholder="Buscar canal..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="bg-gray-950/80 border-gray-800 text-white pl-10 focus:border-red-600 transition-colors"
-                  />
-                </div>
-                <div className="flex gap-1 bg-gray-950/80 border border-gray-800 rounded-lg p-1">
+                <Button
+                  onClick={loadM3U}
+                  disabled={isLoading}
+                  className="flex-1"
+                >
+                  {isLoading ? "Cargando..." : "Cargar Lista"}
+                </Button>
+                {channels.length > 0 && (
                   <Button
-                    variant={viewMode === "grid" ? "default" : "ghost"}
-                    size="sm"
-                    onClick={() => setViewMode("grid")}
-                    className={viewMode === "grid" ? "bg-red-600 hover:bg-red-700" : "text-gray-400 hover:text-white"}
+                    onClick={clearChannels}
+                    variant="outline"
                   >
-                    <GridIcon className="w-4 h-4" />
+                    <Trash2Icon className="w-4 h-4 mr-2" />
+                    Eliminar actual
                   </Button>
-                  <Button
-                    variant={viewMode === "list" ? "default" : "ghost"}
-                    size="sm"
-                    onClick={() => setViewMode("list")}
-                    className={viewMode === "list" ? "bg-red-600 hover:bg-red-700" : "text-gray-400 hover:text-white"}
-                  >
-                    <ListIcon className="w-4 h-4" />
-                  </Button>
-                </div>
+                )}
               </div>
-
-              {/* Filtro de categorías */}
-              {categories.length > 1 && (
-                <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-700">
-                  {categories.map((cat) => (
-                    <Badge
-                      key={cat || "all"}
-                      variant={selectedCategory === cat ? "default" : "outline"}
-                      className={`cursor-pointer whitespace-nowrap transition-all ${
-                        selectedCategory === cat
-                          ? "bg-gradient-to-r from-red-600 to-red-700 border-red-600 shadow-lg shadow-red-900/50"
-                          : "border-gray-700 text-gray-400 hover:border-red-600 hover:text-red-500"
-                      }`}
-                      onClick={() => setSelectedCategory(cat || "all")}
-                    >
-                      {cat === "all" ? "Todos" : cat || "Sin categoría"}
-                    </Badge>
-                  ))}
-                </div>
-              )}
             </div>
+          </CardContent>
+        </Card>
+      )}
 
-            <div className={viewMode === "grid" 
-              ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4" 
-              : "space-y-2"
-            }>
-              {filteredChannels.map((channel, index) => (
-                viewMode === "grid" ? (
-                  <Card
-                    key={index}
-                    className="bg-gradient-to-br from-gray-900/80 to-gray-950/80 border-gray-800 hover:border-red-600 hover:shadow-xl hover:shadow-red-900/20 transition-all duration-300 cursor-pointer group overflow-hidden"
-                    onClick={() => setCurrentChannel(channel)}
-                  >
-                    <CardContent className="p-0">
-                      <div className="aspect-video bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center relative overflow-hidden">
-                        {channel.logo ? (
-                          <img
-                            src={getProxiedImageUrl(channel.logo)}
-                            alt={channel.name}
-                            className="w-full h-full object-contain p-4 group-hover:scale-110 transition-transform duration-300"
-                            onError={(e) => {
-                              e.currentTarget.style.display = 'none';
-                            }}
-                          />
-                        ) : (
-                          <div className="w-16 h-16 bg-gradient-to-br from-red-600 to-red-800 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                            <TvIcon className="w-8 h-8 text-white" />
-                          </div>
-                        )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                          <PlayIcon className="w-12 h-12 text-white" />
-                        </div>
-                      </div>
-                      <div className="p-3">
-                        <h3 className="text-white font-semibold truncate group-hover:text-red-500 transition-colors text-sm">
-                          {channel.name}
-                        </h3>
-                        {channel.group && (
-                          <p className="text-gray-500 text-xs truncate mt-1">
-                            {channel.group}
-                          </p>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                ) : (
-                  <Card
-                    key={index}
-                    className="bg-gradient-to-r from-gray-900/80 to-gray-950/80 border-gray-800 hover:border-red-600 hover:shadow-lg hover:shadow-red-900/20 transition-all cursor-pointer group"
-                    onClick={() => setCurrentChannel(channel)}
-                  >
-                    <CardContent className="p-4">
-                      <div className="flex items-center gap-4">
-                        {channel.logo ? (
-                          <img
-                            src={getProxiedImageUrl(channel.logo)}
-                            alt={channel.name}
-                            className="w-14 h-14 object-contain rounded-lg"
-                            onError={(e) => {
-                              e.currentTarget.style.display = 'none';
-                            }}
-                          />
-                        ) : (
-                          <div className="w-14 h-14 bg-gradient-to-br from-red-600 to-red-800 rounded-lg flex items-center justify-center flex-shrink-0">
-                            <TvIcon className="w-7 h-7 text-white" />
-                          </div>
-                        )}
-                        <div className="flex-1 min-w-0">
-                          <h3 className="text-white font-semibold truncate group-hover:text-red-500 transition-colors">
-                            {channel.name}
-                          </h3>
-                          {channel.group && (
-                            <p className="text-gray-500 text-sm truncate">
-                              {channel.group}
-                            </p>
-                          )}
-                        </div>
-                        <PlayIcon className="w-6 h-6 text-gray-600 group-hover:text-red-500 transition-colors flex-shrink-0" />
-                      </div>
-                    </CardContent>
-                  </Card>
-                )
-              ))}
-            </div>
+      {channels.length > 0 && (
+        <>
+          <CategoryFilter
+            categories={categories}
+            selectedCategoryId={selectedCategoryId}
+            onSelect={setSelectedCategoryId}
+          />
 
-            {filteredChannels.length === 0 && (
-              <div className="text-center py-12">
-                <p className="text-gray-400">No se encontraron canales con "{searchTerm}"</p>
-              </div>
-            )}
-          </>
-        )}
+          <ChannelGrid
+            channels={filteredChannels}
+            onPlay={handlePlay}
+            enableFavorites={false}
+            emptyMessage={searchTerm ? `No se encontraron canales para "${searchTerm}"` : "No hay canales en esta categoría"}
+          />
+        </>
+      )}
 
-      </div>
     </div>
   );
 }

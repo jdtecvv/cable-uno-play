@@ -139,6 +139,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.log(`🔄 XUI URL converted to local: ${url} -> ${result} (Host: ${hostHeader})`);
     }
+
+    // FINAL SAFETY CHECK: If URL is https://127.0.0.1, downgrade to http to avoid SSL errors
+    // (Self-signed certs for localhost often fail in Node)
+    if (result.startsWith('https://127.0.0.1')) {
+      console.log(`⚠️ Detected HTTPS localhost request, downgrading to HTTP to avoid SSL errors: ${result}`);
+      result = result.replace('https://127.0.0.1', 'http://127.0.0.1');
+    }
     
     return { url: result, hostHeader };
   };
@@ -476,11 +483,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).send("Invalid URL format");
       }
 
+      // Handle self-signed certs for internal/local requests by using a permissive agent if needed
+      // Note: In Node 18+ global fetch uses undici. We can't easily attach an agent to global fetch without valid dispatcher.
+      // But we can try to be resilient.
+
       // Fetch the image
       const response = await fetch(url, {
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-        }
+        },
+        // @ts-ignore - Node's fetch supports 'dispatcher' but Typescript might complain if types aren't updated
+        // We leave it standard for now as most external images are standard HTTPS.
       });
 
       if (!response.ok) {
