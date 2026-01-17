@@ -37,7 +37,8 @@ function Router() {
       {/* Aplicación completa con layout y base de datos */}
       <Route path="/">
         <Layout>
-          <Home />
+          {/* Default to XUI Player (Clientes Cable) as requested */}
+          <XUIPlayer />
         </Layout>
       </Route>
       

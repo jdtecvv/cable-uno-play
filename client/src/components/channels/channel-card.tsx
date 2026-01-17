@@ -124,11 +124,12 @@ export default function ChannelCard({
       onKeyDown={handleKeyDown}
     >
       <div className="relative">
-        <div className="aspect-video bg-muted">
+        <div className="aspect-video bg-muted relative">
           <img 
             src={logoUrl} 
             alt={channelData.name} 
-            className="w-full h-full object-cover"
+            loading="lazy"
+            className="w-full h-full object-cover absolute inset-0"
             onError={(e) => {
               e.currentTarget.src = DEFAULT_IMAGES.CHANNEL_THUMBNAIL;
             }}

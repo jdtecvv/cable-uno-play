@@ -468,62 +468,73 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).send("Invalid URL format");
       }
 
-      // Handle self-signed certs for internal/local requests by using a permissive agent if needed
-      // Note: In Node 18+ global fetch uses undici. We can't easily attach an agent to global fetch without valid dispatcher.
-      // But we can try to be resilient.
-
-      // Fetch the image
-      const response = await fetch(url, {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-        },
-        // @ts-ignore - Node's fetch supports 'dispatcher' but Typescript might complain if types aren't updated
-        // We leave it standard for now as most external images are standard HTTPS.
-      });
-
-      if (!response.ok) {
-        return res.status(response.status).send(`Failed to fetch image: ${response.statusText}`);
+      // Handle self-signed certs for internal/local requests
+      const needsInsecure = true;
+      if (needsInsecure) {
+         process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
       }
 
-      const contentType = response.headers.get('content-type');
+      try {
+        // Fetch the image
+        const response = await fetch(url, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+          },
+        });
 
-      // Verify it's an image
-      if (!contentType || !contentType.startsWith('image/')) {
-        // Some servers might not return correct content type, or it might be octet-stream
-        // We'll warn but proceed if we can't be sure
-        console.warn(`⚠️ Proxying content with type ${contentType} from ${url}`);
-      }
+        // Reset env var immediately
+        if (needsInsecure) {
+           process.env.NODE_TLS_REJECT_UNAUTHORIZED = '1';
+        }
 
-      // Set caching headers (cache for 1 hour)
-      res.setHeader('Cache-Control', 'public, max-age=3600');
-      res.setHeader('Access-Control-Allow-Origin', '*');
+        if (!response.ok) {
+          return res.status(response.status).send(`Failed to fetch image: ${response.statusText}`);
+        }
 
-      if (contentType) {
-        res.setHeader('Content-Type', contentType);
-      }
+        const contentType = response.headers.get('content-type');
 
-      // Pipe the response
-      if (response.body) {
-        // @ts-ignore - ReadableStream/Node stream mismatch
-        const reader = response.body.getReader();
-        const pump = async () => {
-          try {
-            while (true) {
-              const { done, value } = await reader.read();
-              if (done) {
-                res.end();
-                break;
+        // Verify it's an image
+        if (!contentType || !contentType.startsWith('image/')) {
+          console.warn(`⚠️ Proxying content with type ${contentType} from ${url}`);
+        }
+
+        // Set caching headers (cache for 1 hour)
+        res.setHeader('Cache-Control', 'public, max-age=3600');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+
+        if (contentType) {
+          res.setHeader('Content-Type', contentType);
+        }
+
+        // Pipe the response
+        if (response.body) {
+          // @ts-ignore - ReadableStream/Node stream mismatch
+          const reader = response.body.getReader();
+          const pump = async () => {
+            try {
+              while (true) {
+                const { done, value } = await reader.read();
+                if (done) {
+                  res.end();
+                  break;
+                }
+                res.write(Buffer.from(value));
               }
-              res.write(Buffer.from(value));
+            } catch (e) {
+              console.error('Image stream error:', e);
+              res.end();
             }
-          } catch (e) {
-            console.error('Image stream error:', e);
-            res.end();
-          }
-        };
-        await pump();
-      } else {
-        res.end();
+          };
+          await pump();
+        } else {
+          res.end();
+        }
+      } catch (error) {
+        // Ensure env var is reset even on error
+        if (needsInsecure) {
+           process.env.NODE_TLS_REJECT_UNAUTHORIZED = '1';
+        }
+        throw error;
       }
 
     } catch (error) {
@@ -582,6 +593,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Use helper that handles XUI redirects manually
       // XUI returns 302 to https://...:81 which fails because port 81 is HTTP
+      // Since convertXUIUrlToLocal is transparent now, this just handles 302s
       const response = await fetchXuiWithRedirectHandling(url, upstreamHeaders);
       console.log(`📡 Upstream response: ${response.status} ${response.statusText}, Content-Type: ${response.headers.get('content-type')}`)
       
