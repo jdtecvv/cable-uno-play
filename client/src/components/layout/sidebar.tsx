@@ -143,7 +143,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                   onClick={() => handleNavigation("/simple")}
                 >
                   <TVIcon className="mr-3 h-5 w-5" />
-                  <span>Reproductor Directo (M3U)</span>
+                  <span>REPRODUCTOR URL</span>
                 </Button>
               </li>
 
@@ -156,7 +156,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                   onClick={() => handleNavigation("/xui")}
                 >
                   <TVIcon className="mr-3 h-5 w-5" />
-                  <span>Acceso Privado</span>
+                  <span>CLIENTES CABLE</span>
                 </Button>
               </li>
             </ul>

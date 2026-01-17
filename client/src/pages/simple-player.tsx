@@ -276,7 +276,7 @@ export default function SimplePlayer() {
       <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-4">
         <div className="flex flex-col gap-1">
           <h1 className="text-2xl md:text-3xl font-bold uppercase">
-              REPRODUCTOR DIRECTO
+              REPRODUCTOR URL
           </h1>
           {playlistName && (
               <p className="text-sm font-medium text-muted-foreground">
@@ -316,7 +316,7 @@ export default function SimplePlayer() {
             className="w-full sm:w-auto"
           >
             <UserIcon className="w-4 h-4 mr-2" />
-            <span className="font-semibold">Ir a Acceso Privado</span>
+            <span className="font-semibold">Ir a Clientes Cable</span>
           </Button>
         </Link>
       </div>

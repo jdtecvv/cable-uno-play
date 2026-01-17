@@ -255,7 +255,7 @@ export default function XUIPlayer() {
         <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-4">
             <div className="flex flex-col gap-1">
                 <h1 className="text-2xl md:text-3xl font-bold uppercase">
-                ACCESO PRIVADO
+                CLIENTES CABLE
                 </h1>
                 {credentials.playlistName && (
                   <p className="text-sm font-medium text-muted-foreground">
@@ -291,7 +291,7 @@ export default function XUIPlayer() {
         <div className="mb-4">
           <Link href="/simple">
              <Button variant="ghost" className="text-muted-foreground hover:text-primary pl-0">
-               ← Volver al Reproductor Directo
+               ← Volver al Reproductor URL
              </Button>
           </Link>
         </div>

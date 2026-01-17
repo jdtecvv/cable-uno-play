@@ -63,8 +63,17 @@ export default function Header({ toggleSidebar }: HeaderProps) {
              navigate("/");
            }}
         >
-          <TVIcon className="text-primary mr-2 h-6 w-6 md:h-7 md:w-7" />
-          <span>{APP_NAME}</span>
+          <img
+            src="/cable-uno-logo.png"
+            alt="Logo"
+            className="mr-3 h-8 md:h-10 w-auto object-contain"
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+              e.currentTarget.nextElementSibling?.classList.remove('hidden');
+            }}
+          />
+          <TVIcon className="text-primary mr-2 h-6 w-6 md:h-7 md:w-7 hidden" />
+          <span className="uppercase tracking-wide">CABLE UNO PLAY</span>
         </a>
       </div>
       
