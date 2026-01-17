@@ -128,7 +128,7 @@ export default function XUIPlayer() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "No se pudo conectar con el servidor XUI");
+        throw new Error(errorData.message || "No se pudo conectar con el servidor");
       }
 
       const { content } = await response.json();
@@ -154,10 +154,10 @@ export default function XUIPlayer() {
         description: `${xuiChannels.length} canales cargados de "${playlistName}"`,
       });
     } catch (error) {
-      console.error("Error loading XUI playlist:", error);
+      console.error("Error loading playlist:", error);
       toast({
         title: "Error de conexión",
-        description: error instanceof Error ? error.message : "No se pudo conectar con XUI",
+        description: error instanceof Error ? error.message : "No se pudo conectar",
         variant: "destructive",
       });
     } finally {
@@ -254,19 +254,14 @@ export default function XUIPlayer() {
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-4">
             <div className="flex flex-col gap-1">
-                <h1 className="text-2xl md:text-3xl font-bold">
-                XUI CLIENT
+                <h1 className="text-2xl md:text-3xl font-bold uppercase">
+                ACCESO PRIVADO
                 </h1>
-                <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="border-blue-600/50 text-blue-400">
-                    Versión XUI
-                    </Badge>
-                    {credentials.playlistName && (
-                        <p className="text-sm font-medium text-muted-foreground">
-                            {credentials.playlistName}
-                        </p>
-                    )}
-                </div>
+                {credentials.playlistName && (
+                  <p className="text-sm font-medium text-muted-foreground">
+                      {credentials.playlistName}
+                  </p>
+                )}
             </div>
             
             {channels.length > 0 && (
@@ -296,7 +291,7 @@ export default function XUIPlayer() {
         <div className="mb-4">
           <Link href="/simple">
              <Button variant="ghost" className="text-muted-foreground hover:text-primary pl-0">
-               ← Volver al reproductor simple (M3U directo)
+               ← Volver al Reproductor Directo
              </Button>
           </Link>
         </div>
@@ -306,8 +301,8 @@ export default function XUIPlayer() {
             <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
               <ServerIcon className="w-10 h-10 text-primary" />
             </div>
-            <h2 className="text-2xl font-bold mb-2">Conectar con XUI</h2>
-            <p className="text-muted-foreground mb-8">Ingresa tus credenciales de XUI para ver tu lista de canales</p>
+            <h2 className="text-2xl font-bold mb-2">Iniciar Sesión</h2>
+            <p className="text-muted-foreground mb-8">Ingresa tus credenciales para acceder a los canales</p>
             <Button
               onClick={() => setShowLoadForm(true)}
               size="lg"
@@ -325,7 +320,7 @@ export default function XUIPlayer() {
                 <div className="flex items-center gap-2">
                   <ServerIcon className="w-5 h-5 text-primary" />
                   <CardTitle>
-                    {channels.length > 0 ? "Cambiar Servidor XUI" : "Conectar con XUI"}
+                    {channels.length > 0 ? "Cambiar Servidor" : "Conectar"}
                   </CardTitle>
                 </div>
                 {channels.length > 0 && (
@@ -339,7 +334,7 @@ export default function XUIPlayer() {
                 )}
               </div>
               <CardDescription>
-                Ingresa las credenciales de tu servidor XUI
+                Ingresa las credenciales de tu servidor
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -380,7 +375,7 @@ export default function XUIPlayer() {
                   </label>
                   <Input
                     type="text"
-                    placeholder="Tu usuario de XUI"
+                    placeholder="Usuario"
                     value={credentials.username}
                     onChange={(e) => setCredentials(prev => ({ ...prev, username: e.target.value }))}
                   />
@@ -392,7 +387,7 @@ export default function XUIPlayer() {
                   </label>
                   <Input
                     type="password"
-                    placeholder="Tu contraseña de XUI"
+                    placeholder="Contraseña"
                     value={credentials.password}
                     onChange={(e) => setCredentials(prev => ({ ...prev, password: e.target.value }))}
                   />
@@ -417,7 +412,7 @@ export default function XUIPlayer() {
                 </div>
                 
                 <p className="text-muted-foreground text-xs text-center">
-                  Las credenciales se usan solo para construir la URL del M3U
+                  Las credenciales se usan solo para acceder a la lista
                 </p>
               </div>
             </CardContent>

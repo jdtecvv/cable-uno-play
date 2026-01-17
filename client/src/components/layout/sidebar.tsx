@@ -73,7 +73,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           <nav>
             <ul>
               <li className="px-4 py-2 font-medium text-muted-foreground uppercase text-xs tracking-wider">
-                Main Menu
+                Menú Principal
               </li>
               
               <li>
@@ -85,7 +85,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                   onClick={() => handleNavigation("/")}
                 >
                   <TVIcon className="mr-3 h-5 w-5" />
-                  <span>Home</span>
+                  <span>Inicio</span>
                 </Button>
               </li>
               
@@ -98,7 +98,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                   onClick={() => handleNavigation("/live")}
                 >
                   <LiveIcon className="mr-3 h-5 w-5" />
-                  <span>Live TV</span>
+                  <span>TV en Vivo</span>
                 </Button>
               </li>
               
@@ -111,7 +111,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                   onClick={() => handleNavigation("/guide")}
                 >
                   <GuideIcon className="mr-3 h-5 w-5" />
-                  <span>TV Guide</span>
+                  <span>Guía de TV</span>
                 </Button>
               </li>
               
@@ -124,13 +124,13 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                   onClick={() => handleNavigation("/favorites")}
                 >
                   <FavoriteIcon className="mr-3 h-5 w-5" />
-                  <span>Favorites</span>
+                  <span>Favoritos</span>
                 </Button>
               </li>
             </ul>
-            
+
             <div className="mt-6 px-4 py-2 font-medium text-muted-foreground uppercase text-xs tracking-wider">
-              Players
+              Reproductores
             </div>
 
             <ul>
@@ -143,7 +143,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                   onClick={() => handleNavigation("/simple")}
                 >
                   <TVIcon className="mr-3 h-5 w-5" />
-                  <span>Direct Player (M3U)</span>
+                  <span>Reproductor Directo (M3U)</span>
                 </Button>
               </li>
 
@@ -156,7 +156,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                   onClick={() => handleNavigation("/xui")}
                 >
                   <TVIcon className="mr-3 h-5 w-5" />
-                  <span>XUI Client</span>
+                  <span>Acceso Privado</span>
                 </Button>
               </li>
             </ul>
@@ -164,7 +164,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             {categories && categories.length > 0 && (
               <>
                 <div className="mt-6 px-4 py-2 font-medium text-muted-foreground uppercase text-xs tracking-wider">
-                  Categories
+                  Categorías
                 </div>
                 
                 <ul>
@@ -185,9 +185,9 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             )}
             
             <div className="px-4 py-5 mt-4 bg-card mx-2 rounded-md">
-              <h3 className="font-medium text-foreground mb-2">Playlist</h3>
+              <h3 className="font-medium text-foreground mb-2">Lista</h3>
               <div className="text-sm text-muted-foreground mb-3">
-                {activePlaylist?.name || "No active playlist"}
+                {activePlaylist?.name || "Sin lista activa"}
               </div>
               
               <Dialog>
@@ -197,7 +197,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                     size="sm"
                   >
                     <ImportIcon className="mr-2 h-4 w-4" />
-                    Import Playlist
+                    Importar Lista
                   </Button>
                 </DialogTrigger>
                 <DialogContent>
@@ -212,7 +212,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                 onClick={() => handleNavigation("/playlists")}
               >
                 <PlaylistIcon className="mr-2 h-4 w-4" />
-                Manage Playlists
+                Gestionar Listas
               </Button>
             </div>
           </nav>

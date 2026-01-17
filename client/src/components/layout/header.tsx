@@ -50,7 +50,7 @@ export default function Header({ toggleSidebar }: HeaderProps) {
             size="icon"
             onClick={toggleSidebar}
             className="md:hidden text-muted-foreground hover:text-foreground focus-visible"
-            aria-label="Open menu"
+            aria-label="Abrir menú"
           >
             <MenuIcon className="h-5 w-5" />
           </Button>
@@ -77,13 +77,13 @@ export default function Header({ toggleSidebar }: HeaderProps) {
             className="flex items-center"
           >
             <SearchIcon className="mr-2 h-4 w-4" />
-            <span>Search</span>
+            <span>Buscar</span>
           </Button>
         ) : (
           <form onSubmit={handleSearch} className="flex items-center">
             <Input
               type="text"
-              placeholder="Search channels..."
+              placeholder="Buscar canales..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-64 mr-2"
@@ -94,7 +94,7 @@ export default function Header({ toggleSidebar }: HeaderProps) {
               size="sm"
               variant="secondary"
             >
-              Search
+              Buscar
             </Button>
             <Button 
               type="button" 
@@ -103,7 +103,7 @@ export default function Header({ toggleSidebar }: HeaderProps) {
               onClick={() => setIsSearchOpen(false)}
               className="ml-1"
             >
-              Cancel
+              Cancelar
             </Button>
           </form>
         )}
@@ -116,7 +116,7 @@ export default function Header({ toggleSidebar }: HeaderProps) {
               className="flex items-center"
             >
               <SettingsIcon className="mr-2 h-4 w-4" />
-              <span>Settings</span>
+              <span>Ajustes</span>
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
@@ -132,7 +132,7 @@ export default function Header({ toggleSidebar }: HeaderProps) {
             size="icon"
             onClick={handleOpenSearch}
             className="text-muted-foreground hover:text-foreground focus-visible"
-            aria-label="Search"
+            aria-label="Buscar"
           >
             <SearchIcon className="h-5 w-5" />
           </Button>
@@ -143,7 +143,7 @@ export default function Header({ toggleSidebar }: HeaderProps) {
                 variant="ghost"
                 size="icon"
                 className="text-muted-foreground hover:text-foreground focus-visible"
-                aria-label="Settings"
+                aria-label="Ajustes"
               >
                 <SettingsIcon className="h-5 w-5" />
               </Button>
@@ -161,7 +161,7 @@ export default function Header({ toggleSidebar }: HeaderProps) {
             <form onSubmit={handleSearch} className="flex flex-col space-y-4">
               <Input
                 type="text"
-                placeholder="Search channels..."
+                placeholder="Buscar canales..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full"
@@ -173,10 +173,10 @@ export default function Header({ toggleSidebar }: HeaderProps) {
                   variant="ghost"
                   onClick={() => setIsSearchOpen(false)}
                 >
-                  Cancel
+                  Cancelar
                 </Button>
                 <Button type="submit" variant="secondary">
-                  Search
+                  Buscar
                 </Button>
               </div>
             </form>

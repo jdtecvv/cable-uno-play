@@ -13,6 +13,10 @@ import CategoryFilter from "@/components/channels/category-filter";
 import { ChannelWithCategory } from "@/lib/types";
 import { Category } from "@shared/schema";
 
+// URL por defecto del sistema
+const DEFAULT_M3U_URL = "http://190.61.110.177:2728/CABLEUNO.m3u8";
+const DEFAULT_PLAYLIST_NAME = "Lista Oficial";
+
 interface SimpleChannel {
   name: string;
   url: string;
@@ -35,22 +39,138 @@ export default function SimplePlayer() {
   const [useTranscoding] = useState<boolean>(true);
   const { toast } = useToast();
 
-  // Cargar canales guardados al inicio
+  const loadM3U = async (urlOverride?: string, nameOverride?: string) => {
+    const urlToLoad = (urlOverride || m3uUrl).trim();
+    const nameToLoad = (nameOverride || playlistName).trim();
+    
+    if (!urlToLoad) {
+      toast({
+        title: "Error",
+        description: "Por favor ingresa una URL de M3U",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!nameToLoad) {
+      toast({
+        title: "Error",
+        description: "Por favor ingresa un nombre para la lista",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      let simpleChannels: SimpleChannel[] = [];
+      let isPlaylist = false;
+
+      // Intentar cargar siempre como playlist primero para inspeccionar contenido
+      try {
+        const response = await fetch('/api/proxy/m3u', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ url: urlToLoad }),
+        });
+
+        if (response.ok) {
+          const { content } = await response.json();
+
+          // Verificar si es un stream HLS (master o media playlist)
+          // Si tiene #EXTINF y NO tiene #EXT-X-TARGETDURATION (media) ni #EXT-X-STREAM-INF (master ABR), es probable que sea una lista de canales.
+          // Sin embargo, algunas listas de canales M3U son simples.
+          // La mejor verificación es ver si parseM3U encuentra múltiples items.
+
+          // Check for stream specific tags that indicate it's NOT a channel list
+          const isHLSStream = content.includes('#EXT-X-TARGETDURATION') ||
+                              content.includes('#EXT-X-MEDIA-SEQUENCE');
+          
+          if (!isHLSStream) {
+            try {
+              const playlist = parseM3U(content);
+              if (playlist.items.length > 0) {
+                 // Éxito parseando como lista de canales
+                 simpleChannels = playlist.items.map(item => ({
+                  name: item.name,
+                  url: item.url,
+                  logo: item.tvg?.logo || undefined,
+                  group: item.group?.title || undefined,
+                  username: item.username || undefined,
+                  password: item.password || undefined,
+                }));
+                isPlaylist = true;
+              }
+            } catch (e) {
+              // Falló el parsing, tal vez no es una lista válida
+              console.warn("No se pudo parsear como lista de canales:", e);
+            }
+          }
+        }
+      } catch (proxyError) {
+        console.warn("Error intentando fetch via proxy:", proxyError);
+      }
+
+      // Si no se detectó como playlist, asumir que es un stream directo
+      if (!isPlaylist) {
+        simpleChannels = [{
+          name: nameToLoad || "Canal Directo",
+          url: urlToLoad,
+          logo: undefined,
+          group: "Directo",
+        }];
+      }
+
+      setChannels(simpleChannels);
+      localStorage.setItem('simple-channels', JSON.stringify(simpleChannels));
+      localStorage.setItem('simple-playlist-name', nameToLoad);
+      setShowLoadForm(false);
+      setSelectedCategoryId(null);
+
+      // Update state in case it was called with overrides
+      if (urlOverride) setM3uUrl(urlOverride);
+      if (nameOverride) setPlaylistName(nameOverride);
+
+      toast({
+        title: "¡Éxito!",
+        description: `${simpleChannels.length} canales cargados de "${nameToLoad}"`,
+      });
+    } catch (error) {
+      console.error("Error loading M3U:", error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "No se pudo cargar la lista",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Cargar canales guardados al inicio o cargar default
   useEffect(() => {
     const savedChannels = localStorage.getItem('simple-channels');
     const savedPlaylistName = localStorage.getItem('simple-playlist-name');
+
     if (savedChannels) {
       try {
-        setChannels(JSON.parse(savedChannels));
-        if (savedPlaylistName) {
-          setPlaylistName(savedPlaylistName);
+        const parsed = JSON.parse(savedChannels);
+        if (parsed.length > 0) {
+          setChannels(parsed);
+          if (savedPlaylistName) {
+            setPlaylistName(savedPlaylistName);
+          }
+          return;
         }
       } catch (e) {
         console.error("Error loading saved channels:", e);
       }
-    } else {
-      setShowLoadForm(true);
     }
+
+    // Si no hay canales guardados, cargar la lista por defecto automáticamente
+    loadM3U(DEFAULT_M3U_URL, DEFAULT_PLAYLIST_NAME);
   }, []);
 
   const clearChannels = () => {
@@ -65,112 +185,6 @@ export default function SimplePlayer() {
       title: "Lista eliminada",
       description: "Todos los canales han sido eliminados",
     });
-  };
-
-  const loadM3U = async () => {
-    const urlToLoad = m3uUrl.trim();
-    
-    if (!urlToLoad) {
-      toast({
-        title: "Error",
-        description: "Por favor ingresa una URL de M3U",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (!playlistName.trim()) {
-      toast({
-        title: "Error",
-        description: "Por favor ingresa un nombre para la lista",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      let simpleChannels: SimpleChannel[];
-      
-      // Check if this is a direct stream URL (ends with .m3u8, .ts, or contains stream indicators)
-      const isDirectStream = urlToLoad.match(/\.(m3u8|ts)(\?.*)?$/i) || 
-                             urlToLoad.includes('/live/') ||
-                             urlToLoad.includes('/playlist.m3u8') ||
-                             urlToLoad.includes(':1935/');
-      
-      if (isDirectStream) {
-        // Direct stream URL - create a single channel entry
-        simpleChannels = [{
-          name: playlistName.trim() || "Canal Directo",
-          url: urlToLoad,
-          logo: undefined,
-          group: "Directo",
-        }];
-      } else {
-        // M3U playlist - fetch and parse
-        const response = await fetch('/api/proxy/m3u', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ url: urlToLoad }),
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.message || "No se pudo cargar la URL");
-        }
-
-        const { content } = await response.json();
-        
-        // Check if the content is an HLS playlist (not a channel list)
-        const isHLSPlaylist = content.includes('#EXT-X-STREAM-INF') || 
-                              content.includes('#EXT-X-TARGETDURATION') ||
-                              content.includes('#EXT-X-MEDIA-SEQUENCE');
-        
-        if (isHLSPlaylist) {
-          // HLS stream disguised as M3U - treat as single channel
-          simpleChannels = [{
-            name: playlistName.trim() || "Canal Directo",
-            url: urlToLoad,
-            logo: undefined,
-            group: "Directo",
-          }];
-        } else {
-          // Regular M3U channel list
-          const playlist = parseM3U(content);
-          
-          simpleChannels = playlist.items.map(item => ({
-            name: item.name,
-            url: item.url,
-            logo: item.tvg?.logo || undefined,
-            group: item.group?.title || undefined,
-            username: item.username || undefined,
-            password: item.password || undefined,
-          }));
-        }
-      }
-
-      setChannels(simpleChannels);
-      localStorage.setItem('simple-channels', JSON.stringify(simpleChannels));
-      localStorage.setItem('simple-playlist-name', playlistName);
-      setShowLoadForm(false);
-      setSelectedCategoryId(null);
-
-      toast({
-        title: "¡Éxito!",
-        description: `${simpleChannels.length} canales cargados de "${playlistName}"`,
-      });
-    } catch (error) {
-      console.error("Error loading M3U:", error);
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "No se pudo cargar la lista",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
   };
 
   // Memoize mapped channels to avoid recalculation
@@ -261,8 +275,8 @@ export default function SimplePlayer() {
     <div className="h-full w-full overflow-y-auto px-4 py-6">
       <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-4">
         <div className="flex flex-col gap-1">
-          <h1 className="text-2xl md:text-3xl font-bold">
-              DIRECT PLAYER
+          <h1 className="text-2xl md:text-3xl font-bold uppercase">
+              REPRODUCTOR DIRECTO
           </h1>
           {playlistName && (
               <p className="text-sm font-medium text-muted-foreground">
@@ -302,7 +316,7 @@ export default function SimplePlayer() {
             className="w-full sm:w-auto"
           >
             <UserIcon className="w-4 h-4 mr-2" />
-            <span className="font-semibold">Ir a Versión Clientes (XUI)</span>
+            <span className="font-semibold">Ir a Acceso Privado</span>
           </Button>
         </Link>
       </div>
@@ -313,13 +327,13 @@ export default function SimplePlayer() {
             <TvIcon className="w-10 h-10 text-primary" />
           </div>
           <h2 className="text-2xl font-bold mb-2">Bienvenido a Cable Uno Play</h2>
-          <p className="text-muted-foreground mb-8">Carga tu lista M3U para comenzar a ver televisión</p>
+          <p className="text-muted-foreground mb-8">Carga tu lista para comenzar a ver televisión</p>
           <Button
             onClick={() => setShowLoadForm(true)}
             size="lg"
           >
             <DownloadIcon className="w-4 h-4 mr-2" />
-            Cargar Lista M3U
+            Cargar Lista
           </Button>
         </div>
       )}
@@ -375,7 +389,7 @@ export default function SimplePlayer() {
 
               <div className="flex gap-2">
                 <Button
-                  onClick={loadM3U}
+                  onClick={() => loadM3U()}
                   disabled={isLoading}
                   className="flex-1"
                 >
