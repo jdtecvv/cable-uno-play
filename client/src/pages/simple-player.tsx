@@ -13,10 +13,6 @@ import CategoryFilter from "@/components/channels/category-filter";
 import { ChannelWithCategory } from "@/lib/types";
 import { Category } from "@shared/schema";
 
-// URL por defecto del sistema
-const DEFAULT_M3U_URL = "http://190.61.110.177:2728/CABLEUNO.m3u8";
-const DEFAULT_PLAYLIST_NAME = "Lista Oficial";
-
 interface SimpleChannel {
   name: string;
   url: string;
@@ -149,7 +145,7 @@ export default function SimplePlayer() {
     }
   };
 
-  // Cargar canales guardados al inicio o cargar default
+  // Cargar canales guardados al inicio
   useEffect(() => {
     const savedChannels = localStorage.getItem('simple-channels');
     const savedPlaylistName = localStorage.getItem('simple-playlist-name');
@@ -169,8 +165,8 @@ export default function SimplePlayer() {
       }
     }
 
-    // Si no hay canales guardados, cargar la lista por defecto automáticamente
-    loadM3U(DEFAULT_M3U_URL, DEFAULT_PLAYLIST_NAME);
+    // Si no hay canales guardados, mostrar el formulario
+    setShowLoadForm(true);
   }, []);
 
   const clearChannels = () => {
