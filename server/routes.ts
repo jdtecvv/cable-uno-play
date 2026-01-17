@@ -251,30 +251,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         throw error;
       }
     }
-
-    throw new Error(`Too many redirects (max ${maxRedirects})`);
-  };
-      
-      // Check for redirect responses (301, 302, 303, 307, 308)
-      if (response.status >= 300 && response.status < 400) {
-        const location = response.headers.get('location');
-        if (!location) {
-          console.log(`⚠️ Redirect without Location header, returning response`);
-          return response;
-        }
-        
-        console.log(`🔀 Redirect ${response.status} -> ${location}`);
-        
-        // Update URL for next iteration
-        currentUrl = location;
-        redirectCount++;
-        continue;
-      }
-      
-      // Not a redirect, return the response
-      console.log(`📡 Final response: ${response.status} ${response.statusText}`);
-      return response;
-    }
     
     throw new Error(`Too many redirects (max ${maxRedirects})`);
   };
