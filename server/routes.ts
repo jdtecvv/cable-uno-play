@@ -120,21 +120,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
       hostHeader = 'app.teleunotv.cr';
       
       // Convert all XUI variants to localhost:81 (always use HTTP for internal)
+      // Only force port 81 if no specific port is defined or if the port is 81
+      // If a different port is specified (e.g. 2728), keep it!
+
+      // Check if URL has a port that is NOT 81 and NOT standard (80/443)
+      // Regex looks for :port where port is not 81
+      const hasCustomPort = /:(\d+)/.exec(result);
+      const customPort = hasCustomPort ? hasCustomPort[1] : null;
+
       // Pattern 1: http(s)://app.teleunotv.cr:81/...
       if (result.includes('app.teleunotv.cr:81')) {
         result = result.replace(/https?:\/\/app\.teleunotv\.cr:81/, 'http://127.0.0.1:81');
       }
-      // Pattern 2: http(s)://app.teleunotv.cr/... (without port)
+      // Pattern 2: http(s)://app.teleunotv.cr/... (without port or with custom port)
       else if (result.includes('app.teleunotv.cr')) {
-        result = result.replace(/https?:\/\/app\.teleunotv\.cr/, 'http://127.0.0.1:81');
+        // If it has a custom port that isn't 81, preserve it
+        if (customPort && customPort !== '81' && customPort !== '80' && customPort !== '443') {
+           result = result.replace(/https?:\/\/app\.teleunotv\.cr/, 'http://127.0.0.1');
+        } else {
+           // Otherwise default to 81
+           result = result.replace(/https?:\/\/app\.teleunotv\.cr/, 'http://127.0.0.1:81');
+        }
       }
       // Pattern 3: http(s)://190.61.110.177:81/...
       else if (result.includes('190.61.110.177:81')) {
         result = result.replace(/https?:\/\/190\.61\.110\.177:81/, 'http://127.0.0.1:81');
       }
-      // Pattern 4: http(s)://190.61.110.177/... (without port)
+      // Pattern 4: http(s)://190.61.110.177/... (without port or with custom port)
       else if (result.includes('190.61.110.177')) {
-        result = result.replace(/https?:\/\/190\.61\.110\.177/, 'http://127.0.0.1:81');
+         // If it has a custom port that isn't 81, preserve it
+        if (customPort && customPort !== '81' && customPort !== '80' && customPort !== '443') {
+           result = result.replace(/https?:\/\/190\.61\.110\.177/, 'http://127.0.0.1');
+        } else {
+           // Otherwise default to 81
+           result = result.replace(/https?:\/\/190\.61\.110\.177/, 'http://127.0.0.1:81');
+        }
       }
       
       console.log(`🔄 XUI URL converted to local: ${url} -> ${result} (Host: ${hostHeader})`);
@@ -161,6 +181,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     let currentUrl = url;
     let redirectCount = 0;
     
+    // Create an agent that ignores SSL errors for local requests
+    // This fixes "IP: 127.0.0.1 is not in the cert's list" error
+    // We can't easily attach it to global fetch in Node 18, so we set NODE_TLS_REJECT_UNAUTHORIZED
+    // for this specific operation if we detect localhost
+
     while (redirectCount < maxRedirects) {
       // Convert URL to localhost if it's XUI
       const { url: fetchUrl, hostHeader } = convertXUIUrlToLocal(currentUrl);
@@ -173,11 +198,62 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.log(`📡 Fetching (attempt ${redirectCount + 1}): ${fetchUrl}${hostHeader ? ` (Host: ${hostHeader})` : ''}`);
       
-      // Fetch with redirect: 'manual' to handle redirects ourselves
-      const response = await fetch(fetchUrl, { 
+      // Determine if we need to disable SSL verification
+      const isLocalhost = fetchUrl.includes('127.0.0.1') || fetchUrl.includes('localhost');
+
+      // @ts-ignore - Undici specific options for fetch
+      const fetchOptions: RequestInit & { dispatcher?: any } = {
         headers: fetchHeaders,
-        redirect: 'manual'
-      });
+        redirect: 'manual',
+      };
+
+      // In Node environment we might need to rely on the environment variable or custom agent
+      // Since we can't easily import undici here without adding it to package.json,
+      // we'll rely on a temporary env var set if it's localhost
+      if (isLocalhost) {
+         process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+      }
+
+      try {
+        // Fetch with redirect: 'manual' to handle redirects ourselves
+        const response = await fetch(fetchUrl, fetchOptions);
+
+        // Reset env var immediately
+        if (isLocalhost) {
+           process.env.NODE_TLS_REJECT_UNAUTHORIZED = '1';
+        }
+
+        // Check for redirect responses (301, 302, 303, 307, 308)
+        if (response.status >= 300 && response.status < 400) {
+          const location = response.headers.get('location');
+          if (!location) {
+            console.log(`⚠️ Redirect without Location header, returning response`);
+            return response;
+          }
+
+          console.log(`🔀 Redirect ${response.status} -> ${location}`);
+
+          // Update URL for next iteration
+          currentUrl = location;
+          redirectCount++;
+          continue;
+        }
+
+        // Not a redirect, return the response
+        console.log(`📡 Final response: ${response.status} ${response.statusText}`);
+        return response;
+
+      } catch (error) {
+        // Ensure env var is reset even on error
+        if (isLocalhost) {
+           process.env.NODE_TLS_REJECT_UNAUTHORIZED = '1';
+        }
+        throw error;
+      }
+    }
+
+    throw new Error(`Too many redirects (max ${maxRedirects})`);
+  };
       
       // Check for redirect responses (301, 302, 303, 307, 308)
       if (response.status >= 300 && response.status < 400) {
