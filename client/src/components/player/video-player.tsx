@@ -165,6 +165,8 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
             manifestLoadingTimeOut: 15000, // 15s timeout for manifest
             manifestLoadingMaxRetry: 4,    // Retry manifest 4 times
             levelLoadingTimeOut: 15000,    // 15s timeout for level
+            // Set default audio codec to AAC (mp4a.40.2) for better compatibility
+            defaultAudioCodec: 'mp4a.40.2',
             // Intercept ALL XHR requests made by HLS.js
             xhrSetup: function(xhr: XMLHttpRequest, url: string) {
               let finalUrl = url;
@@ -216,6 +218,25 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
           hlsRef.current = hlsInstance;
           
           hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
+            // Attempt to select Stereo/AAC track if available (fixes missing audio on 5.1/AC3 streams)
+            try {
+              if (hlsInstance.audioTracks && hlsInstance.audioTracks.length > 1) {
+                // Find a track that looks like stereo or has 'aac' in codec/name
+                const stereoTrackIndex = hlsInstance.audioTracks.findIndex(track => {
+                  const name = (track.name || '').toLowerCase();
+                  const codec = (track.audioCodec || '').toLowerCase();
+                  return name.includes('stereo') || name.includes('aac') || codec.includes('mp4a');
+                });
+
+                if (stereoTrackIndex !== -1 && hlsInstance.audioTrack !== stereoTrackIndex) {
+                  console.log(`🔊 Switching to optimized audio track: ${hlsInstance.audioTracks[stereoTrackIndex].name} (Index ${stereoTrackIndex})`);
+                  hlsInstance.audioTrack = stereoTrackIndex;
+                }
+              }
+            } catch (e) {
+              console.warn("Audio track selection failed:", e);
+            }
+
             if (autoplay) {
               videoRef.current?.play()
                 .then(() => {
