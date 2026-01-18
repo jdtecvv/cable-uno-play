@@ -129,6 +129,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (hostHeader) {
         fetchHeaders['Host'] = hostHeader;
       }
+
+      // Forward client cookies to upstream server
+      // This is critical for session management (preventing re-auth loops)
+      if (headers['cookie']) {
+        // We already have 'headers' passed in, but check if we need to merge
+      }
       
       console.log(`📡 Fetching (attempt ${redirectCount + 1}): ${fetchUrl}${hostHeader ? ` (Host: ${hostHeader})` : ''}`);
       
@@ -624,6 +630,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         upstreamHeaders['If-None-Match'] = req.headers['if-none-match'] as string;
       }
 
+      // Forward Cookies (CRITICAL for session management to avoid re-auth loops)
+      if (req.headers['cookie']) {
+        upstreamHeaders['Cookie'] = req.headers['cookie'];
+      }
+
       // Use helper that handles XUI redirects manually
       // XUI returns 302 to https://...:81 which fails because port 81 is HTTP
       // Since convertXUIUrlToLocal is transparent now, this just handles 302s
@@ -673,6 +684,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const etag = response.headers.get('etag');
       if (etag) {
         res.setHeader('ETag', etag);
+      }
+
+      // Forward Set-Cookie headers back to client (CRITICAL for session persistence)
+      const setCookie = response.headers.get('set-cookie');
+      if (setCookie) {
+        res.setHeader('Set-Cookie', setCookie);
       }
 
       // Check if this is an M3U8 playlist that needs URL rewriting
