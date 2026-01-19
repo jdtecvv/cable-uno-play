@@ -1,26 +1,11 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { parseM3U } from "@/lib/utils/m3u-parser";
-import VideoPlayer from "@/components/player/video-player";
-import { TvIcon, SearchIcon, Trash2Icon, ServerIcon, XIcon, KeyIcon, UserIcon, WifiIcon } from "lucide-react";
+import { ServerIcon, UserIcon, KeyIcon, WifiIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { Link } from "wouter";
-import ChannelGrid from "@/components/channels/channel-grid";
-import CategoryFilter from "@/components/channels/category-filter";
-import { ChannelWithCategory } from "@/lib/types";
-import { Category } from "@shared/schema";
-
-interface XUIChannel {
-  name: string;
-  url: string;
-  logo?: string;
-  group?: string;
-  username?: string;
-  password?: string;
-}
+import { useLocation } from "wouter";
+import { usePlaylist } from "@/hooks/use-playlist";
 
 interface XUICredentials {
   server: string;
@@ -38,62 +23,36 @@ export default function XUIPlayer() {
     password: "",
     playlistName: "",
   });
-  const [channels, setChannels] = useState<XUIChannel[]>([]);
-  const [currentChannel, setCurrentChannel] = useState<XUIChannel | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
-  const [showLoadForm, setShowLoadForm] = useState(false);
-  const [useTranscoding] = useState<boolean>(true);
   const { toast } = useToast();
-
-  useEffect(() => {
-    const savedChannels = localStorage.getItem('xui-channels');
-    const savedCredentials = localStorage.getItem('xui-credentials');
-    if (savedChannels) {
-      try {
-        setChannels(JSON.parse(savedChannels));
-        if (savedCredentials) {
-          const creds = JSON.parse(savedCredentials);
-          setCredentials(prev => ({ ...prev, playlistName: creds.playlistName || "" }));
-        }
-      } catch (e) {
-        console.error("Error loading saved channels:", e);
-      }
-    } else {
-      setShowLoadForm(true);
-    }
-  }, []);
-
-  const clearChannels = () => {
-    setChannels([]);
-    setCredentials({
-      server: "",
-      port: "",
-      username: "",
-      password: "",
-      playlistName: "",
-    });
-    setShowLoadForm(true);
-    setSelectedCategoryId(null);
-    localStorage.removeItem('xui-channels');
-    localStorage.removeItem('xui-credentials');
-    toast({
-      title: "Lista eliminada",
-      description: "Todos los canales han sido eliminados",
-    });
-  };
+  const [, navigate] = useLocation();
+  const { importPlaylist } = usePlaylist();
 
   const buildM3UUrl = () => {
     const { server, port, username, password } = credentials;
-    // Si el servidor ya tiene protocolo, usarlo; si no, agregar http://
-    const protocol = server.startsWith('https://') || server.startsWith('http://') ? '' : 'http://';
-    const baseUrl = `${protocol}${server}${port ? `:${port}` : ''}`;
-    // Usar formato XUI correcto: /playlist/{username}/{password}/m3u?output=hls
-    return `${baseUrl}/playlist/${encodeURIComponent(username)}/${encodeURIComponent(password)}/m3u?output=hls`;
+    // Ensure protocol is present
+    let baseUrl = server.trim();
+    if (!baseUrl.startsWith('http://') && !baseUrl.startsWith('https://')) {
+      baseUrl = `http://${baseUrl}`;
+    }
+    // Remove trailing slash
+    if (baseUrl.endsWith('/')) {
+      baseUrl = baseUrl.slice(0, -1);
+    }
+
+    const portStr = port.trim() ? `:${port.trim()}` : '';
+    // XUI M3U Format: /get.php?username=...&password=...&type=m3u_plus&output=ts
+    // OR /playlist/username/password/m3u?output=hls
+    // We'll use the standard /get.php format or the one specific to the panel
+    // Most Xtream Codes panels support: http://domain:port/get.php?username=X&password=Y&type=m3u_plus&output=ts
+
+    // However, the original code used: /playlist/{username}/{password}/m3u?output=hls
+    // Let's stick to that if it was working, or fallback to get.php
+
+    return `${baseUrl}${portStr}/playlist/${encodeURIComponent(username.trim())}/${encodeURIComponent(password.trim())}/m3u?output=hls`;
   };
 
-  const loadXUIPlaylist = async () => {
+  const handleConnect = async () => {
     const { server, username, password, playlistName } = credentials;
     
     if (!server || !username || !password) {
@@ -118,6 +77,7 @@ export default function XUIPlayer() {
     try {
       const m3uUrl = buildM3UUrl();
       
+      // 1. Fetch the playlist content via proxy
       const response = await fetch('/api/proxy/m3u', {
         method: 'POST',
         headers: {
@@ -132,32 +92,32 @@ export default function XUIPlayer() {
       }
 
       const { content } = await response.json();
-      const playlist = parseM3U(content);
       
-      const xuiChannels: XUIChannel[] = playlist.items.map(item => ({
-        name: item.name,
-        url: item.url,
-        logo: item.tvg?.logo || undefined,
-        group: item.group?.title || undefined,
-        username: credentials.username,
-        password: credentials.password,
-      }));
-
-      setChannels(xuiChannels);
-      localStorage.setItem('xui-channels', JSON.stringify(xuiChannels));
-      localStorage.setItem('xui-credentials', JSON.stringify({ playlistName: credentials.playlistName }));
-      setShowLoadForm(false);
-      setSelectedCategoryId(null);
+      // 2. Import to Database
+      await importPlaylist({
+        name: playlistName,
+        url: m3uUrl, // Save the dynamic URL
+        username: username,
+        password: password,
+        providerType: 'xtream', // Mark as Xtream/XUI
+        isActive: true,
+      }, content);
 
       toast({
         title: "¡Conectado!",
-        description: `${xuiChannels.length} canales cargados de "${playlistName}"`,
+        description: "Lista importada correctamente. Redirigiendo...",
       });
+
+      // 3. Redirect to Dashboard (LiveTV)
+      setTimeout(() => {
+         navigate("/live");
+      }, 1000);
+
     } catch (error) {
-      console.error("Error loading playlist:", error);
+      console.error("Error connecting/importing:", error);
       toast({
         title: "Error de conexión",
-        description: error instanceof Error ? error.message : "No se pudo conectar",
+        description: error instanceof Error ? error.message : "No se pudo conectar o importar la lista",
         variant: "destructive",
       });
     } finally {
@@ -165,276 +125,97 @@ export default function XUIPlayer() {
     }
   };
 
-  // Memoize mapped channels
-  const { mappedChannels, categories } = useMemo(() => {
-    const categoryMap = new Map<string, Category>();
-    const mapped: ChannelWithCategory[] = [];
-
-    channels.forEach((ch, index) => {
-      const groupName = ch.group || "Sin categoría";
-
-      let category = categoryMap.get(groupName);
-      if (!category) {
-        // Create fake category
-        category = {
-          id: -(categoryMap.size + 1), // Negative ID
-          name: groupName,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        };
-        categoryMap.set(groupName, category);
-      }
-
-      mapped.push({
-        channel: {
-            id: -(index + 1), // Negative ID
-            name: ch.name,
-            url: ch.url,
-            logo: ch.logo || null,
-            playlistId: 0,
-            categoryId: category.id,
-            epgId: null,
-            isFavorite: false,
-            lastWatched: null,
-            createdAt: new Date(),
-            updatedAt: new Date()
-        },
-        category: category
-      });
-    });
-
-    return {
-        mappedChannels: mapped,
-        categories: Array.from(categoryMap.values())
-    };
-  }, [channels]);
-  
-  const filteredChannels = mappedChannels.filter(item => {
-    const matchesSearch = item.channel.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategoryId === null || item.category?.id === selectedCategoryId;
-    return matchesSearch && matchesCategory;
-  });
-
-  const handlePlay = (channel: ChannelWithCategory) => {
-    const index = Math.abs(channel.channel.id) - 1;
-    if (channels[index]) {
-      setCurrentChannel(channels[index]);
-    }
-  };
-
-  if (currentChannel) {
-    return (
-      <div className="h-full w-full bg-black">
-        <VideoPlayer
-          channel={{
-            id: 0,
-            name: currentChannel.name,
-            url: currentChannel.url,
-            playlistId: 0,
-            categoryId: null,
-            logo: currentChannel.logo || null,
-            epgId: null,
-            isFavorite: false,
-            lastWatched: null,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          }}
-          username={currentChannel.username}
-          password={currentChannel.password}
-          useTranscoding={useTranscoding}
-          onClose={() => setCurrentChannel(null)}
-          autoplay={true}
-        />
-      </div>
-    );
-  }
-
   return (
-    <div className="h-full w-full overflow-y-auto px-4 py-6">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-4">
-            <div className="flex flex-col gap-1">
-                <h1 className="text-2xl md:text-3xl font-bold uppercase">
-                CLIENTES CABLE
-                </h1>
-                {credentials.playlistName && (
-                  <p className="text-sm font-medium text-muted-foreground">
-                      {credentials.playlistName}
-                  </p>
-                )}
-            </div>
-            
-            {channels.length > 0 && (
-              <div className="flex items-center gap-3">
-                 <div className="relative w-full md:w-64">
-                    <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                    <Input
-                      type="text"
-                      placeholder="Buscar canal..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10"
-                    />
-                 </div>
-                 <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setShowLoadForm(true)}
-                  >
-                    Cambiar servidor
-                  </Button>
-              </div>
-            )}
-        </div>
-
-        {/* Link al Simple Player */}
-        <div className="mb-4">
-          <Link href="/simple">
-             <Button variant="ghost" className="text-muted-foreground hover:text-primary pl-0">
-               ← Volver al Reproductor URL
-             </Button>
-          </Link>
-        </div>
-
-        {channels.length === 0 && !showLoadForm && (
-          <div className="text-center py-16">
-            <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-              <ServerIcon className="w-10 h-10 text-primary" />
-            </div>
-            <h2 className="text-2xl font-bold mb-2">Iniciar Sesión</h2>
-            <p className="text-muted-foreground mb-8">Ingresa tus credenciales para acceder a los canales</p>
-            <Button
-              onClick={() => setShowLoadForm(true)}
-              size="lg"
-            >
-              <ServerIcon className="w-4 h-4 mr-2" />
-              Conectar Servidor
-            </Button>
+    <div className="h-full w-full overflow-y-auto px-4 py-6 flex flex-col items-center justify-center">
+      <div className="max-w-md w-full">
+        <div className="text-center mb-8">
+          <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+            <ServerIcon className="w-10 h-10 text-primary" />
           </div>
-        )}
+          <h1 className="text-2xl font-bold mb-2">Conectar Servicio de Cable</h1>
+          <p className="text-muted-foreground">
+            Ingresa tus credenciales para importar los canales al sistema
+          </p>
+        </div>
 
-        {showLoadForm && (
-          <Card className="mb-6 max-w-md mx-auto">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <ServerIcon className="w-5 h-5 text-primary" />
-                  <CardTitle>
-                    {channels.length > 0 ? "Cambiar Servidor" : "Conectar"}
-                  </CardTitle>
-                </div>
-                {channels.length > 0 && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setShowLoadForm(false)}
-                  >
-                    <XIcon className="w-4 h-4" />
-                  </Button>
-                )}
-              </div>
-              <CardDescription>
-                Ingresa las credenciales de tu servidor
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
+        <Card>
+          <CardHeader>
+            <CardTitle>Credenciales XUI / Xtream</CardTitle>
+            <CardDescription>
+              Configura tu conexión al servidor
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="space-y-2">
                 <Input
                   type="text"
-                  placeholder="Nombre de la lista (ej: Mi IPTV)"
+                  placeholder="Nombre para la lista (ej: Mi Cable)"
                   value={credentials.playlistName}
                   onChange={(e) => setCredentials(prev => ({ ...prev, playlistName: e.target.value }))}
                 />
-                
-                <div className="space-y-2">
-                  <label className="text-xs text-muted-foreground flex items-center gap-1">
-                    <WifiIcon className="w-3 h-3" /> Servidor
-                  </label>
-                  <div className="grid grid-cols-4 gap-2">
-                    <Input
-                      type="text"
-                      placeholder="dominio o IP"
-                      value={credentials.server}
-                      onChange={(e) => setCredentials(prev => ({ ...prev, server: e.target.value }))}
-                      className="col-span-3"
-                    />
-                    <Input
-                      type="text"
-                      placeholder="Puerto"
-                      value={credentials.port}
-                      onChange={(e) => setCredentials(prev => ({ ...prev, port: e.target.value }))}
-                      className="text-center"
-                    />
-                  </div>
-                  <p className="text-xs text-muted-foreground">Deja el puerto vacío para usar el estándar (80/443)</p>
-                </div>
-                
-                <div className="space-y-2">
-                  <label className="text-xs text-muted-foreground flex items-center gap-1">
-                    <UserIcon className="w-3 h-3" /> Usuario
-                  </label>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs text-muted-foreground flex items-center gap-1">
+                  <WifiIcon className="w-3 h-3" /> Servidor (URL o IP)
+                </label>
+                <div className="grid grid-cols-4 gap-2">
                   <Input
                     type="text"
-                    placeholder="Usuario"
-                    value={credentials.username}
-                    onChange={(e) => setCredentials(prev => ({ ...prev, username: e.target.value }))}
+                    placeholder="ej: play.miservidor.com"
+                    value={credentials.server}
+                    onChange={(e) => setCredentials(prev => ({ ...prev, server: e.target.value }))}
+                    className="col-span-3"
                   />
-                </div>
-                
-                <div className="space-y-2">
-                  <label className="text-xs text-muted-foreground flex items-center gap-1">
-                    <KeyIcon className="w-3 h-3" /> Contraseña
-                  </label>
                   <Input
-                    type="password"
-                    placeholder="Contraseña"
-                    value={credentials.password}
-                    onChange={(e) => setCredentials(prev => ({ ...prev, password: e.target.value }))}
+                    type="text"
+                    placeholder="Puerto"
+                    value={credentials.port}
+                    onChange={(e) => setCredentials(prev => ({ ...prev, port: e.target.value }))}
+                    className="text-center"
                   />
                 </div>
-                
-                <div className="flex gap-2 pt-2">
-                  <Button
-                    onClick={loadXUIPlaylist}
-                    disabled={isLoading}
-                    className="flex-1"
-                  >
-                    {isLoading ? "Conectando..." : "Conectar"}
-                  </Button>
-                  {channels.length > 0 && (
-                    <Button
-                      onClick={clearChannels}
-                      variant="outline"
-                    >
-                      <Trash2Icon className="w-4 h-4" />
-                    </Button>
-                  )}
-                </div>
-                
-                <p className="text-muted-foreground text-xs text-center">
-                  Las credenciales se usan solo para acceder a la lista
+                <p className="text-xs text-muted-foreground">
+                  Deja el puerto vacío si usas 80/443
                 </p>
               </div>
-            </CardContent>
-          </Card>
-        )}
 
-        {channels.length > 0 && (
-          <>
-            <CategoryFilter
-               categories={categories}
-               selectedCategoryId={selectedCategoryId}
-               onSelect={setSelectedCategoryId}
-            />
+              <div className="space-y-2">
+                <label className="text-xs text-muted-foreground flex items-center gap-1">
+                  <UserIcon className="w-3 h-3" /> Usuario
+                </label>
+                <Input
+                  type="text"
+                  placeholder="Tu usuario"
+                  value={credentials.username}
+                  onChange={(e) => setCredentials(prev => ({ ...prev, username: e.target.value }))}
+                />
+              </div>
 
-            <ChannelGrid
-              channels={filteredChannels}
-              onPlay={handlePlay}
-              enableFavorites={false}
-              emptyMessage={searchTerm ? `No se encontraron canales para "${searchTerm}"` : "No hay canales en esta categoría"}
-            />
-          </>
-        )}
+              <div className="space-y-2">
+                <label className="text-xs text-muted-foreground flex items-center gap-1">
+                  <KeyIcon className="w-3 h-3" /> Contraseña
+                </label>
+                <Input
+                  type="password"
+                  placeholder="Tu contraseña"
+                  value={credentials.password}
+                  onChange={(e) => setCredentials(prev => ({ ...prev, password: e.target.value }))}
+                />
+              </div>
+
+              <Button
+                onClick={handleConnect}
+                disabled={isLoading}
+                className="w-full mt-2"
+              >
+                {isLoading ? "Conectando e Importando..." : "Conectar"}
+              </Button>
+
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

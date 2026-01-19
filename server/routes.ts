@@ -140,7 +140,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Disable SSL verification for all proxy requests to ensure connectivity
       // regardless of self-signed certs on localhost or external servers
-      const needsInsecure = true;
+      // Note: NODE_TLS_REJECT_UNAUTHORIZED is set globally in server/index.ts
 
       // @ts-ignore - Undici specific options for fetch
       const fetchOptions: RequestInit & { dispatcher?: any } = {
@@ -148,19 +148,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         redirect: 'manual',
       };
 
-      // Set environment variable to allow insecure SSL connections
-      if (needsInsecure) {
-         process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-      }
-
       try {
         // Fetch with redirect: 'manual' to handle redirects ourselves
         const response = await fetch(fetchUrl, fetchOptions);
-
-        // Reset env var immediately
-        if (needsInsecure) {
-           process.env.NODE_TLS_REJECT_UNAUTHORIZED = '1';
-        }
 
         // Check for redirect responses (301, 302, 303, 307, 308)
         if (response.status >= 300 && response.status < 400) {
@@ -183,10 +173,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return response;
 
       } catch (error) {
-        // Ensure env var is reset even on error
-        if (needsInsecure) {
-           process.env.NODE_TLS_REJECT_UNAUTHORIZED = '1';
-        }
         throw error;
       }
     }
@@ -218,18 +204,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Disable SSL verification for M3U proxy requests as well
-      const needsInsecure = true;
-      if (needsInsecure) {
-         process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-      }
+      // Note: NODE_TLS_REJECT_UNAUTHORIZED is set globally in server/index.ts
 
       let response;
       try {
         response = await fetch(fetchUrl, { headers });
-      } finally {
-        if (needsInsecure) {
-           process.env.NODE_TLS_REJECT_UNAUTHORIZED = '1';
-        }
+      } catch (e) {
+        throw e;
       }
       
       if (!response.ok) {
@@ -488,10 +469,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Handle self-signed certs for internal/local requests
-      const needsInsecure = true;
-      if (needsInsecure) {
-         process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-      }
+      // Note: NODE_TLS_REJECT_UNAUTHORIZED is set globally in server/index.ts
 
       try {
         // Fetch the image
@@ -500,11 +478,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
           },
         });
-
-        // Reset env var immediately
-        if (needsInsecure) {
-           process.env.NODE_TLS_REJECT_UNAUTHORIZED = '1';
-        }
 
         if (!response.ok) {
           return res.status(response.status).send(`Failed to fetch image: ${response.statusText}`);
@@ -549,10 +522,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
           res.end();
         }
       } catch (error) {
-        // Ensure env var is reset even on error
-        if (needsInsecure) {
-           process.env.NODE_TLS_REJECT_UNAUTHORIZED = '1';
-        }
         throw error;
       }
 

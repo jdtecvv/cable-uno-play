@@ -154,7 +154,7 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
             maxBufferSize: 60 * 1000 * 1000, // 60MB buffer size
             maxBufferHole: 0.5,            // Allow small gaps
             lowLatencyMode: false,         // Disable low latency for stability
-            enableWorker: false,           // Disable web worker to fix AC3 audio demuxing race conditions
+            enableWorker: true,            // Enable web worker for better performance (audio)
             startLevel: -1,                // Auto quality selection
             abrEwmaDefaultEstimate: 500000, // 500kbps initial estimate
             abrBandWidthFactor: 0.95,      // Conservative bandwidth usage
