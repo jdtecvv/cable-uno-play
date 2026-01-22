@@ -710,6 +710,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // If it's already an absolute URL, proxy it
           if (trimmedLine.startsWith('http://') || trimmedLine.startsWith('https://')) {
             // Prevent recursive wrapping if it's already pointing to our proxy
+            // Check specifically for our proxy path to be safe
             if (trimmedLine.includes('/api/proxy/stream')) {
               return trimmedLine;
             }

@@ -236,6 +236,7 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
 
               if (!hasPlayableAudio && hasAC3) {
                 console.log("⚠️ No playable AAC/Stereo track found. AC3 detected. Triggering transcoding...");
+                // FORCE transcoding immediately
                 handleTranscoding();
                 return;
               }

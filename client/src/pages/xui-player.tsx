@@ -5,7 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ServerIcon, UserIcon, KeyIcon, WifiIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
-import { usePlaylist } from "@/hooks/use-playlist";
+import { savePlaylist } from "@/lib/storage";
+import { parseM3U } from "@/lib/utils/m3u-parser";
 
 interface XUICredentials {
   server: string;
@@ -26,29 +27,18 @@ export default function XUIPlayer() {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const [, navigate] = useLocation();
-  const { importPlaylist } = usePlaylist();
 
   const buildM3UUrl = () => {
     const { server, port, username, password } = credentials;
-    // Ensure protocol is present
     let baseUrl = server.trim();
     if (!baseUrl.startsWith('http://') && !baseUrl.startsWith('https://')) {
       baseUrl = `http://${baseUrl}`;
     }
-    // Remove trailing slash
     if (baseUrl.endsWith('/')) {
       baseUrl = baseUrl.slice(0, -1);
     }
 
     const portStr = port.trim() ? `:${port.trim()}` : '';
-    // XUI M3U Format: /get.php?username=...&password=...&type=m3u_plus&output=ts
-    // OR /playlist/username/password/m3u?output=hls
-    // We'll use the standard /get.php format or the one specific to the panel
-    // Most Xtream Codes panels support: http://domain:port/get.php?username=X&password=Y&type=m3u_plus&output=ts
-
-    // However, the original code used: /playlist/{username}/{password}/m3u?output=hls
-    // Let's stick to that if it was working, or fallback to get.php
-
     return `${baseUrl}${portStr}/playlist/${encodeURIComponent(username.trim())}/${encodeURIComponent(password.trim())}/m3u?output=hls`;
   };
 
@@ -77,7 +67,7 @@ export default function XUIPlayer() {
     try {
       const m3uUrl = buildM3UUrl();
       
-      // 1. Fetch the playlist content via proxy
+      // 1. Fetch playlist via Proxy to validate and get content
       const response = await fetch('/api/proxy/m3u', {
         method: 'POST',
         headers: {
@@ -87,37 +77,49 @@ export default function XUIPlayer() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "No se pudo conectar con el servidor");
+        throw new Error("No se pudo conectar con el servidor");
       }
 
       const { content } = await response.json();
       
-      // 2. Import to Database
-      await importPlaylist({
-        name: playlistName,
-        url: m3uUrl, // Save the dynamic URL
+      // 2. Parse channels client-side
+      const parsed = parseM3U(content);
+      const channels = parsed.items.map((item, index) => ({
+        id: index + 1, // Client-side ID
+        name: item.name,
+        url: item.url,
+        logo: item.tvg?.logo || null,
+        group: item.group?.title || "Sin Categoría",
+        // Helper fields for XUI auth if needed later
         username: username,
-        password: password,
-        providerType: 'xtream', // Mark as Xtream/XUI
-        isActive: true,
-      }, content);
+        password: password
+      }));
+
+      // 3. Save to LocalStorage (Client-Side Privacy)
+      savePlaylist({
+        name: playlistName,
+        type: 'xui',
+        url: m3uUrl,
+        username,
+        password,
+        content, // Cache raw content
+        channels // Cache parsed channels
+      });
 
       toast({
         title: "¡Conectado!",
-        description: "Lista importada correctamente. Redirigiendo...",
+        description: "Lista guardada localmente.",
       });
 
-      // 3. Redirect to Dashboard (LiveTV)
       setTimeout(() => {
          navigate("/live");
       }, 1000);
 
     } catch (error) {
-      console.error("Error connecting/importing:", error);
+      console.error("Error connecting:", error);
       toast({
         title: "Error de conexión",
-        description: error instanceof Error ? error.message : "No se pudo conectar o importar la lista",
+        description: error instanceof Error ? error.message : "No se pudo conectar",
         variant: "destructive",
       });
     } finally {
@@ -134,7 +136,7 @@ export default function XUIPlayer() {
           </div>
           <h1 className="text-2xl font-bold mb-2">Conectar Servicio de Cable</h1>
           <p className="text-muted-foreground">
-            Ingresa tus credenciales para importar los canales al sistema
+            Tus credenciales se guardarán solo en este dispositivo.
           </p>
         </div>
 
@@ -210,7 +212,7 @@ export default function XUIPlayer() {
                 disabled={isLoading}
                 className="w-full mt-2"
               >
-                {isLoading ? "Conectando e Importando..." : "Conectar"}
+                {isLoading ? "Conectando..." : "Conectar"}
               </Button>
 
             </div>

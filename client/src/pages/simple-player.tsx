@@ -5,7 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { DownloadIcon, TvIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
-import { usePlaylist } from "@/hooks/use-playlist";
+import { savePlaylist } from "@/lib/storage";
+import { parseM3U } from "@/lib/utils/m3u-parser";
 
 export default function SimplePlayer() {
   const [m3uUrl, setM3uUrl] = useState("");
@@ -13,7 +14,6 @@ export default function SimplePlayer() {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const [, navigate] = useLocation();
-  const { importPlaylist } = usePlaylist();
 
   const handleLoad = async () => {
     const urlToLoad = m3uUrl.trim();
@@ -39,7 +39,7 @@ export default function SimplePlayer() {
 
     setIsLoading(true);
     try {
-      // 1. Fetch the playlist content via proxy
+      // 1. Fetch via proxy
       const response = await fetch('/api/proxy/m3u', {
         method: 'POST',
         headers: {
@@ -54,20 +54,30 @@ export default function SimplePlayer() {
 
       const { content } = await response.json();
 
-      // 2. Import to Database
-      await importPlaylist({
+      // 2. Parse client-side
+      const parsed = parseM3U(content);
+      const channels = parsed.items.map((item, index) => ({
+        id: index + 1,
+        name: item.name,
+        url: item.url,
+        logo: item.tvg?.logo || null,
+        group: item.group?.title || "General",
+      }));
+
+      // 3. Save to localStorage
+      savePlaylist({
         name: nameToLoad,
+        type: 'm3u',
         url: urlToLoad,
-        providerType: 'm3u',
-        isActive: true,
-      }, content);
+        content,
+        channels
+      });
 
       toast({
         title: "¡Éxito!",
-        description: "Lista importada correctamente. Redirigiendo...",
+        description: "Lista guardada localmente.",
       });
 
-      // 3. Redirect to Dashboard
       setTimeout(() => {
         navigate("/live");
       }, 1000);
@@ -93,7 +103,7 @@ export default function SimplePlayer() {
           </div>
           <h1 className="text-2xl font-bold mb-2">Importar Lista M3U</h1>
           <p className="text-muted-foreground">
-            Carga una lista remota para verla en la interfaz principal
+            La lista se guardará localmente en tu navegador.
           </p>
         </div>
 
@@ -125,9 +135,6 @@ export default function SimplePlayer() {
                   value={m3uUrl}
                   onChange={(e) => setM3uUrl(e.target.value)}
                 />
-                <p className="text-xs text-muted-foreground">
-                  Ingresa la URL pública de tu archivo M3U o M3U8
-                </p>
               </div>
 
               <Button
@@ -135,7 +142,7 @@ export default function SimplePlayer() {
                 disabled={isLoading}
                 className="w-full"
               >
-                {isLoading ? "Importando..." : "Cargar e Importar"}
+                {isLoading ? "Guardando..." : "Cargar y Guardar"}
               </Button>
             </div>
           </CardContent>

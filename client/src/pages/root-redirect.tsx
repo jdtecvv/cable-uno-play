@@ -1,36 +1,33 @@
-import { useQuery } from "@tanstack/react-query";
-import { API_ENDPOINTS } from "@/lib/constants";
 import { useLocation } from "wouter";
+import { getActivePlaylist } from "@/lib/storage";
+import { useEffect, useState } from "react";
 import XUIPlayer from "./xui-player";
-import { useEffect } from "react";
 
 export default function RootRedirect() {
   const [, navigate] = useLocation();
-
-  // Check for active playlist
-  const { data: activePlaylist, isLoading, error } = useQuery({
-    queryKey: [API_ENDPOINTS.ACTIVE_PLAYLIST],
-    retry: false, // Don't retry if 404 (no active playlist)
-  });
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasPlaylist, setHasPlaylist] = useState(false);
 
   useEffect(() => {
-    if (activePlaylist && !isLoading) {
-      console.log("Found active playlist, redirecting to dashboard...");
+    const playlist = getActivePlaylist();
+    if (playlist && playlist.channels && playlist.channels.length > 0) {
+      setHasPlaylist(true);
+      console.log("Found client-side playlist, redirecting...");
       navigate("/live");
+    } else {
+      setHasPlaylist(false);
     }
-  }, [activePlaylist, isLoading, navigate]);
+    setIsLoading(false);
+  }, [navigate]);
 
   if (isLoading) {
     return (
       <div className="h-full w-full flex items-center justify-center bg-background">
-        <div className="flex flex-col items-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-          <p className="mt-4 text-muted-foreground">Cargando configuración...</p>
-        </div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
       </div>
     );
   }
 
-  // If no active playlist (or error), show the Import Screen (XUIPlayer)
+  // If no active playlist, show the Import Screen (XUIPlayer)
   return <XUIPlayer />;
 }
