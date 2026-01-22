@@ -710,8 +710,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // If it's already an absolute URL, proxy it
           if (trimmedLine.startsWith('http://') || trimmedLine.startsWith('https://')) {
             // Prevent recursive wrapping if it's already pointing to our proxy
-            // Check specifically for our proxy path to be safe
-            if (trimmedLine.includes('/api/proxy/stream')) {
+            // Check specifically for our proxy path to be safe (both raw and encoded)
+            if (trimmedLine.includes('/api/proxy/stream') || trimmedLine.includes('%2Fapi%2Fproxy%2Fstream')) {
               return trimmedLine;
             }
             return `/api/proxy/stream?url=${encodeURIComponent(trimmedLine)}`;
@@ -802,13 +802,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   app.post(`${apiPrefix}/playlists`, async (req, res) => {
-    try {
-      const validatedData = schema.playlistInsertSchema.parse(req.body);
-      const newPlaylist = await storage.createPlaylist(validatedData);
-      return res.status(201).json(newPlaylist[0]);
-    } catch (error) {
-      handleError(res, error);
-    }
+    // DEPRECATED: Client-side storage only
+    return res.status(410).json({ message: "Playlist storage is now client-side only." });
   });
 
   app.patch(`${apiPrefix}/playlists/:id`, async (req, res) => {
