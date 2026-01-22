@@ -53,6 +53,7 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
     const hlsRef = useRef<Hls | null>(null);
     const transcodingSessionIdRef = useRef<string | null>(null);
     const [hls, setHls] = useState<Hls | null>(null);
+    const [isTranscoding, setIsTranscoding] = useState(false);
     const [isPlaying, setIsPlaying] = useState(false);
     const [isMuted, setIsMuted] = useState(false);
     const [volume, setVolume] = useState(DEFAULT_PLAYER_SETTINGS.volume);
@@ -107,40 +108,41 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
       
       setIsBuffering(true);
       setError(null);
+      setIsTranscoding(false); // Reset transcoding state on channel change
       
       let isMounted = true;
       const sessionId = sessionIdRef.current;
   
-      const setupHls = async () => {
-        let streamUrl = channel.url;
+      const setupHls = async (urlToPlay: string, isTranscoded = false) => {
+        let streamUrl = urlToPlay;
 
-        // Fix XUI malformed URLs with extra colon after domain
-        // Example: https://app.teleunotv.cr:/play/... -> https://app.teleunotv.cr/play/...
-        if (streamUrl.includes('://') && streamUrl.match(/:\/\/[^/]+:\/[^/]/)) {
-          streamUrl = streamUrl.replace(/:\/([^/])/, '/$1');
-          console.log(`🔧 Fixed malformed URL (removed extra colon): ${streamUrl}`);
-        }
+        // Only apply URL fixes/proxy logic if NOT already transcoded
+        if (!isTranscoded) {
+          // Fix XUI malformed URLs with extra colon after domain
+          if (streamUrl.includes('://') && streamUrl.match(/:\/\/[^/]+:\/[^/]/)) {
+            streamUrl = streamUrl.replace(/:\/([^/])/, '/$1');
+            console.log(`🔧 Fixed malformed URL (removed extra colon): ${streamUrl}`);
+          }
 
-        // Convert XUI /ts URLs to /m3u8 for HLS.js compatibility
-        // XUI streams ending in /ts are MPEG-TS direct streams, not HLS playlists
-        // XUI format is /play/TOKEN/ts -> /play/TOKEN/m3u8 (not .m3u8)
-        if (streamUrl.endsWith('/ts')) {
-          streamUrl = streamUrl.replace(/\/ts$/, '/m3u8');
-          console.log(`🔄 Converted XUI URL from /ts to /m3u8: ${streamUrl}`);
-        }
+          // Convert XUI /ts URLs to /m3u8 for HLS.js compatibility
+          // XUI streams ending in /ts are MPEG-TS direct streams, not HLS playlists
+          if (streamUrl.endsWith('/ts')) {
+            streamUrl = streamUrl.replace(/\/ts$/, '/m3u8');
+            console.log(`🔄 Converted XUI URL from /ts to /m3u8: ${streamUrl}`);
+          }
 
-        // Route XUI streams through backend proxy (tokens are port-bound to :81)
-        // The backend proxy converts URLs to localhost:81 for internal access
-        const isXUIStream = streamUrl.includes('app.teleunotv.cr') || 
-                           streamUrl.includes('190.61.110.177');
-        
-        if (isXUIStream) {
-          console.log(`🔄 Routing XUI stream through proxy: ${streamUrl}`);
-          streamUrl = `/api/proxy/stream?url=${encodeURIComponent(streamUrl)}`;
-        } else if (streamUrl.startsWith('http://')) {
-          // Use proxy for other HTTP streams (mixed content protection)
-          console.log(`🔄 Routing HTTP stream through proxy: ${streamUrl}`);
-          streamUrl = `/api/proxy/stream?url=${encodeURIComponent(streamUrl)}`;
+          // Route XUI streams through backend proxy (tokens are port-bound to :81)
+          const isXUIStream = streamUrl.includes('app.teleunotv.cr') ||
+                             streamUrl.includes('190.61.110.177');
+
+          if (isXUIStream) {
+            console.log(`🔄 Routing XUI stream through proxy: ${streamUrl}`);
+            streamUrl = `/api/proxy/stream?url=${encodeURIComponent(streamUrl)}`;
+          } else if (streamUrl.startsWith('http://')) {
+            // Use proxy for other HTTP streams (mixed content protection)
+            console.log(`🔄 Routing HTTP stream through proxy: ${streamUrl}`);
+            streamUrl = `/api/proxy/stream?url=${encodeURIComponent(streamUrl)}`;
+          }
         }
         
         // Check again before creating HLS instance
@@ -217,11 +219,31 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
           
           hlsRef.current = hlsInstance;
           
-          hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
-            // Attempt to select Stereo/AAC track if available (fixes missing audio on 5.1/AC3 streams)
+          hlsInstance.on(Hls.Events.MANIFEST_PARSED, (_, data) => {
+            // Check for AC3/EC3 audio only (which browsers can't play)
+            // If ONLY AC3/EC3 tracks exist and we haven't transcoded yet, trigger transcoding
+            if (!isTranscoded) {
+              const hasPlayableAudio = hlsInstance.audioTracks.some(track => {
+                const codec = (track.audioCodec || '').toLowerCase();
+                const name = (track.name || '').toLowerCase();
+                return codec.includes('mp4a') || codec.includes('aac') || name.includes('stereo') || name.includes('aac');
+              });
+
+              const hasAC3 = hlsInstance.audioTracks.some(track => {
+                const codec = (track.audioCodec || '').toLowerCase();
+                return codec.includes('ac-3') || codec.includes('ec-3');
+              });
+
+              if (!hasPlayableAudio && hasAC3) {
+                console.log("⚠️ No playable AAC/Stereo track found. AC3 detected. Triggering transcoding...");
+                handleTranscoding();
+                return;
+              }
+            }
+
+            // Attempt to select Stereo/AAC track if available
             try {
               if (hlsInstance.audioTracks && hlsInstance.audioTracks.length > 1) {
-                // Find a track that looks like stereo or has 'aac' in codec/name
                 const stereoTrackIndex = hlsInstance.audioTracks.findIndex(track => {
                   const name = (track.name || '').toLowerCase();
                   const codec = (track.audioCodec || '').toLowerCase();
@@ -262,7 +284,13 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
                   break;
                 case Hls.ErrorTypes.MEDIA_ERROR:
                   console.error("Fatal media error", data);
-                  hlsInstance.recoverMediaError();
+                  // Try to transcode on media error if we haven't already
+                  if (!isTranscoded) {
+                    console.log("⚠️ Media error detected. Attempting transcoding fallback...");
+                    handleTranscoding();
+                  } else {
+                    hlsInstance.recoverMediaError();
+                  }
                   break;
                 default:
                   console.error("Fatal error", data);
@@ -306,8 +334,51 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
           });
         }
       };
+
+      const handleTranscoding = async () => {
+        if (!isMounted) return;
+        setIsTranscoding(true);
+        setIsBuffering(true);
+
+        try {
+          if (hlsRef.current) {
+            hlsRef.current.destroy();
+            hlsRef.current = null;
+          }
+
+          toast({
+            title: "Optimizing Audio",
+            description: "Transcoding AC3 audio to AAC...",
+          });
+
+          // Create transcoding session
+          const response = await fetch('/api/proxy/stream-transcode/sessions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              ...(username && password ? { 'X-Stream-Auth': btoa(`${username}:${password}`) } : {})
+            },
+            body: JSON.stringify({ url: channel.url }),
+          });
+
+          if (!response.ok) throw new Error("Transcoding failed");
+
+          const data = await response.json();
+          transcodingSessionIdRef.current = data.sessionId;
+
+          // Re-init HLS with new playlist URL
+          if (isMounted) {
+            setupHls(data.playlistUrl, true);
+          }
+
+        } catch (err) {
+          console.error("Transcoding setup failed:", err);
+          setError("Failed to optimize stream audio.");
+          setIsBuffering(false);
+        }
+      };
       
-      setupHls();
+      setupHls(channel.url, false);
       
       // Clean up
       return () => {

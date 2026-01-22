@@ -11,6 +11,7 @@ import Watch from "@/pages/watch";
 import Setup from "@/pages/setup";
 import SimplePlayer from "@/pages/simple-player";
 import XUIPlayer from "@/pages/xui-player";
+import RootRedirect from "@/pages/root-redirect";
 import NotFound from "@/pages/not-found";
 import { ThemeProvider } from "./lib/theme-provider";
 
@@ -37,8 +38,8 @@ function Router() {
       {/* Aplicación completa con layout y base de datos */}
       <Route path="/">
         <Layout>
-          {/* Default to XUI Player (Clientes Cable) as requested */}
-          <XUIPlayer />
+          {/* Check for active playlist and redirect to Live TV, or show Import Screen */}
+          <RootRedirect />
         </Layout>
       </Route>
       

@@ -129,38 +129,6 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
               </li>
             </ul>
 
-            <div className="mt-6 px-4 py-2 font-medium text-muted-foreground uppercase text-xs tracking-wider">
-              Reproductores
-            </div>
-
-            <ul>
-              <li>
-                <Button
-                  variant={location === "/simple" ? "secondary" : "ghost"}
-                  className={`w-full justify-start px-4 py-3 text-foreground rounded-md mx-2 ${
-                    location === "/simple" ? "bg-primary text-primary-foreground" : ""
-                  }`}
-                  onClick={() => handleNavigation("/simple")}
-                >
-                  <TVIcon className="mr-3 h-5 w-5" />
-                  <span>REPRODUCTOR URL</span>
-                </Button>
-              </li>
-
-              <li>
-                <Button
-                  variant={location === "/xui" ? "secondary" : "ghost"}
-                  className={`w-full justify-start px-4 py-3 text-foreground rounded-md mx-2 ${
-                    location === "/xui" ? "bg-primary text-primary-foreground" : ""
-                  }`}
-                  onClick={() => handleNavigation("/xui")}
-                >
-                  <TVIcon className="mr-3 h-5 w-5" />
-                  <span>CLIENTES CABLE</span>
-                </Button>
-              </li>
-            </ul>
-
             {categories && categories.length > 0 && (
               <>
                 <div className="mt-6 px-4 py-2 font-medium text-muted-foreground uppercase text-xs tracking-wider">
@@ -209,10 +177,10 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                 variant="outline" 
                 className="w-full"
                 size="sm"
-                onClick={() => handleNavigation("/playlists")}
+                onClick={() => handleNavigation("/xui")}
               >
                 <PlaylistIcon className="mr-2 h-4 w-4" />
-                Gestionar Listas
+                Cambiar Servidor
               </Button>
             </div>
           </nav>
