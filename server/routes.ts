@@ -690,6 +690,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const lines = playlist.split('\n');
         const rewrittenLines = lines.map(line => {
           const trimmedLine = line.trim();
+
+          // Strict recursion guard: If already proxied, return as is
+          if (trimmedLine.includes('/api/proxy/stream')) {
+            return trimmedLine;
+          }
           
           // Skip empty lines and comments
           if (!trimmedLine || trimmedLine.startsWith('#')) {

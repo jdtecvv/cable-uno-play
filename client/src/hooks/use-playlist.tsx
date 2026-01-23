@@ -1,31 +1,28 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { API_ENDPOINTS } from "@/lib/constants";
 import { parseM3U } from "@/lib/utils/m3u-parser";
-import { PlaylistInsert, ChannelInsert } from "@shared/schema";
+import { PlaylistInsert } from "@shared/schema";
+import { savePlaylist, clearPlaylist as clearStoragePlaylist, SavedPlaylist } from "@/lib/storage";
 
 export function usePlaylist() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   
   /**
-   * Imports a playlist and its channels
+   * Imports a playlist and its channels (Client-Side Storage)
    */
   const importPlaylist = async (
     playlist: PlaylistInsert, 
     fileContent: string | null = null
   ) => {
     try {
-      // Create the playlist first
-      const response = await apiRequest("POST", API_ENDPOINTS.PLAYLISTS, playlist);
-      const createdPlaylist = await response.json();
-      
-      // Check if we need to process channels from file content
-      if (fileContent) {
+      let channels: any[] = [];
+      let contentToSave = fileContent;
+
+      // If we have content, parse it to extract channels
+      if (contentToSave) {
         try {
-          // Parse the M3U file content
-          const parsed = parseM3U(fileContent);
+          const parsed = parseM3U(contentToSave);
           
           if (parsed.items.length === 0) {
             toast({
@@ -33,24 +30,19 @@ export function usePlaylist() {
               description: "The playlist doesn't contain any channels",
               variant: "destructive"
             });
-            return createdPlaylist;
+            return null;
           }
           
-          // Transform parsed items to channel objects
-          const channels: ChannelInsert[] = parsed.items.map((item) => ({
-            playlistId: createdPlaylist.id,
+          // Map to internal format
+          channels = parsed.items.map((item, index) => ({
+            id: index + 1,
             name: item.name,
             url: item.url,
             logo: item.tvg?.logo || null,
-            epgId: item.tvg?.id || null,
-            // Try to find category by title
-            categoryId: null, // We'll resolve this later if possible
+            group: item.group?.title || "General",
+            username: playlist.username,
+            password: playlist.password
           }));
-          
-          // Insert channels
-          if (channels.length > 0) {
-            await apiRequest("POST", `${API_ENDPOINTS.CHANNELS}/bulk`, channels);
-          }
           
           toast({
             title: "Playlist imported",
@@ -63,19 +55,25 @@ export function usePlaylist() {
             description: "The file doesn't appear to be a valid M3U playlist",
             variant: "destructive"
           });
+          return null;
         }
       }
+
+      // Prepare playlist object for local storage
+      const savedPlaylist: SavedPlaylist = {
+        name: playlist.name,
+        type: playlist.providerType === 'xtream' ? 'xui' : 'm3u',
+        url: playlist.url,
+        username: playlist.username || undefined,
+        password: playlist.password || undefined,
+        content: contentToSave || undefined,
+        channels: channels
+      };
+
+      // Save to localStorage
+      savePlaylist(savedPlaylist);
       
-      // If set to active, make sure UI updates
-      if (playlist.isActive) {
-        queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.ACTIVE_PLAYLIST] });
-      }
-      
-      // Invalidate necessary queries
-      queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.PLAYLISTS] });
-      queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.CHANNELS] });
-      
-      return createdPlaylist;
+      return savedPlaylist;
     } catch (error) {
       console.error("Failed to import playlist:", error);
       throw error;
@@ -83,47 +81,19 @@ export function usePlaylist() {
   };
   
   /**
-   * Set active playlist
+   * Clear active playlist (disconnect)
    */
-  const setActivePlaylist = async (playlistId: number) => {
+  const deletePlaylist = async (playlistId?: number) => {
     try {
-      await apiRequest("PATCH", `${API_ENDPOINTS.PLAYLISTS}/${playlistId}/set-active`);
-      
-      // Invalidate queries
-      queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.PLAYLISTS] });
-      queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.ACTIVE_PLAYLIST] });
-      
-      toast({
-        title: "Active playlist updated",
-        description: "The selected playlist is now active",
-      });
-    } catch (error) {
-      console.error("Failed to set active playlist:", error);
-      toast({
-        title: "Error",
-        description: "Failed to set active playlist",
-        variant: "destructive"
-      });
-      throw error;
-    }
-  };
-  
-  /**
-   * Delete a playlist
-   */
-  const deletePlaylist = async (playlistId: number) => {
-    try {
-      await apiRequest("DELETE", `${API_ENDPOINTS.PLAYLISTS}/${playlistId}`);
-      
-      // Invalidate queries
-      queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.PLAYLISTS] });
-      queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.ACTIVE_PLAYLIST] });
-      queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.CHANNELS] });
+      clearStoragePlaylist();
       
       toast({
         title: "Playlist deleted",
-        description: "The playlist has been removed",
+        description: "The playlist has been removed from this device",
       });
+
+      // Force reload to clear state or redirect
+      window.location.href = "/";
     } catch (error) {
       console.error("Failed to delete playlist:", error);
       toast({
@@ -137,7 +107,8 @@ export function usePlaylist() {
   
   return {
     importPlaylist,
-    setActivePlaylist,
     deletePlaylist,
+    // Legacy support alias
+    setActivePlaylist: async () => {},
   };
 }
