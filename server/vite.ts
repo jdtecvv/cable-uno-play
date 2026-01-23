@@ -4,6 +4,7 @@ import fs from "fs";
 import path from "path";
 import { type Server } from "http";
 import { nanoid } from "nanoid";
+import { createRequire } from "module";
 
 export function log(message: string, source = "express") {
   const formattedTime = new Date().toLocaleTimeString("en-US", {
@@ -17,7 +18,8 @@ export function log(message: string, source = "express") {
 }
 
 export async function setupVite(app: Express, server: Server) {
-  const vite = await import("vite");
+  const require = createRequire(import.meta.url);
+  const vite = require("vite");
   const viteConfig = (await import("../vite.config")).default;
   const viteLogger = vite.createLogger();
 
