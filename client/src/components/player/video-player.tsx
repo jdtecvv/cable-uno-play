@@ -230,8 +230,10 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
                    return t.type === 'audio' && (codec.includes('ac-3') || codec.includes('ec-3'));
                 });
 
-                if (hasAC3) {
-                   console.log("⚠️ AC3/EC3 detected in init segment. Triggering transcoding...");
+                // Aggressive Auto-Switch logic for AC3
+                // We double check we aren't already on the transcoding endpoint to prevent loops
+                if (hasAC3 && !streamUrl.includes('stream-transcode')) {
+                   console.log("⚠️ AC3/EC3 detected in init segment. Auto-switching to Transcoder...");
                    handleTranscoding();
                 }
              }

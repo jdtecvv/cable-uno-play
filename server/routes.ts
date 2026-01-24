@@ -277,26 +277,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const sessionId = randomUUID();
       const tempDir = await mkdtemp(path.join('/tmp', `hls-${sessionId}-`));
 
-      // FFmpeg command for low-latency HLS with HEAD audio downmix
+      // FFmpeg command for STABLE HLS with audio transcoding (optimized for stability > latency)
       const ffmpegArgs = [
         '-hide_banner',
         '-loglevel', 'warning',
-        '-fflags', 'nobuffer',
+        // Input resilience flags (must be before -i)
+        '-reconnect', '1',
+        '-reconnect_at_eof', '1',
+        '-reconnect_streamed', '1',
+        '-reconnect_delay_max', '5',
+        '-fflags', '+genpts+discardcorrupt+nobuffer', // Added discardcorrupt
         '-threads', '0',
         '-i', inputUrl,
         '-map', '0:v:0',
         '-map', '0:a:0',
         '-c:v', 'copy',
         '-c:a', 'aac',
-        '-b:a', '192k',
+        '-b:a', '128k', // Lower bitrate to save CPU
         '-ac', '2',  // Downmix to stereo
         '-af', 'aresample=async=1:min_hard_comp=0.100:first_pts=0',
         '-profile:a', 'aac_low',
         '-movflags', '+faststart',
         '-flags', '+global_header',
         '-max_delay', '500000',
-        '-hls_time', '2',
-        '-hls_list_size', '6',
+        '-hls_time', '6', // Increased for stability
+        '-hls_list_size', '10', // Increased buffer size
         '-hls_flags', 'delete_segments+append_list+omit_endlist',
         '-hls_segment_type', 'mpegts',
         '-hls_segment_filename', path.join(tempDir, 'seg_%05d.ts'),
