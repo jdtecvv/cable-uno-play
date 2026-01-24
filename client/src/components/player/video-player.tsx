@@ -652,7 +652,7 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
         
         {/* Video Controls */}
         {isControlsVisible && !error && (
-          <div className="controls-fade absolute inset-0 flex flex-col z-10">
+          <div className="controls-fade absolute inset-0 flex flex-col z-50">
             {/* Top Controls */}
             <div className="flex justify-between items-center p-4 bg-gradient-to-b from-black/80 to-transparent">
               <div className="flex items-center">

@@ -691,9 +691,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const rewrittenLines = lines.map(line => {
           const trimmedLine = line.trim();
 
-          // Strict recursion guard: If already proxied, return as is
+          // CRITICAL: If the URL is already pointing to our proxy, DO NOT wrap it again.
           if (trimmedLine.includes('/api/proxy/stream')) {
-            return trimmedLine;
+             return trimmedLine;
           }
           
           // Skip empty lines and comments
