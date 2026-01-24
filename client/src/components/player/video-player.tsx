@@ -52,6 +52,7 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
     const playerContainerRef = useRef<HTMLDivElement>(null);
     const hlsRef = useRef<Hls | null>(null);
     const transcodingSessionIdRef = useRef<string | null>(null);
+    const manualTranscodeRef = useRef<() => void>(() => {});
     const [hls, setHls] = useState<Hls | null>(null);
     const [isTranscoding, setIsTranscoding] = useState(false);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -219,6 +220,23 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
           
           hlsRef.current = hlsInstance;
           
+          // Listen for fragment parsing to detect AC3 codecs in actual segments
+          hlsInstance.on(Hls.Events.FRAG_PARSING_INIT_SEGMENT, (_, data) => {
+             if (!isTranscoded && data.tracks) {
+                // Check if any audio track is AC-3 or EC-3
+                const tracks = Object.values(data.tracks) as any[];
+                const hasAC3 = tracks.some(t => {
+                   const codec = (t.codec || '').toLowerCase();
+                   return t.type === 'audio' && (codec.includes('ac-3') || codec.includes('ec-3'));
+                });
+
+                if (hasAC3) {
+                   console.log("⚠️ AC3/EC3 detected in init segment. Triggering transcoding...");
+                   handleTranscoding();
+                }
+             }
+          });
+
           hlsInstance.on(Hls.Events.MANIFEST_PARSED, (_, data) => {
             // Check for AC3/EC3 audio only (which browsers can't play)
             // If ONLY AC3/EC3 tracks exist and we haven't transcoded yet, trigger transcoding
@@ -379,6 +397,9 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
         }
       };
       
+      // Expose handleTranscoding to the UI via ref
+      manualTranscodeRef.current = handleTranscoding;
+
       setupHls(channel.url, false);
       
       // Clean up
@@ -648,6 +669,17 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
                 </div>
               </div>
               <div className="flex items-center space-x-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => manualTranscodeRef.current()}
+                  className="text-white hover:text-primary mr-2 border border-white/20 bg-black/40"
+                  title="Fix Audio / Transcode"
+                >
+                  <SettingsIcon className="h-4 w-4 mr-2" />
+                  <span className="text-xs">Fix Audio</span>
+                </Button>
+
                 <Button 
                   variant="ghost"
                   size="icon"

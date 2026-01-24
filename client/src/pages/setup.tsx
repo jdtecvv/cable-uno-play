@@ -79,14 +79,21 @@ export default function Setup() {
         isActive: true, // Lo establecemos como activo por defecto
       };
 
-      // Intentar cargar el contenido de la URL
-      const response = await fetch(data.url);
+      // Intentar cargar el contenido de la URL a través del proxy
+      // Esto evita problemas de CORS y permite cargar listas HTTP en sitio HTTPS
+      const response = await fetch('/api/proxy/m3u', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url: data.url }),
+      });
       
       if (!response.ok) {
         throw new Error("No se pudo cargar la URL. Comprueba que sea una URL válida de M3U.");
       }
       
-      const content = await response.text();
+      const { content } = await response.json();
       
       // Importar la lista de reproducción con el contenido
       await importPlaylist(playlist, content);

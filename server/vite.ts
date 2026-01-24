@@ -19,9 +19,27 @@ export function log(message: string, source = "express") {
 
 export async function setupVite(app: Express, server: Server) {
   const require = createRequire(import.meta.url);
-  const vite = require("vite");
+  let vite;
+  try {
+     // Try standard import
+     const viteModule = await import("vite");
+     vite = viteModule.default || viteModule;
+  } catch (e) {
+     console.error("Standard import failed, trying fallback", e);
+  }
+
+  if (!vite || !vite.createServer) {
+      // Fallback to direct CJS require
+      try {
+          const vitePath = path.resolve("node_modules/vite/index.cjs");
+          vite = require(vitePath);
+      } catch (e) {
+          console.error("Fallback require failed", e);
+      }
+  }
+
   const viteConfig = (await import("../vite.config")).default;
-  const viteLogger = vite.createLogger();
+  const viteLogger = vite.createLogger ? vite.createLogger() : { error: console.error, info: console.log, warn: console.warn, hasErrorLogged: () => false, clearScreen: () => {}, hasWarned: false };
 
   const serverOptions = {
     middlewareMode: true,
