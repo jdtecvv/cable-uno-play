@@ -362,6 +362,7 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
         setIsBuffering(true);
 
         try {
+          // Hard Reset: Destroy existing HLS immediately
           if (hlsRef.current) {
             hlsRef.current.destroy();
             hlsRef.current = null;
@@ -387,10 +388,13 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
           const data = await response.json();
           transcodingSessionIdRef.current = data.sessionId;
 
-          // Re-init HLS with new playlist URL
-          if (isMounted) {
-            setupHls(data.playlistUrl, true);
-          }
+          // Wait briefly for backend buffer to fill, then re-init
+          setTimeout(() => {
+             if (isMounted) {
+                console.log("🔄 Re-initializing HLS with transcoded source...");
+                setupHls(data.playlistUrl, true);
+             }
+          }, 500);
 
         } catch (err) {
           console.error("Transcoding setup failed:", err);
@@ -634,7 +638,9 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
           <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 z-10">
             <div className="flex flex-col items-center">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-              <p className="mt-4 text-white text-lg">Loading stream...</p>
+              <p className="mt-4 text-white text-lg">
+                 {isTranscoding ? "Optimizing Audio..." : "Loading stream..."}
+              </p>
             </div>
           </div>
         )}

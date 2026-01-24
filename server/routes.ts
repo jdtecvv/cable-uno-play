@@ -294,7 +294,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         '-c:v', 'copy',
         '-c:a', 'aac',
         '-b:a', '128k', // Lower bitrate to save CPU
-        '-ac', '2',  // Downmix to stereo
+        '-ac', '2',  // Explicitly force Stereo Downmix
         '-af', 'aresample=async=1:min_hard_comp=0.100:first_pts=0',
         '-profile:a', 'aac_low',
         '-movflags', '+faststart',
