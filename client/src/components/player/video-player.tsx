@@ -12,6 +12,7 @@ import {
   ArrowRightIcon,
   FavoriteIcon,
   FavoriteFillIcon,
+  ExternalLinkIcon,
 } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
@@ -79,6 +80,32 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
           setIsControlsVisible(false);
         }, 3000);
       }
+    };
+
+    const handleOpenExternal = () => {
+      let streamUrl = channel.url;
+
+      // Fix XUI malformed URLs
+      if (streamUrl.includes('://') && streamUrl.match(/:\/\/[^/]+:\/[^/]/)) {
+        streamUrl = streamUrl.replace(/:\/([^/])/, '/$1');
+      }
+
+      // For external players, we generally prefer m3u8 if available, but keep ts if that's what we have.
+      // However, the proxy handles m3u8 rewriting, so let's stick to the consistent logic.
+      if (streamUrl.endsWith('/ts')) {
+        streamUrl = streamUrl.replace(/\/ts$/, '/m3u8');
+      }
+
+      const isXUIStream = streamUrl.includes('app.teleunotv.cr') ||
+                          streamUrl.includes('190.61.110.177');
+
+      if (isXUIStream || streamUrl.startsWith('http://')) {
+        // Construct absolute URL for the proxy
+        const proxyPath = `/api/proxy/stream?url=${encodeURIComponent(streamUrl)}`;
+        streamUrl = window.location.origin + proxyPath;
+      }
+
+      window.open(streamUrl, '_blank');
     };
 
     const showControls = () => {
@@ -686,6 +713,17 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
                 >
                   <SettingsIcon className="h-4 w-4 mr-2" />
                   <span className="text-xs">Fix Audio</span>
+                </Button>
+
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleOpenExternal}
+                  className="text-white hover:text-primary mr-2 border border-white/20 bg-black/40"
+                  title="Open in External Player"
+                >
+                  <ExternalLinkIcon className="h-4 w-4 mr-2" />
+                  <span className="text-xs">Ext. Player</span>
                 </Button>
 
                 <Button 

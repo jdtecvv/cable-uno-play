@@ -126,6 +126,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Build headers with Host header for XUI
       const fetchHeaders = { ...headers };
+
+      // PROXY HEADER SANITIZATION (The 'Lie'):
+      // Force Upstream User-Agent to be Chrome to bypass blocking.
+      // Do NOT forward client's User-Agent (which might be 'undici', 'Lavf', or valid browser).
+      fetchHeaders['User-Agent'] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+
+      // Remove tracking/context headers that might leak 'localhost' or trigger anti-bot protections
+      delete fetchHeaders['referer'];
+      delete fetchHeaders['origin'];
+      // Also delete lowercase variants just in case
+      delete fetchHeaders['Referer'];
+      delete fetchHeaders['Origin'];
+
       if (hostHeader) {
         fetchHeaders['Host'] = hostHeader;
       }
