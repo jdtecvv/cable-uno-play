@@ -257,6 +257,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Extract credentials if provided
       const streamAuth = req.headers['x-stream-auth'] as string | undefined;
       let inputUrl = url;
+
+      // Unproxy URL if it was passed as a proxy link (e.g., from VideoPlayer logic)
+      if (inputUrl.includes('/api/proxy/stream')) {
+         const match = inputUrl.match(/[?&]url=([^&]+)/);
+         if (match && match[1]) {
+            try {
+               inputUrl = decodeURIComponent(match[1]);
+               console.log(`Transcode input unwrapped from proxy: ${inputUrl}`);
+            } catch (e) {
+               console.warn("Failed to unwrap proxy URL for transcoding:", e);
+            }
+         }
+      }
       
       if (streamAuth) {
         try {
@@ -287,6 +300,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         '-reconnect_streamed', '1',
         '-reconnect_delay_max', '5',
         '-fflags', '+genpts+discardcorrupt+nobuffer', // Added discardcorrupt
+        // Input analysis enforcement
+        '-analyzeduration', '10000000',
+        '-probesize', '10000000',
+        // User-Agent spoofing to bypass blocking
+        '-user_agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         '-threads', '0',
         '-i', inputUrl,
         '-map', '0:v:0',
