@@ -256,15 +256,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Extract credentials if provided
       const streamAuth = req.headers['x-stream-auth'] as string | undefined;
-      let inputUrl = url;
+      let targetUrl = url;
 
       // Unproxy URL if it was passed as a proxy link (e.g., from VideoPlayer logic)
-      if (inputUrl.includes('/api/proxy/stream')) {
-         const match = inputUrl.match(/[?&]url=([^&]+)/);
+      if (targetUrl.includes('/api/proxy/stream')) {
+         const match = targetUrl.match(/[?&]url=([^&]+)/);
          if (match && match[1]) {
             try {
-               inputUrl = decodeURIComponent(match[1]);
-               console.log(`Transcode input unwrapped from proxy: ${inputUrl}`);
+               targetUrl = decodeURIComponent(match[1]);
+               console.log(`Transcode target unwrapped from proxy: ${targetUrl}`);
             } catch (e) {
                console.warn("Failed to unwrap proxy URL for transcoding:", e);
             }
@@ -275,16 +275,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
         try {
           const decodedAuth = Buffer.from(streamAuth, 'base64').toString('utf-8');
           const [username, password] = decodedAuth.split(':');
-          const urlObj = new URL(url);
+          // Use targetUrl here, not 'url' which might be the proxy url
+          const urlObj = new URL(targetUrl);
           if (username && password) {
             urlObj.username = username;
             urlObj.password = password;
           }
-          inputUrl = urlObj.toString();
+          targetUrl = urlObj.toString();
         } catch (error) {
           console.error('Failed to parse auth:', error);
         }
       }
+
+      // CRITICAL: Route FFmpeg through LOCALHOST proxy to bypass upstream blocks.
+      // The local proxy (Node.js) successfully connects (spoofing User-Agent, etc.),
+      // whereas direct FFmpeg connections fail (403/404/EOF).
+      const localPort = req.socket.localPort || 5000;
+      const loopbackUrl = `http://127.0.0.1:${localPort}/api/proxy/stream?url=${encodeURIComponent(targetUrl)}`;
+
+      console.log(`🔄 Transcoding via Loopback: ${loopbackUrl}`);
 
       // Create session
       const sessionId = randomUUID();
@@ -306,7 +315,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // User-Agent spoofing to bypass blocking
         '-user_agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         '-threads', '0',
-        '-i', inputUrl,
+        '-i', loopbackUrl,
         '-map', '0:v:0',
         '-map', '0:a:0',
         '-c:v', 'copy',
