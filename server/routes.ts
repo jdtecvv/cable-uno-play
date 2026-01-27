@@ -326,7 +326,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         '-analyzeduration', '10000000',
         '-probesize', '10000000',
         // User-Agent spoofing to bypass blocking
-        '-user_agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        // CRITICAL: Use -headers flag instead of -user_agent for better HLS/HTTP compatibility with upstream
+        '-headers', 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36\r\nReferer: https://play.teleunotv.cr/\r\n',
         '-threads', '0',
         '-i', loopbackUrl,
         '-map', '0:v:0',
