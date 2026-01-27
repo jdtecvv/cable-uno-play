@@ -11,6 +11,7 @@ import Watch from "@/pages/watch";
 import Setup from "@/pages/setup";
 import SimplePlayer from "@/pages/simple-player";
 import XUIPlayer from "@/pages/xui-player";
+import RootRedirect from "@/pages/root-redirect";
 import NotFound from "@/pages/not-found";
 import { ThemeProvider } from "./lib/theme-provider";
 
@@ -21,15 +22,24 @@ function Router() {
       <Route path="/setup" component={Setup} />
       
       {/* Simple Player - modo standalone sin base de datos */}
-      <Route path="/simple" component={SimplePlayer} />
+      <Route path="/simple">
+        <Layout>
+          <SimplePlayer />
+        </Layout>
+      </Route>
       
       {/* XUI Player - versión full con credenciales XUI */}
-      <Route path="/xui" component={XUIPlayer} />
+      <Route path="/xui">
+        <Layout>
+          <XUIPlayer />
+        </Layout>
+      </Route>
       
       {/* Aplicación completa con layout y base de datos */}
       <Route path="/">
         <Layout>
-          <Home />
+          {/* Check for active playlist and redirect to Live TV, or show Import Screen */}
+          <RootRedirect />
         </Layout>
       </Route>
       

@@ -93,7 +93,16 @@ export default function ImportPlaylist() {
       let playlistContent: string | null = null;
       
       if (activeTab === "url") {
-        playlistContent = null; // We'll use the URL directly
+        // Fetch content via proxy
+        const response = await fetch('/api/proxy/m3u', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: values.playlistUrl })
+        });
+
+        if (!response.ok) throw new Error("Failed to fetch playlist");
+        const data = await response.json();
+        playlistContent = data.content;
       } else if (activeTab === "file" && fileContent) {
         // For file upload, we need to validate M3U format
         playlistContent = fileContent;
@@ -107,19 +116,22 @@ export default function ImportPlaylist() {
         return;
       }
       
-      // Create playlist in database
+      // Create playlist object
       const createPlaylistData = {
         name: values.playlistName,
-        url: activeTab === "url" ? values.playlistUrl : "local_file", // For file upload, we'll handle content separately
+        url: activeTab === "url" ? values.playlistUrl : "local_file",
         isActive: values.makeActive,
       };
       
-      // Import the playlist
+      // Import the playlist (client-side)
       await importPlaylist(
         createPlaylistData,
-        activeTab === "file" ? playlistContent : null
+        playlistContent
       );
       
+      // Force refresh/redirect to live
+      window.location.href = '/live';
+
       // Reset form
       form.reset();
       setFileContent(null);

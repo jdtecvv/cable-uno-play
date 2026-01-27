@@ -1,162 +1,169 @@
-import { useState, useEffect } from "react";
-import { useQueryClient } from "@tanstack/react-query";
-import { useQuery } from "@tanstack/react-query";
+import { useState, useEffect, useMemo } from "react";
 import { useLocation } from "wouter";
-import { API_ENDPOINTS } from "@/lib/constants";
 import ChannelGrid from "@/components/channels/channel-grid";
 import CategoryFilter from "@/components/channels/category-filter";
-import { useKeyNavigation } from "@/hooks/use-key-navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SearchIcon } from "@/components/ui/icons";
+import { getActivePlaylist } from "@/lib/storage";
+import { ChannelWithCategory } from "@/lib/types";
+import { Category } from "@shared/schema";
 
 export default function LiveTV() {
-  const queryClient = useQueryClient();
-  const [location] = useLocation();
+  const [location, navigate] = useLocation();
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [categoryId, setCategoryId] = useState<number | null>(null);
+  const [channels, setChannels] = useState<any[]>([]);
+  const [playlistName, setPlaylistName] = useState<string>("");
   
-  // Parse query params from URL
+  // Load playlist from LocalStorage
+  useEffect(() => {
+    const playlist = getActivePlaylist();
+    if (!playlist) {
+      navigate("/"); // Redirect to import if no playlist
+      return;
+    }
+
+    setPlaylistName(playlist.name);
+    if (playlist.channels) {
+      setChannels(playlist.channels);
+    }
+  }, [navigate]);
+
+  // Parse query params
   useEffect(() => {
     const params = new URLSearchParams(location.split("?")[1]);
     const category = params.get("category");
     const search = params.get("search");
     
-    if (category) {
-      setCategoryId(Number(category));
-    } else {
-      setCategoryId(null);
-    }
+    if (category) setCategoryId(Number(category));
+    else setCategoryId(null);
     
-    if (search) {
-      setSearchTerm(search);
-    } else {
-      setSearchTerm("");
-    }
+    if (search) setSearchTerm(search);
+    else setSearchTerm("");
   }, [location]);
-  
-  // Fetch active playlist
-  const { data: activePlaylist } = useQuery({
-    queryKey: [API_ENDPOINTS.ACTIVE_PLAYLIST],
+
+  // Transform raw channels into ChannelWithCategory format for grid
+  const { mappedChannels, categories } = useMemo(() => {
+    const categoryMap = new Map<string, Category>();
+    const mapped: ChannelWithCategory[] = [];
+
+    channels.forEach((ch, index) => {
+      const groupName = ch.group || "General";
+      let category = categoryMap.get(groupName);
+
+      // Assign persistent IDs to categories based on name hash or simple counter
+      // For client-side, we can just use negative IDs to avoid DB conflict logic
+      if (!category) {
+        category = {
+          id: -(categoryMap.size + 1),
+          name: groupName,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        };
+        categoryMap.set(groupName, category);
+      }
+
+      mapped.push({
+        channel: {
+          id: ch.id || index + 1,
+          name: ch.name,
+          url: ch.url,
+          logo: ch.logo,
+          playlistId: 0,
+          categoryId: category.id,
+          epgId: null,
+          isFavorite: false,
+          lastWatched: null,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        },
+        category: category
+      });
+    });
+
+    return {
+      mappedChannels: mapped,
+      categories: Array.from(categoryMap.values()).sort((a, b) => a.name.localeCompare(b.name))
+    };
+  }, [channels]);
+
+  // Filter logic
+  const displayedChannels = mappedChannels.filter(item => {
+    const matchesSearch = item.channel.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = categoryId === null || item.category?.id === categoryId;
+    return matchesSearch && matchesCategory;
   });
-  
-  // Fetch channels
-  const { data: allChannels = [], isLoading: allChannelsLoading } = useQuery({
-    queryKey: [API_ENDPOINTS.CHANNELS],
-  });
-  
-  // Fetch channels by category if categoryId is set
-  const { data: categoryChannels = [], isLoading: categoryChannelsLoading } = useQuery({
-    queryKey: [API_ENDPOINTS.CATEGORIES, categoryId, "channels"],
-    enabled: categoryId !== null,
-  });
-  
-  // Fetch search results if searchTerm is set
-  const { data: searchResults = [], isLoading: searchLoading } = useQuery({
-    queryKey: [API_ENDPOINTS.SEARCH, searchTerm],
-    enabled: searchTerm.length > 0,
-  });
-  
-  // Determine which channels to display
-  const displayedChannels = searchTerm
-    ? searchResults
-    : categoryId !== null
-      ? categoryChannels
-      : allChannels;
-  
-  const isLoading = searchTerm
-    ? searchLoading
-    : categoryId !== null
-      ? categoryChannelsLoading
-      : allChannelsLoading;
-  
-  // Get the selected category name
-  const { data: categories = [] } = useQuery({
-    queryKey: [API_ENDPOINTS.CATEGORIES],
-  });
-  
-  const selectedCategory = categories.find((cat: any) => cat.id === categoryId);
-  
-  // Enable keyboard navigation
-  useKeyNavigation({
-    enabled: true,
-  });
-  
-  // Handle search form submission
+
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (searchTerm.trim()) {
-      // Update the URL to include the search term
       const params = new URLSearchParams();
       params.set("search", searchTerm);
       window.history.pushState({}, "", `/live?${params.toString()}`);
-      
-      // Trigger search
-      queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.SEARCH, searchTerm] });
     } else {
-      // Clear search
       window.history.pushState({}, "", `/live`);
       setCategoryId(null);
     }
   };
-  
+
+  const handlePlay = (channelItem: ChannelWithCategory) => {
+    const playlist = getActivePlaylist();
+    navigate(`/watch/${channelItem.channel.id}`);
+  };
+
   return (
     <div className="px-4 py-6">
       <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-4">
-        <h1 className="text-2xl md:text-3xl font-bold">
-          {searchTerm
-            ? `Search: ${searchTerm}`
-            : categoryId !== null
-              ? selectedCategory
-                ? `${selectedCategory.name} Channels`
-                : "Category Channels"
-              : "All Channels"}
-        </h1>
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold">
+            {playlistName || "TV en Vivo"}
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            {categories.length} Categorías | {mappedChannels.length} Canales
+          </p>
+        </div>
         
         <form onSubmit={handleSearchSubmit} className="flex w-full md:w-auto">
           <Input
             type="text"
-            placeholder="Search channels..."
+            placeholder="Buscar canal..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="mr-2"
           />
           <Button type="submit" variant="secondary">
             <SearchIcon className="mr-2 h-4 w-4" />
-            Search
+            Buscar
           </Button>
         </form>
       </div>
       
       {!searchTerm && (
         <div className="mb-6">
-          <CategoryFilter selectedCategoryId={categoryId} />
-        </div>
-      )}
-      
-      {!activePlaylist && !isLoading && (
-        <div className="bg-card p-6 rounded-lg mb-6">
-          <h2 className="text-lg font-medium mb-2">No Active Playlist</h2>
-          <p className="text-muted-foreground mb-4">
-            You need to import or activate a playlist to view channels.
-          </p>
-          <Button onClick={() => document.getElementById("import-playlist-trigger")?.click()}>
-            Import Playlist
-          </Button>
+          <CategoryFilter
+            categories={categories}
+            selectedCategoryId={categoryId}
+            onSelect={(id) => {
+                if (id) {
+                    window.history.pushState({}, "", `/live?category=${id}`);
+                    setCategoryId(id);
+                } else {
+                    window.history.pushState({}, "", `/live`);
+                    setCategoryId(null);
+                }
+            }}
+          />
         </div>
       )}
       
       <ChannelGrid
         channels={displayedChannels}
+        onPlay={handlePlay}
         emptyMessage={
-          isLoading
-            ? "Loading channels..."
-            : searchTerm
-              ? "No channels found for your search"
-              : categoryId !== null
-                ? "No channels in this category"
-                : "No channels available"
+          searchTerm
+            ? `No se encontraron canales para "${searchTerm}"`
+            : "No hay canales disponibles."
         }
       />
     </div>

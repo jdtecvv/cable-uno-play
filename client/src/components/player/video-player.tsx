@@ -52,7 +52,9 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
     const playerContainerRef = useRef<HTMLDivElement>(null);
     const hlsRef = useRef<Hls | null>(null);
     const transcodingSessionIdRef = useRef<string | null>(null);
+    const manualTranscodeRef = useRef<() => void>(() => {});
     const [hls, setHls] = useState<Hls | null>(null);
+    const [isTranscoding, setIsTranscoding] = useState(false);
     const [isPlaying, setIsPlaying] = useState(false);
     const [isMuted, setIsMuted] = useState(false);
     const [volume, setVolume] = useState(DEFAULT_PLAYER_SETTINGS.volume);
@@ -107,40 +109,41 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
       
       setIsBuffering(true);
       setError(null);
+      setIsTranscoding(false); // Reset transcoding state on channel change
       
       let isMounted = true;
       const sessionId = sessionIdRef.current;
   
-      const setupHls = async () => {
-        let streamUrl = channel.url;
+      const setupHls = async (urlToPlay: string, isTranscoded = false) => {
+        let streamUrl = urlToPlay;
 
-        // Fix XUI malformed URLs with extra colon after domain
-        // Example: https://app.teleunotv.cr:/play/... -> https://app.teleunotv.cr/play/...
-        if (streamUrl.includes('://') && streamUrl.match(/:\/\/[^/]+:\/[^/]/)) {
-          streamUrl = streamUrl.replace(/:\/([^/])/, '/$1');
-          console.log(`🔧 Fixed malformed URL (removed extra colon): ${streamUrl}`);
-        }
+        // Only apply URL fixes/proxy logic if NOT already transcoded
+        if (!isTranscoded) {
+          // Fix XUI malformed URLs with extra colon after domain
+          if (streamUrl.includes('://') && streamUrl.match(/:\/\/[^/]+:\/[^/]/)) {
+            streamUrl = streamUrl.replace(/:\/([^/])/, '/$1');
+            console.log(`🔧 Fixed malformed URL (removed extra colon): ${streamUrl}`);
+          }
 
-        // Convert XUI /ts URLs to /m3u8 for HLS.js compatibility
-        // XUI streams ending in /ts are MPEG-TS direct streams, not HLS playlists
-        // XUI format is /play/TOKEN/ts -> /play/TOKEN/m3u8 (not .m3u8)
-        if (streamUrl.endsWith('/ts')) {
-          streamUrl = streamUrl.replace(/\/ts$/, '/m3u8');
-          console.log(`🔄 Converted XUI URL from /ts to /m3u8: ${streamUrl}`);
-        }
+          // Convert XUI /ts URLs to /m3u8 for HLS.js compatibility
+          // XUI streams ending in /ts are MPEG-TS direct streams, not HLS playlists
+          if (streamUrl.endsWith('/ts')) {
+            streamUrl = streamUrl.replace(/\/ts$/, '/m3u8');
+            console.log(`🔄 Converted XUI URL from /ts to /m3u8: ${streamUrl}`);
+          }
 
-        // Route XUI streams through backend proxy (tokens are port-bound to :81)
-        // The backend proxy converts URLs to localhost:81 for internal access
-        const isXUIStream = streamUrl.includes('app.teleunotv.cr') || 
-                           streamUrl.includes('190.61.110.177');
-        
-        if (isXUIStream) {
-          console.log(`🔄 Routing XUI stream through proxy: ${streamUrl}`);
-          streamUrl = `/api/proxy/stream?url=${encodeURIComponent(streamUrl)}`;
-        } else if (streamUrl.startsWith('http://')) {
-          // Use proxy for other HTTP streams (mixed content protection)
-          console.log(`🔄 Routing HTTP stream through proxy: ${streamUrl}`);
-          streamUrl = `/api/proxy/stream?url=${encodeURIComponent(streamUrl)}`;
+          // Route XUI streams through backend proxy (tokens are port-bound to :81)
+          const isXUIStream = streamUrl.includes('app.teleunotv.cr') ||
+                             streamUrl.includes('190.61.110.177');
+
+          if (isXUIStream) {
+            console.log(`🔄 Routing XUI stream through proxy: ${streamUrl}`);
+            streamUrl = `/api/proxy/stream?url=${encodeURIComponent(streamUrl)}`;
+          } else if (streamUrl.startsWith('http://')) {
+            // Use proxy for other HTTP streams (mixed content protection)
+            console.log(`🔄 Routing HTTP stream through proxy: ${streamUrl}`);
+            streamUrl = `/api/proxy/stream?url=${encodeURIComponent(streamUrl)}`;
+          }
         }
         
         // Check again before creating HLS instance
@@ -154,6 +157,7 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
             maxBufferSize: 60 * 1000 * 1000, // 60MB buffer size
             maxBufferHole: 0.5,            // Allow small gaps
             lowLatencyMode: false,         // Disable low latency for stability
+            enableWorker: true,            // Enable web worker for better performance (audio)
             startLevel: -1,                // Auto quality selection
             abrEwmaDefaultEstimate: 500000, // 500kbps initial estimate
             abrBandWidthFactor: 0.95,      // Conservative bandwidth usage
@@ -164,6 +168,8 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
             manifestLoadingTimeOut: 15000, // 15s timeout for manifest
             manifestLoadingMaxRetry: 4,    // Retry manifest 4 times
             levelLoadingTimeOut: 15000,    // 15s timeout for level
+            // Set default audio codec to AAC (mp4a.40.2) for better compatibility
+            defaultAudioCodec: 'mp4a.40.2',
             // Intercept ALL XHR requests made by HLS.js
             xhrSetup: function(xhr: XMLHttpRequest, url: string) {
               let finalUrl = url;
@@ -214,7 +220,66 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
           
           hlsRef.current = hlsInstance;
           
-          hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
+          // Listen for fragment parsing to detect AC3 codecs in actual segments
+          hlsInstance.on(Hls.Events.FRAG_PARSING_INIT_SEGMENT, (_, data) => {
+             if (!isTranscoded && data.tracks) {
+                // Check if any audio track is AC-3 or EC-3
+                const tracks = Object.values(data.tracks) as any[];
+                const hasAC3 = tracks.some(t => {
+                   const codec = (t.codec || '').toLowerCase();
+                   return t.type === 'audio' && (codec.includes('ac-3') || codec.includes('ec-3'));
+                });
+
+                // Aggressive Auto-Switch logic for AC3
+                // We double check we aren't already on the transcoding endpoint to prevent loops
+                if (hasAC3 && !streamUrl.includes('stream-transcode')) {
+                   console.log("⚠️ AC3/EC3 detected in init segment. Auto-switching to Transcoder...");
+                   handleTranscoding();
+                }
+             }
+          });
+
+          hlsInstance.on(Hls.Events.MANIFEST_PARSED, (_, data) => {
+            // Check for AC3/EC3 audio only (which browsers can't play)
+            // If ONLY AC3/EC3 tracks exist and we haven't transcoded yet, trigger transcoding
+            if (!isTranscoded) {
+              const hasPlayableAudio = hlsInstance.audioTracks.some(track => {
+                const codec = (track.audioCodec || '').toLowerCase();
+                const name = (track.name || '').toLowerCase();
+                return codec.includes('mp4a') || codec.includes('aac') || name.includes('stereo') || name.includes('aac');
+              });
+
+              const hasAC3 = hlsInstance.audioTracks.some(track => {
+                const codec = (track.audioCodec || '').toLowerCase();
+                return codec.includes('ac-3') || codec.includes('ec-3');
+              });
+
+              if (!hasPlayableAudio && hasAC3) {
+                console.log("⚠️ No playable AAC/Stereo track found. AC3 detected. Triggering transcoding...");
+                // FORCE transcoding immediately
+                handleTranscoding();
+                return;
+              }
+            }
+
+            // Attempt to select Stereo/AAC track if available
+            try {
+              if (hlsInstance.audioTracks && hlsInstance.audioTracks.length > 1) {
+                const stereoTrackIndex = hlsInstance.audioTracks.findIndex(track => {
+                  const name = (track.name || '').toLowerCase();
+                  const codec = (track.audioCodec || '').toLowerCase();
+                  return name.includes('stereo') || name.includes('aac') || codec.includes('mp4a');
+                });
+
+                if (stereoTrackIndex !== -1 && hlsInstance.audioTrack !== stereoTrackIndex) {
+                  console.log(`🔊 Switching to optimized audio track: ${hlsInstance.audioTracks[stereoTrackIndex].name} (Index ${stereoTrackIndex})`);
+                  hlsInstance.audioTrack = stereoTrackIndex;
+                }
+              }
+            } catch (e) {
+              console.warn("Audio track selection failed:", e);
+            }
+
             if (autoplay) {
               videoRef.current?.play()
                 .then(() => {
@@ -240,7 +305,13 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
                   break;
                 case Hls.ErrorTypes.MEDIA_ERROR:
                   console.error("Fatal media error", data);
-                  hlsInstance.recoverMediaError();
+                  // Try to transcode on media error if we haven't already
+                  if (!isTranscoded) {
+                    console.log("⚠️ Media error detected. Attempting transcoding fallback...");
+                    handleTranscoding();
+                  } else {
+                    hlsInstance.recoverMediaError();
+                  }
                   break;
                 default:
                   console.error("Fatal error", data);
@@ -284,8 +355,58 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
           });
         }
       };
+
+      const handleTranscoding = async () => {
+        if (!isMounted) return;
+        setIsTranscoding(true);
+        setIsBuffering(true);
+
+        try {
+          // Hard Reset: Destroy existing HLS immediately
+          if (hlsRef.current) {
+            hlsRef.current.destroy();
+            hlsRef.current = null;
+          }
+
+          toast({
+            title: "Optimizing Audio",
+            description: "Transcoding AC3 audio to AAC...",
+          });
+
+          // Create transcoding session
+          const response = await fetch('/api/proxy/stream-transcode/sessions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              ...(username && password ? { 'X-Stream-Auth': btoa(`${username}:${password}`) } : {})
+            },
+            body: JSON.stringify({ url: channel.url }),
+          });
+
+          if (!response.ok) throw new Error("Transcoding failed");
+
+          const data = await response.json();
+          transcodingSessionIdRef.current = data.sessionId;
+
+          // Wait briefly for backend buffer to fill, then re-init
+          setTimeout(() => {
+             if (isMounted) {
+                console.log("🔄 Re-initializing HLS with transcoded source...");
+                setupHls(data.playlistUrl, true);
+             }
+          }, 500);
+
+        } catch (err) {
+          console.error("Transcoding setup failed:", err);
+          setError("Failed to optimize stream audio.");
+          setIsBuffering(false);
+        }
+      };
       
-      setupHls();
+      // Expose handleTranscoding to the UI via ref
+      manualTranscodeRef.current = handleTranscoding;
+
+      setupHls(channel.url, false);
       
       // Clean up
       return () => {
@@ -517,7 +638,9 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
           <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 z-10">
             <div className="flex flex-col items-center">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-              <p className="mt-4 text-white text-lg">Loading stream...</p>
+              <p className="mt-4 text-white text-lg">
+                 {isTranscoding ? "Optimizing Audio..." : "Loading stream..."}
+              </p>
             </div>
           </div>
         )}
@@ -537,7 +660,7 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
         
         {/* Video Controls */}
         {isControlsVisible && !error && (
-          <div className="controls-fade absolute inset-0 flex flex-col z-10">
+          <div className="controls-fade absolute inset-0 flex flex-col z-50">
             {/* Top Controls */}
             <div className="flex justify-between items-center p-4 bg-gradient-to-b from-black/80 to-transparent">
               <div className="flex items-center">
@@ -554,6 +677,17 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
                 </div>
               </div>
               <div className="flex items-center space-x-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => manualTranscodeRef.current()}
+                  className="text-white hover:text-primary mr-2 border border-white/20 bg-black/40"
+                  title="Fix Audio / Transcode"
+                >
+                  <SettingsIcon className="h-4 w-4 mr-2" />
+                  <span className="text-xs">Fix Audio</span>
+                </Button>
+
                 <Button 
                   variant="ghost"
                   size="icon"

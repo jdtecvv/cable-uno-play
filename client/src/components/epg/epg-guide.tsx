@@ -1,14 +1,14 @@
 import { useState, useEffect, useRef } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { API_ENDPOINTS } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { ArrowLeftIcon, ArrowRightIcon } from "@/components/ui/icons";
-import { format, addDays, subDays, startOfDay, endOfDay, isSameDay } from "date-fns";
+import { format, addDays, subDays, isSameDay } from "date-fns";
 import { useLocation } from "wouter";
+import { getActivePlaylist } from "@/lib/storage";
+import { getProxiedImageUrl } from "@/lib/utils";
+import { ChannelWithCategory } from "@/lib/types";
 
 interface EPGGuideProps {
-  activeChannelId?: number;
+  activeChannelId?: number | null;
 }
 
 export default function EPGGuide({ activeChannelId }: EPGGuideProps) {
@@ -16,11 +16,53 @@ export default function EPGGuide({ activeChannelId }: EPGGuideProps) {
   const [, navigate] = useLocation();
   const timelineRef = useRef<HTMLDivElement>(null);
   const currentTimeRef = useRef<HTMLDivElement>(null);
+  const [channels, setChannels] = useState<ChannelWithCategory[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Get all channels for the guide
-  const { data: channels = [], isLoading: channelsLoading } = useQuery({
-    queryKey: [API_ENDPOINTS.CHANNELS],
-  });
+  // Load channels from client-side storage
+  useEffect(() => {
+    const loadChannels = () => {
+      setIsLoading(true);
+      try {
+        const playlist = getActivePlaylist();
+        if (playlist && playlist.channels) {
+          // Map stored channels to the format expected by the view
+          // Note: client-side channels are simple objects, we wrap them to match ChannelWithCategory
+          const mapped: ChannelWithCategory[] = playlist.channels.map((ch: any, index: number) => ({
+            channel: {
+              id: ch.id || index + 1,
+              name: ch.name,
+              url: ch.url,
+              logo: ch.logo,
+              playlistId: 0,
+              categoryId: 0,
+              epgId: ch.epgId || null,
+              isFavorite: false,
+              lastWatched: null,
+              createdAt: new Date(),
+              updatedAt: new Date()
+            },
+            category: {
+              id: 0,
+              name: ch.group || "General",
+              createdAt: new Date(),
+              updatedAt: new Date()
+            }
+          }));
+          setChannels(mapped);
+        } else {
+          setChannels([]);
+        }
+      } catch (err) {
+        console.error("Failed to load channels for EPG:", err);
+        setChannels([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadChannels();
+  }, []);
 
   // Calculate time slots for the guide
   const timeSlots = Array.from({ length: 24 }, (_, i) => i);
@@ -59,12 +101,6 @@ export default function EPGGuide({ activeChannelId }: EPGGuideProps) {
   // Handle play channel
   const handlePlayChannel = (channelId: number) => {
     navigate(`/watch/${channelId}`);
-  };
-  
-  // Handle show program details
-  const handleShowProgramDetails = (programId: number) => {
-    // Future enhancement - Show program details dialog
-    console.log("Show program details for:", programId);
   };
   
   return (
@@ -138,61 +174,53 @@ export default function EPGGuide({ activeChannelId }: EPGGuideProps) {
           </div>
           
           {/* EPG Rows (Channels and Programs) */}
-          {channelsLoading ? (
+          {isLoading ? (
             <div className="p-6 text-center">
               <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
               <p className="text-muted-foreground">Loading TV guide...</p>
             </div>
           ) : channels.length === 0 ? (
             <div className="p-6 text-center text-muted-foreground">
-              No channels available
+              No channels available. Import a playlist first.
             </div>
           ) : (
-            channels.map((channel: any) => (
+            channels.map((item) => (
               <div 
-                key={channel.channel.id} 
+                key={item.channel.id}
                 className={`flex border-b border-border ${
-                  activeChannelId === channel.channel.id ? 'bg-muted/20' : ''
+                  activeChannelId === item.channel.id ? 'bg-muted/20' : ''
                 }`}
               >
                 <div 
                   className="w-48 min-w-[12rem] p-3 flex items-center border-r border-border bg-card cursor-pointer hover:bg-muted/30"
-                  onClick={() => handlePlayChannel(channel.channel.id)}
+                  onClick={() => handlePlayChannel(item.channel.id)}
                 >
-                  {channel.channel.logo ? (
+                  {item.channel.logo ? (
                     <img 
-                      src={channel.channel.logo} 
-                      alt={channel.channel.name} 
+                      src={getProxiedImageUrl(item.channel.logo)}
+                      alt={item.channel.name}
                       className="mr-2 h-8 w-8 rounded object-cover"
                       onError={(e) => {
-                        e.currentTarget.src = 'https://via.placeholder.com/40';
+                        e.currentTarget.src = '/images/default-channel.png';
                       }}
                     />
                   ) : (
                     <div className="mr-2 h-8 w-8 rounded bg-muted flex items-center justify-center">
-                      <span className="text-xs">{channel.channel.name.substring(0, 2).toUpperCase()}</span>
+                      <span className="text-xs">{item.channel.name.substring(0, 2).toUpperCase()}</span>
                     </div>
                   )}
-                  <span className="font-medium text-foreground">{channel.channel.name}</span>
+                  <span className="font-medium text-foreground truncate">{item.channel.name}</span>
                 </div>
                 
-                {/* Programs timeline - Simplified mock layout */}
-                <div className="epg-timeline relative">
-                  <div className="absolute top-0 bottom-0 left-[25%] w-px bg-border opacity-50"></div>
-                  <div className="absolute top-0 bottom-0 left-[50%] w-px bg-border opacity-50"></div>
-                  <div className="absolute top-0 bottom-0 left-[75%] w-px bg-border opacity-50"></div>
-                  
-                  {/* Sample programs - In reality, this would be populated with actual EPG data */}
-                  <div 
-                    className="cursor-pointer hover:bg-muted focus-visible"
-                    style={{ gridColumn: `span ${Math.floor(Math.random() * 3) + 1}` }}
-                    onClick={() => handleShowProgramDetails(1)}
-                  >
-                    <div className="p-3 bg-card m-1 rounded border border-border">
-                      <h4 className="font-medium text-foreground truncate">Program {Math.floor(Math.random() * 100)}</h4>
-                      <p className="text-muted-foreground text-xs">{`${Math.floor(Math.random() * 12)}:00 - ${Math.floor(Math.random() * 12) + 12}:00`}</p>
-                    </div>
-                  </div>
+                {/* Programs timeline - Empty for now as we removed fake data */}
+                <div className="epg-timeline relative bg-card/50">
+                   <div className="absolute top-0 bottom-0 left-[25%] w-px bg-border opacity-50"></div>
+                   <div className="absolute top-0 bottom-0 left-[50%] w-px bg-border opacity-50"></div>
+                   <div className="absolute top-0 bottom-0 left-[75%] w-px bg-border opacity-50"></div>
+
+                   <div className="p-3 text-xs text-muted-foreground">
+                      No program information available
+                   </div>
                 </div>
               </div>
             ))

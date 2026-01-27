@@ -2,9 +2,14 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
+// FORCE SSL VERIFICATION OFF GLOBALLY FOR INTERNAL CALLS
+// This fixes the "ERR_TLS_CERT_ALTNAME_INVALID" when the backend
+// fetches from localhost (which often has self-signed certs)
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
 const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: false, limit: '50mb' }));
 
 app.use((req, res, next) => {
   const start = Date.now();

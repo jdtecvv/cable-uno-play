@@ -7,12 +7,16 @@ interface ChannelGridProps {
   channels: ChannelWithCategory[];
   title?: string;
   emptyMessage?: string;
+  onPlay?: (channel: ChannelWithCategory) => void;
+  enableFavorites?: boolean;
 }
 
 export default function ChannelGrid({
   channels,
   title,
   emptyMessage = "No channels found",
+  onPlay,
+  enableFavorites = true,
 }: ChannelGridProps) {
   const gridRef = useRef<HTMLDivElement>(null);
   const [columnCount, setColumnCount] = useState(4);
@@ -102,6 +106,8 @@ export default function ChannelGrid({
               index={index}
               columnCount={columnCount}
               onKeyNavigate={(direction) => handleKeyNavigate(index, direction)}
+              onPlay={onPlay}
+              enableFavorites={enableFavorites}
             />
           ))}
         </div>
