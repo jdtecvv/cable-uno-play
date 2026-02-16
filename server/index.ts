@@ -28,6 +28,7 @@ function log(message: string, source = "express") {
 
 // Request logging middleware
 app.use((req, res, next) => {
+  // Skip logging for internal/health checks if needed, or filter WS pollution
   const start = Date.now();
   const path = req.path;
   let capturedJsonResponse: Record<string, any> | undefined = undefined;
@@ -39,8 +40,9 @@ app.use((req, res, next) => {
   };
 
   res.on("finish", () => {
-    const duration = Date.now() - start;
-    if (path.startsWith("/api")) {
+    // Only log API requests to reduce noise, unless it's an error
+    if (path.startsWith("/api") || res.statusCode >= 400) {
+      const duration = Date.now() - start;
       let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
       if (capturedJsonResponse) {
         logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
@@ -92,7 +94,13 @@ app.use((req, res, next) => {
     app.use(express.static(distPath));
 
     // Fall through to index.html if the file doesn't exist
-    app.use("*", (_req, res) => {
+    app.use("*", (req, res) => {
+      // Fix for "WS Error": Stop serving index.html for WebSocket upgrade requests
+      // This prevents 200 OK responses to WS clients, which confuses them and spams logs.
+      if (req.headers.upgrade && req.headers.upgrade.toLowerCase() === 'websocket') {
+          res.status(426).send('Upgrade Required'); // Or 400 Bad Request
+          return;
+      }
       res.sendFile(path.resolve(distPath, "index.html"));
     });
   }

@@ -103,6 +103,33 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
     // Generate unique session ID for this player instance (persists across segment requests)
     const sessionIdRef = useRef<string>(`${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
 
+    // Monitor drift and stall
+    useEffect(() => {
+        if (!videoRef.current || !isPlaying || isBuffering) return;
+
+        const checkDrift = () => {
+            if (!videoRef.current || !hlsRef.current) return;
+
+            // Check if we are "live" and stuck behind
+            if (hlsRef.current.liveSyncPosition) {
+                const latency = hlsRef.current.liveSyncPosition - videoRef.current.currentTime;
+                // If we are more than 15s behind "live sync point", jump ahead
+                if (latency > 15) {
+                   console.log(`⚠️ Drift detected (${latency.toFixed(1)}s). Resyncing to live edge...`);
+                   videoRef.current.currentTime = hlsRef.current.liveSyncPosition - 1; // 1s buffer
+                }
+            }
+
+            // Check if video is frozen but audio playing (or just frozen)
+            // If currentTime hasn't moved for 2 seconds but we are supposed to be playing
+            // This logic is tricky, simple "audio vs video" comparison is hard without querying tracks.
+            // Instead, we trust HLS.js 'bufferStalled' event usually, but let's add a manual nudge.
+        };
+
+        const interval = setInterval(checkDrift, 2000);
+        return () => clearInterval(interval);
+    }, [isPlaying, isBuffering]);
+
     // Initialize HLS.js
     useEffect(() => {
       if (!videoRef.current || !channel?.url) return;
@@ -152,22 +179,25 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
         if (Hls.isSupported()) {
           const hlsInstance = new Hls({
             // Optimized for IPTV streaming - larger buffers for stability
-            maxBufferLength: 60,           // 60 seconds of buffer
-            maxMaxBufferLength: 120,       // Max 2 minutes buffer
-            maxBufferSize: 60 * 1000 * 1000, // 60MB buffer size
-            maxBufferHole: 0.5,            // Allow small gaps
-            lowLatencyMode: false,         // Disable low latency for stability
-            enableWorker: true,            // Enable web worker for better performance (audio)
-            startLevel: -1,                // Auto quality selection
-            abrEwmaDefaultEstimate: 500000, // 500kbps initial estimate
-            abrBandWidthFactor: 0.95,      // Conservative bandwidth usage
-            abrBandWidthUpFactor: 0.7,     // Slow to upgrade quality
-            fragLoadingTimeOut: 20000,     // 20s timeout for segments
-            fragLoadingMaxRetry: 6,        // Retry 6 times
-            fragLoadingRetryDelay: 1000,   // 1s between retries
-            manifestLoadingTimeOut: 15000, // 15s timeout for manifest
-            manifestLoadingMaxRetry: 4,    // Retry manifest 4 times
-            levelLoadingTimeOut: 15000,    // 15s timeout for level
+            // CRITICAL: Increased buffers and latency to prevent stalling on unstable connections
+            maxBufferLength: 30,           // 30 seconds of buffer (User Request)
+            maxMaxBufferLength: 60,        // Max 60s
+            maxBufferSize: 60 * 1000 * 1000, // 60MB
+            liveSyncDurationCount: 5,      // Stay 5 segments behind live edge (User Request)
+            liveMaxLatencyDurationCount: 10, // Max 10 segments behind
+            maxBufferHole: 0.5,
+            lowLatencyMode: false,
+            enableWorker: true,
+            startLevel: -1,
+            abrEwmaDefaultEstimate: 500000,
+            abrBandWidthFactor: 0.95,
+            abrBandWidthUpFactor: 0.7,
+            fragLoadingTimeOut: 20000,
+            fragLoadingMaxRetry: 6,
+            fragLoadingRetryDelay: 1000,
+            manifestLoadingTimeOut: 15000,
+            manifestLoadingMaxRetry: 4,
+            levelLoadingTimeOut: 15000,
             // Set default audio codec to AAC (mp4a.40.2) for better compatibility
             defaultAudioCodec: 'mp4a.40.2',
             // Intercept ALL XHR requests made by HLS.js

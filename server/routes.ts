@@ -8,11 +8,24 @@ import { spawn, spawnSync } from "child_process";
 import * as schema from "@shared/schema";
 import { randomUUID } from "crypto";
 import { promisify } from "util";
+import { Agent, fetch, setGlobalDispatcher } from "undici";
 
 const mkdtemp = promisify(fs.mkdtemp);
 const mkdir = promisify(fs.mkdir);
 const readdir = promisify(fs.readdir);
 const stat = promisify(fs.stat);
+
+// Configure global dispatcher for persistent connections (Keep-Alive)
+// This significantly reduces latency by reusing TCP connections to the upstream server
+const agent = new Agent({
+  keepAliveTimeout: 15000,
+  keepAliveMaxTimeout: 30000,
+  pipelining: 0,
+  connect: {
+    rejectUnauthorized: false // Allow self-signed certs (e.g. localhost)
+  }
+});
+setGlobalDispatcher(agent);
 
 // Transcoding session management
 interface TranscodingSession {
@@ -27,6 +40,11 @@ interface TranscodingSession {
 const transcodingSessions = new Map<string, TranscodingSession>();
 const SESSION_TIMEOUT = 10 * 60 * 1000; // 10 minutes
 const MAX_CONCURRENT_SESSIONS = 5;
+
+// Simple in-memory cache for prefetching segments
+// key: segment URL, value: Promise<Response>
+const segmentPrefetchCache = new Map<string, { promise: Promise<Response>, timestamp: number }>();
+const PREFETCH_CACHE_TTL = 10000; // 10 seconds
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Prefix for all API routes
@@ -115,55 +133,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
     let currentUrl = url;
     let redirectCount = 0;
     
-    // Create an agent that ignores SSL errors for local requests
-    // This fixes "IP: 127.0.0.1 is not in the cert's list" error
-    // We can't easily attach it to global fetch in Node 18, so we set NODE_TLS_REJECT_UNAUTHORIZED
-    // for this specific operation if we detect localhost
-
     while (redirectCount < maxRedirects) {
-      // Convert URL to localhost if it's XUI
-      const { url: fetchUrl, hostHeader } = convertXUIUrlToLocal(currentUrl);
+      // 1. Clean Credentials from URL (Node.js fetch rejects them)
+      let fetchUrl = currentUrl;
+      let urlObj: URL;
+      try {
+        urlObj = new URL(currentUrl);
+        if (urlObj.username || urlObj.password) {
+           // Extract credentials
+           const auth = btoa(`${urlObj.username}:${urlObj.password}`);
+           headers['Authorization'] = `Basic ${auth}`;
+
+           // Remove from URL object
+           urlObj.username = '';
+           urlObj.password = '';
+           fetchUrl = urlObj.toString();
+        }
+      } catch (e) {
+        // Invalid URL, let fetch handle the error
+      }
+
+      const { url: finalUrl, hostHeader } = convertXUIUrlToLocal(fetchUrl);
       
       // Build headers with Host header for XUI
       const fetchHeaders = { ...headers };
 
       // PROXY HEADER SANITIZATION (The 'Lie'):
       // Force Upstream User-Agent to be Chrome to bypass blocking.
-      // Do NOT forward client's User-Agent (which might be 'undici', 'Lavf', or valid browser).
       fetchHeaders['User-Agent'] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
 
-      // Remove tracking/context headers that might leak 'localhost' or trigger anti-bot protections
+      // Remove tracking/context headers
       delete fetchHeaders['referer'];
       delete fetchHeaders['origin'];
-      // Also delete lowercase variants just in case
       delete fetchHeaders['Referer'];
       delete fetchHeaders['Origin'];
-
+      // Also remove host if we are setting it manually, otherwise let fetch set it
       if (hostHeader) {
         fetchHeaders['Host'] = hostHeader;
+      } else {
+        delete fetchHeaders['Host'];
       }
 
-      // Forward client cookies to upstream server
-      // This is critical for session management (preventing re-auth loops)
-      if (headers['cookie']) {
-        // We already have 'headers' passed in, but check if we need to merge
-      }
+      console.log(`📡 Fetching (attempt ${redirectCount + 1}): ${finalUrl}`);
       
-      console.log(`📡 Fetching (attempt ${redirectCount + 1}): ${fetchUrl}${hostHeader ? ` (Host: ${hostHeader})` : ''}`);
-      
-      // Disable SSL verification for all proxy requests to ensure connectivity
-      // regardless of self-signed certs on localhost or external servers
-      // Note: NODE_TLS_REJECT_UNAUTHORIZED is set globally in server/index.ts
-
-      // @ts-ignore - Undici specific options for fetch
-      const fetchOptions: RequestInit & { dispatcher?: any } = {
+      const fetchOptions: RequestInit = {
         headers: fetchHeaders,
         redirect: 'manual',
+        // @ts-ignore - Undici dispatcher
+        dispatcher: agent
       };
 
       try {
         // Fetch with redirect: 'manual' to handle redirects ourselves
-        const response = await fetch(fetchUrl, fetchOptions);
+        const response = await fetch(finalUrl, fetchOptions);
 
         // Check for redirect responses (301, 302, 303, 307, 308)
         if (response.status >= 300 && response.status < 400) {
@@ -182,7 +204,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
 
         // Not a redirect, return the response
-        console.log(`📡 Final response: ${response.status} ${response.statusText}`);
+        // console.log(`📡 Final response: ${response.status} ${response.statusText}`);
         return response;
 
       } catch (error) {
@@ -192,6 +214,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     throw new Error(`Too many redirects (max ${maxRedirects})`);
   };
+
+  // Helper: Prefetch next segment (simple heuristic)
+  const prefetchNextSegment = (currentUrl: string, headers: Record<string, string>) => {
+    try {
+        // Check if URL ends in a number (e.g. seg_123.ts)
+        const match = currentUrl.match(/(\d+)(\.ts)$/);
+        if (match) {
+            const currentNum = parseInt(match[1]);
+            const nextNum = currentNum + 1;
+            // Pad with leading zeros if necessary (assumes strict formatting, but flexible enough)
+            const padding = match[1].length;
+            const nextNumStr = nextNum.toString().padStart(padding, '0');
+
+            const nextUrl = currentUrl.replace(match[0], `${nextNumStr}${match[2]}`);
+
+            // Avoid duplicate prefetches
+            if (!segmentPrefetchCache.has(nextUrl)) {
+                console.log(`🚀 Prefetching next segment: ${nextUrl}`);
+                const promise = fetchXuiWithRedirectHandling(nextUrl, headers);
+                segmentPrefetchCache.set(nextUrl, {
+                    promise,
+                    timestamp: Date.now()
+                });
+
+                // Cleanup old cache entries occasionally
+                if (segmentPrefetchCache.size > 50) {
+                     const now = Date.now();
+                     for (const [key, value] of segmentPrefetchCache.entries()) {
+                         if (now - value.timestamp > PREFETCH_CACHE_TTL) {
+                             segmentPrefetchCache.delete(key);
+                         }
+                     }
+                }
+            }
+        }
+    } catch (e) {
+        console.warn("Prefetch error:", e);
+    }
+  };
+
 
   // Proxy endpoint to avoid CORS issues when loading M3U from external URLs
   app.post(`${apiPrefix}/proxy/m3u`, async (req, res) => {
@@ -216,12 +278,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         headers['Host'] = hostHeader;
       }
 
-      // Disable SSL verification for M3U proxy requests as well
-      // Note: NODE_TLS_REJECT_UNAUTHORIZED is set globally in server/index.ts
-
       let response;
       try {
-        response = await fetch(fetchUrl, { headers });
+        response = await fetch(fetchUrl, { headers, dispatcher: agent } as any);
       } catch (e) {
         throw e;
       }
@@ -523,7 +582,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           headers: {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
           },
-        });
+          dispatcher: agent
+        } as any);
 
         if (!response.ok) {
           return res.status(response.status).send(`Failed to fetch image: ${response.statusText}`);
@@ -601,7 +661,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       break;
     }
 
-    console.log(`🎯 Proxy stream request: ${url}`);
+    // console.log(`🎯 Proxy stream request: ${url}`);
     try {
       if (!url) {
         return res.status(400).json({ message: "URL parameter is required" });
@@ -650,15 +710,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
         upstreamHeaders['Cookie'] = req.headers['cookie'];
       }
 
-      // Use helper that handles XUI redirects manually
-      // XUI returns 302 to https://...:81 which fails because port 81 is HTTP
-      // Since convertXUIUrlToLocal is transparent now, this just handles 302s
-      const response = await fetchXuiWithRedirectHandling(url, upstreamHeaders);
-      console.log(`📡 Upstream response: ${response.status} ${response.statusText}, Content-Type: ${response.headers.get('content-type')}`)
+      // CHECK PREFETCH CACHE
+      let response: Response;
+      if (segmentPrefetchCache.has(url)) {
+          const cacheEntry = segmentPrefetchCache.get(url)!;
+          console.log(`🎯 Cache HIT for segment: ${url}`);
+          try {
+             response = await cacheEntry.promise;
+          } catch (e) {
+             // If prefetched promise failed, retry normally
+             console.warn("Prefetch promise rejected, retrying normally:", e);
+             response = await fetchXuiWithRedirectHandling(url, upstreamHeaders);
+          }
+          segmentPrefetchCache.delete(url); // Remove from cache after consumption (one-time use)
+      } else {
+          // Cache Miss - fetch normally
+          // Use helper that handles XUI redirects manually
+          // XUI returns 302 to https://...:81 which fails because port 81 is HTTP
+          // Since convertXUIUrlToLocal is transparent now, this just handles 302s
+          response = await fetchXuiWithRedirectHandling(url, upstreamHeaders);
+      }
       
       // Accept 200, 206 (Partial Content), and 304 (Not Modified)
       if (!response.ok && response.status !== 206 && response.status !== 304) {
         return res.status(response.status).send(`Failed to fetch stream: ${response.statusText}`);
+      }
+
+      // PREFETCH NEXT SEGMENT (if it's a TS file)
+      if (url.endsWith('.ts')) {
+         // Fire and forget - don't await
+         prefetchNextSegment(url, upstreamHeaders);
       }
 
       // Enable CORS
@@ -705,6 +786,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const setCookie = response.headers.get('set-cookie');
       if (setCookie) {
         res.setHeader('Set-Cookie', setCookie);
+      }
+
+      // Set Cache-Control for segments to help client buffer
+      if (url.endsWith('.ts')) {
+          res.setHeader('Cache-Control', 'public, max-age=3600');
       }
 
       // Check if this is an M3U8 playlist that needs URL rewriting
