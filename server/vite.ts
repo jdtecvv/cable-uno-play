@@ -1,12 +1,12 @@
 import express, { type Express } from "express";
 import fs from "fs";
 import path from "path";
-import { createServer as createViteServer, createLogger } from "vite";
 import { type Server } from "http";
-import viteConfig from "../vite.config";
 import { nanoid } from "nanoid";
 
-const viteLogger = createLogger();
+// NOTE: We do NOT import vite or vite-related plugins statically here.
+// This is to prevent the production build (which bundles this file) from failing
+// due to missing devDependencies (vite, @vitejs/plugin-react, etc.).
 
 export function log(message: string, source = "express") {
   const formattedTime = new Date().toLocaleTimeString("en-US", {
@@ -20,14 +20,46 @@ export function log(message: string, source = "express") {
 }
 
 export async function setupVite(app: Express, server: Server) {
+  // Dynamically import Vite and plugins only when needed (in development)
+  const { createServer: createViteServer, createLogger } = await import("vite");
+  const { default: react } = await import("@vitejs/plugin-react");
+  const { default: runtimeErrorOverlay } = await import("@replit/vite-plugin-runtime-error-modal");
+
+  const viteLogger = createLogger();
+
+  // Replicate the vite config here to avoid importing vite.config.ts
+  // (which would pull in static vite imports)
+  const clientRoot = path.resolve(import.meta.dirname, "../client");
+
   const serverOptions = {
     middlewareMode: true,
     hmr: { server },
     allowedHosts: true,
   };
 
+  const plugins = [
+    react(),
+    runtimeErrorOverlay(),
+  ];
+
+  if (process.env.NODE_ENV !== "production" && process.env.REPL_ID !== undefined) {
+    const { cartographer } = await import("@replit/vite-plugin-cartographer");
+    plugins.push(cartographer());
+  }
+
   const vite = await createViteServer({
-    ...viteConfig,
+    plugins,
+    resolve: {
+      alias: {
+        "@db": path.resolve(import.meta.dirname, "../db"),
+        "@": path.resolve(import.meta.dirname, "../client/src"),
+        "@shared": path.resolve(import.meta.dirname, "../shared"),
+        "@assets": path.resolve(import.meta.dirname, "../attached_assets"),
+      },
+    },
+    root: clientRoot,
+    server: serverOptions,
+    appType: "custom",
     configFile: false,
     customLogger: {
       ...viteLogger,
@@ -36,8 +68,6 @@ export async function setupVite(app: Express, server: Server) {
         process.exit(1);
       },
     },
-    server: serverOptions,
-    appType: "custom",
   });
 
   app.use(vite.middlewares);
@@ -46,9 +76,7 @@ export async function setupVite(app: Express, server: Server) {
 
     try {
       const clientTemplate = path.resolve(
-        import.meta.dirname,
-        "..",
-        "client",
+        clientRoot,
         "index.html",
       );
 
