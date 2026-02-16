@@ -4,24 +4,32 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useQuery } from "@tanstack/react-query";
 import { API_ENDPOINTS } from "@/lib/constants";
 import { useLocation } from "wouter";
+import { Category } from "@shared/schema";
 
 interface CategoryFilterProps {
   selectedCategoryId?: number | null;
   showAll?: boolean;
+  categories?: Category[];
+  onSelect?: (categoryId: number | null) => void;
 }
 
 export default function CategoryFilter({
   selectedCategoryId,
   showAll = true,
+  categories: explicitCategories,
+  onSelect,
 }: CategoryFilterProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const selectedRef = useRef<HTMLButtonElement>(null);
   const [, navigate] = useLocation();
   
-  // Fetch categories
-  const { data: categories = [], isLoading } = useQuery({
+  // Fetch categories only if not provided explicitly
+  const { data: fetchedCategories = [], isLoading } = useQuery({
     queryKey: [API_ENDPOINTS.CATEGORIES],
+    enabled: !explicitCategories
   });
+
+  const categories = explicitCategories || fetchedCategories;
   
   // Scroll selected category into view
   useEffect(() => {
@@ -35,14 +43,18 @@ export default function CategoryFilter({
   }, [selectedCategoryId, categories]);
   
   const handleCategoryClick = (categoryId?: number) => {
-    if (categoryId) {
-      navigate(`/live?category=${categoryId}`);
+    if (onSelect) {
+      onSelect(categoryId || null);
     } else {
-      navigate('/live');
+      if (categoryId) {
+        navigate(`/live?category=${categoryId}`);
+      } else {
+        navigate('/live');
+      }
     }
   };
   
-  if (isLoading) {
+  if (isLoading && !explicitCategories) {
     return (
       <div className="flex items-center space-x-2 overflow-x-auto pb-4 mb-4">
         <Button className="bg-muted animate-pulse" disabled>
@@ -66,7 +78,7 @@ export default function CategoryFilter({
           </Button>
         )}
         
-        {categories.map((category: any) => (
+        {categories.map((category: Category) => (
           <Button
             key={category.id}
             ref={selectedCategoryId === category.id ? selectedRef : undefined}

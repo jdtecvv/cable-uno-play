@@ -8,11 +8,24 @@ import { spawn, spawnSync } from "child_process";
 import * as schema from "@shared/schema";
 import { randomUUID } from "crypto";
 import { promisify } from "util";
+import { Agent, fetch, setGlobalDispatcher } from "undici";
 
 const mkdtemp = promisify(fs.mkdtemp);
 const mkdir = promisify(fs.mkdir);
 const readdir = promisify(fs.readdir);
 const stat = promisify(fs.stat);
+
+// Configure global dispatcher for persistent connections (Keep-Alive)
+// This significantly reduces latency by reusing TCP connections to the upstream server
+const agent = new Agent({
+  keepAliveTimeout: 15000,
+  keepAliveMaxTimeout: 30000,
+  pipelining: 0,
+  connect: {
+    rejectUnauthorized: false // Allow self-signed certs (e.g. localhost)
+  }
+});
+setGlobalDispatcher(agent);
 
 // Transcoding session management
 interface TranscodingSession {
@@ -27,6 +40,11 @@ interface TranscodingSession {
 const transcodingSessions = new Map<string, TranscodingSession>();
 const SESSION_TIMEOUT = 10 * 60 * 1000; // 10 minutes
 const MAX_CONCURRENT_SESSIONS = 5;
+
+// Simple in-memory cache for prefetching segments
+// key: segment URL, value: Promise<Response>
+const segmentPrefetchCache = new Map<string, { promise: Promise<Response>, timestamp: number }>();
+const PREFETCH_CACHE_TTL = 10000; // 10 seconds
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Prefix for all API routes
@@ -97,50 +115,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Run cleanup every minute
   setInterval(cleanupStaleSessions, 60 * 1000);
 
-  // Helper function to convert XUI URLs to localhost for internal access
-  // In production, XUI nginx listens on 127.0.0.1:81 (HTTP) and 127.0.0.1:444 (HTTPS)
-  // We use HTTP on port 81 for internal communication
-  const isProduction = process.env.NODE_ENV === 'production';
-  
+  // Helper function is now a pass-through to ensure TRANSPARENT proxying
+  // as requested by user. We do NOT rewrite IPs to localhost.
   const convertXUIUrlToLocal = (url: string): { url: string; hostHeader: string | null } => {
-    // Only convert to localhost in production where XUI is available locally
-    if (!isProduction) {
-      console.log(`🔄 Development mode - using original URL: ${url}`);
-      return { url, hostHeader: null };
-    }
-    
-    let result = url;
-    let hostHeader: string | null = null;
-    
-    // Check if this is an XUI URL
-    const isXUIUrl = url.includes('app.teleunotv.cr') || url.includes('190.61.110.177');
-    
-    if (isXUIUrl) {
-      // Extract the original host for the Host header
-      hostHeader = 'app.teleunotv.cr';
-      
-      // Convert all XUI variants to localhost:81 (always use HTTP for internal)
-      // Pattern 1: http(s)://app.teleunotv.cr:81/...
-      if (result.includes('app.teleunotv.cr:81')) {
-        result = result.replace(/https?:\/\/app\.teleunotv\.cr:81/, 'http://127.0.0.1:81');
-      }
-      // Pattern 2: http(s)://app.teleunotv.cr/... (without port)
-      else if (result.includes('app.teleunotv.cr')) {
-        result = result.replace(/https?:\/\/app\.teleunotv\.cr/, 'http://127.0.0.1:81');
-      }
-      // Pattern 3: http(s)://190.61.110.177:81/...
-      else if (result.includes('190.61.110.177:81')) {
-        result = result.replace(/https?:\/\/190\.61\.110\.177:81/, 'http://127.0.0.1:81');
-      }
-      // Pattern 4: http(s)://190.61.110.177/... (without port)
-      else if (result.includes('190.61.110.177')) {
-        result = result.replace(/https?:\/\/190\.61\.110\.177/, 'http://127.0.0.1:81');
-      }
-      
-      console.log(`🔄 XUI URL converted to local: ${url} -> ${result} (Host: ${hostHeader})`);
-    }
-    
-    return { url: result, hostHeader };
+    // Return original URL without modification
+    return { url, hostHeader: null };
   };
 
   // Helper to fetch XUI URLs with manual redirect handling
@@ -155,46 +134,126 @@ export async function registerRoutes(app: Express): Promise<Server> {
     let redirectCount = 0;
     
     while (redirectCount < maxRedirects) {
-      // Convert URL to localhost if it's XUI
-      const { url: fetchUrl, hostHeader } = convertXUIUrlToLocal(currentUrl);
+      // 1. Clean Credentials from URL (Node.js fetch rejects them)
+      let fetchUrl = currentUrl;
+      let urlObj: URL;
+      try {
+        urlObj = new URL(currentUrl);
+        if (urlObj.username || urlObj.password) {
+           // Extract credentials
+           const auth = btoa(`${urlObj.username}:${urlObj.password}`);
+           headers['Authorization'] = `Basic ${auth}`;
+
+           // Remove from URL object
+           urlObj.username = '';
+           urlObj.password = '';
+           fetchUrl = urlObj.toString();
+        }
+      } catch (e) {
+        // Invalid URL, let fetch handle the error
+      }
+
+      const { url: finalUrl, hostHeader } = convertXUIUrlToLocal(fetchUrl);
       
       // Build headers with Host header for XUI
       const fetchHeaders = { ...headers };
+
+      // PROXY HEADER SANITIZATION (The 'Lie'):
+      // Force Upstream User-Agent to be Chrome to bypass blocking.
+      fetchHeaders['User-Agent'] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+
+      // Remove tracking/context headers
+      delete fetchHeaders['referer'];
+      delete fetchHeaders['origin'];
+      delete fetchHeaders['Referer'];
+      delete fetchHeaders['Origin'];
+      // Also remove host if we are setting it manually, otherwise let fetch set it
       if (hostHeader) {
         fetchHeaders['Host'] = hostHeader;
+      } else {
+        delete fetchHeaders['Host'];
       }
+
+      console.log(`📡 Fetching (attempt ${redirectCount + 1}): ${finalUrl}`);
       
-      console.log(`📡 Fetching (attempt ${redirectCount + 1}): ${fetchUrl}${hostHeader ? ` (Host: ${hostHeader})` : ''}`);
-      
-      // Fetch with redirect: 'manual' to handle redirects ourselves
-      const response = await fetch(fetchUrl, { 
+      const fetchOptions: RequestInit = {
         headers: fetchHeaders,
-        redirect: 'manual'
-      });
-      
-      // Check for redirect responses (301, 302, 303, 307, 308)
-      if (response.status >= 300 && response.status < 400) {
-        const location = response.headers.get('location');
-        if (!location) {
-          console.log(`⚠️ Redirect without Location header, returning response`);
-          return response;
+        redirect: 'manual',
+        // @ts-ignore - Undici dispatcher
+        dispatcher: agent
+      };
+
+      try {
+        // Fetch with redirect: 'manual' to handle redirects ourselves
+        const response = await fetch(finalUrl, fetchOptions);
+
+        // Check for redirect responses (301, 302, 303, 307, 308)
+        if (response.status >= 300 && response.status < 400) {
+          const location = response.headers.get('location');
+          if (!location) {
+            console.log(`⚠️ Redirect without Location header, returning response`);
+            return response;
+          }
+
+          console.log(`🔀 Redirect ${response.status} -> ${location}`);
+
+          // Update URL for next iteration
+          currentUrl = location;
+          redirectCount++;
+          continue;
         }
-        
-        console.log(`🔀 Redirect ${response.status} -> ${location}`);
-        
-        // Update URL for next iteration
-        currentUrl = location;
-        redirectCount++;
-        continue;
+
+        // Not a redirect, return the response
+        // console.log(`📡 Final response: ${response.status} ${response.statusText}`);
+        return response;
+
+      } catch (error) {
+        throw error;
       }
-      
-      // Not a redirect, return the response
-      console.log(`📡 Final response: ${response.status} ${response.statusText}`);
-      return response;
     }
     
     throw new Error(`Too many redirects (max ${maxRedirects})`);
   };
+
+  // Helper: Prefetch next segment (simple heuristic)
+  const prefetchNextSegment = (currentUrl: string, headers: Record<string, string>) => {
+    try {
+        // Check if URL ends in a number (e.g. seg_123.ts)
+        const match = currentUrl.match(/(\d+)(\.ts)$/);
+        if (match) {
+            const currentNum = parseInt(match[1]);
+            const nextNum = currentNum + 1;
+            // Pad with leading zeros if necessary (assumes strict formatting, but flexible enough)
+            const padding = match[1].length;
+            const nextNumStr = nextNum.toString().padStart(padding, '0');
+
+            const nextUrl = currentUrl.replace(match[0], `${nextNumStr}${match[2]}`);
+
+            // Avoid duplicate prefetches
+            if (!segmentPrefetchCache.has(nextUrl)) {
+                console.log(`🚀 Prefetching next segment: ${nextUrl}`);
+                const promise = fetchXuiWithRedirectHandling(nextUrl, headers);
+                segmentPrefetchCache.set(nextUrl, {
+                    promise,
+                    timestamp: Date.now()
+                });
+
+                // Cleanup old cache entries occasionally
+                if (segmentPrefetchCache.size > 50) {
+                     const now = Date.now();
+                     for (const [key, value] of segmentPrefetchCache.entries()) {
+                         if (now - value.timestamp > PREFETCH_CACHE_TTL) {
+                             segmentPrefetchCache.delete(key);
+                         }
+                     }
+                }
+            }
+        }
+    } catch (e) {
+        console.warn("Prefetch error:", e);
+    }
+  };
+
 
   // Proxy endpoint to avoid CORS issues when loading M3U from external URLs
   app.post(`${apiPrefix}/proxy/m3u`, async (req, res) => {
@@ -219,7 +278,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         headers['Host'] = hostHeader;
       }
 
-      const response = await fetch(fetchUrl, { headers });
+      let response;
+      try {
+        response = await fetch(fetchUrl, { headers, dispatcher: agent } as any);
+      } catch (e) {
+        throw e;
+      }
       
       if (!response.ok) {
         return res.status(response.status).json({ 
@@ -264,47 +328,80 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Extract credentials if provided
       const streamAuth = req.headers['x-stream-auth'] as string | undefined;
-      let inputUrl = url;
+      let targetUrl = url;
+
+      // Unproxy URL if it was passed as a proxy link (e.g., from VideoPlayer logic)
+      if (targetUrl.includes('/api/proxy/stream')) {
+         const match = targetUrl.match(/[?&]url=([^&]+)/);
+         if (match && match[1]) {
+            try {
+               targetUrl = decodeURIComponent(match[1]);
+               console.log(`Transcode target unwrapped from proxy: ${targetUrl}`);
+            } catch (e) {
+               console.warn("Failed to unwrap proxy URL for transcoding:", e);
+            }
+         }
+      }
       
       if (streamAuth) {
         try {
           const decodedAuth = Buffer.from(streamAuth, 'base64').toString('utf-8');
           const [username, password] = decodedAuth.split(':');
-          const urlObj = new URL(url);
+          // Use targetUrl here, not 'url' which might be the proxy url
+          const urlObj = new URL(targetUrl);
           if (username && password) {
             urlObj.username = username;
             urlObj.password = password;
           }
-          inputUrl = urlObj.toString();
+          targetUrl = urlObj.toString();
         } catch (error) {
           console.error('Failed to parse auth:', error);
         }
       }
 
+      // CRITICAL: Route FFmpeg through LOCALHOST proxy to bypass upstream blocks.
+      // The local proxy (Node.js) successfully connects (spoofing User-Agent, etc.),
+      // whereas direct FFmpeg connections fail (403/404/EOF).
+      const localPort = req.socket.localPort || 5000;
+      const loopbackUrl = `http://127.0.0.1:${localPort}/api/proxy/stream?url=${encodeURIComponent(targetUrl)}`;
+
+      console.log(`🔄 Transcoding via Loopback: ${loopbackUrl}`);
+
       // Create session
       const sessionId = randomUUID();
       const tempDir = await mkdtemp(path.join('/tmp', `hls-${sessionId}-`));
 
-      // FFmpeg command for low-latency HLS with HEAD audio downmix
+      // FFmpeg command for STABLE HLS with audio transcoding (optimized for stability > latency)
       const ffmpegArgs = [
         '-hide_banner',
         '-loglevel', 'warning',
-        '-fflags', 'nobuffer',
+        // Input resilience flags (must be before -i)
+        '-reconnect', '1',
+        '-reconnect_at_eof', '1',
+        '-reconnect_streamed', '1',
+        '-reconnect_delay_max', '5',
+        '-fflags', '+genpts+discardcorrupt+nobuffer', // Added discardcorrupt
+        // Input analysis enforcement
+        '-analyzeduration', '10000000',
+        '-probesize', '10000000',
+        // User-Agent spoofing to bypass blocking
+        // CRITICAL: Use -headers flag instead of -user_agent for better HLS/HTTP compatibility with upstream
+        '-headers', 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36\r\nReferer: https://play.teleunotv.cr/\r\n',
         '-threads', '0',
-        '-i', inputUrl,
+        '-i', loopbackUrl,
         '-map', '0:v:0',
         '-map', '0:a:0',
         '-c:v', 'copy',
         '-c:a', 'aac',
-        '-b:a', '192k',
-        '-ac', '2',  // Downmix to stereo
+        '-b:a', '128k', // Lower bitrate to save CPU
+        '-ac', '2',  // Explicitly force Stereo Downmix
         '-af', 'aresample=async=1:min_hard_comp=0.100:first_pts=0',
         '-profile:a', 'aac_low',
         '-movflags', '+faststart',
         '-flags', '+global_header',
         '-max_delay', '500000',
-        '-hls_time', '2',
-        '-hls_list_size', '6',
+        '-hls_time', '6', // Increased for stability
+        '-hls_list_size', '10', // Increased buffer size
         '-hls_flags', 'delete_segments+append_list+omit_endlist',
         '-hls_segment_type', 'mpegts',
         '-hls_segment_filename', path.join(tempDir, 'seg_%05d.ts'),
@@ -461,11 +558,110 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Proxy endpoint for images to avoid Mixed Content issues
+  console.log(`📡 Registering route: GET ${apiPrefix}/proxy/image`);
+  app.get(`${apiPrefix}/proxy/image`, async (req, res) => {
+    const url = req.query.url as string;
+
+    try {
+      if (!url) {
+        return res.status(400).send("URL is required");
+      }
+
+      // Validate URL format
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        return res.status(400).send("Invalid URL format");
+      }
+
+      // Handle self-signed certs for internal/local requests
+      // Note: NODE_TLS_REJECT_UNAUTHORIZED is set globally in server/index.ts
+
+      try {
+        // Fetch the image
+        const response = await fetch(url, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+          },
+          dispatcher: agent
+        } as any);
+
+        if (!response.ok) {
+          return res.status(response.status).send(`Failed to fetch image: ${response.statusText}`);
+        }
+
+        const contentType = response.headers.get('content-type');
+
+        // Verify it's an image
+        if (!contentType || !contentType.startsWith('image/')) {
+          console.warn(`⚠️ Proxying content with type ${contentType} from ${url}`);
+        }
+
+        // Set caching headers (cache for 1 hour)
+        res.setHeader('Cache-Control', 'public, max-age=3600');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+
+        if (contentType) {
+          res.setHeader('Content-Type', contentType);
+        }
+
+        // Pipe the response
+        if (response.body) {
+          // @ts-ignore - ReadableStream/Node stream mismatch
+          const reader = response.body.getReader();
+          const pump = async () => {
+            try {
+              while (true) {
+                const { done, value } = await reader.read();
+                if (done) {
+                  res.end();
+                  break;
+                }
+                res.write(Buffer.from(value));
+              }
+            } catch (e) {
+              console.error('Image stream error:', e);
+              res.end();
+            }
+          };
+          await pump();
+        } else {
+          res.end();
+        }
+      } catch (error) {
+        throw error;
+      }
+
+    } catch (error) {
+      console.error("Image proxy error:", error);
+      res.status(500).send("Failed to proxy image");
+    }
+  });
+
   // Proxy endpoint for video streams to avoid Mixed Content issues
   console.log(`📡 Registering route: GET ${apiPrefix}/proxy/stream`);
   app.get(`${apiPrefix}/proxy/stream`, async (req, res) => {
-    const url = req.query.url as string;
-    console.log(`🎯 Proxy stream request: ${url}`);
+    let url = req.query.url as string;
+
+    // Unwrap recursive proxy URLs to prevent loops
+    // Example: .../stream?url=.../stream?url=http://real-source
+    while (url && url.includes('/api/proxy/stream')) {
+      const match = url.match(/[?&]url=([^&]+)/);
+      if (match && match[1]) {
+        try {
+          const unwrapped = decodeURIComponent(match[1]);
+          if (unwrapped.startsWith('http')) {
+             console.log(`🔄 Unwrapping recursive proxy URL: ${url} -> ${unwrapped}`);
+             url = unwrapped;
+             continue;
+          }
+        } catch (e) {
+          console.warn("Failed to decode recursive URL:", e);
+        }
+      }
+      break;
+    }
+
+    // console.log(`🎯 Proxy stream request: ${url}`);
     try {
       if (!url) {
         return res.status(400).json({ message: "URL parameter is required" });
@@ -509,14 +705,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
         upstreamHeaders['If-None-Match'] = req.headers['if-none-match'] as string;
       }
 
-      // Use helper that handles XUI redirects manually
-      // XUI returns 302 to https://...:81 which fails because port 81 is HTTP
-      const response = await fetchXuiWithRedirectHandling(url, upstreamHeaders);
-      console.log(`📡 Upstream response: ${response.status} ${response.statusText}, Content-Type: ${response.headers.get('content-type')}`)
+      // Forward Cookies (CRITICAL for session management to avoid re-auth loops)
+      if (req.headers['cookie']) {
+        upstreamHeaders['Cookie'] = req.headers['cookie'];
+      }
+
+      // CHECK PREFETCH CACHE
+      let response: Response;
+      if (segmentPrefetchCache.has(url)) {
+          const cacheEntry = segmentPrefetchCache.get(url)!;
+          console.log(`🎯 Cache HIT for segment: ${url}`);
+          try {
+             response = await cacheEntry.promise;
+          } catch (e) {
+             // If prefetched promise failed, retry normally
+             console.warn("Prefetch promise rejected, retrying normally:", e);
+             response = await fetchXuiWithRedirectHandling(url, upstreamHeaders);
+          }
+          segmentPrefetchCache.delete(url); // Remove from cache after consumption (one-time use)
+      } else {
+          // Cache Miss - fetch normally
+          // Use helper that handles XUI redirects manually
+          // XUI returns 302 to https://...:81 which fails because port 81 is HTTP
+          // Since convertXUIUrlToLocal is transparent now, this just handles 302s
+          response = await fetchXuiWithRedirectHandling(url, upstreamHeaders);
+      }
       
       // Accept 200, 206 (Partial Content), and 304 (Not Modified)
       if (!response.ok && response.status !== 206 && response.status !== 304) {
         return res.status(response.status).send(`Failed to fetch stream: ${response.statusText}`);
+      }
+
+      // PREFETCH NEXT SEGMENT (if it's a TS file)
+      if (url.endsWith('.ts')) {
+         // Fire and forget - don't await
+         prefetchNextSegment(url, upstreamHeaders);
       }
 
       // Enable CORS
@@ -559,6 +782,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         res.setHeader('ETag', etag);
       }
 
+      // Forward Set-Cookie headers back to client (CRITICAL for session persistence)
+      const setCookie = response.headers.get('set-cookie');
+      if (setCookie) {
+        res.setHeader('Set-Cookie', setCookie);
+      }
+
+      // Set Cache-Control for segments to help client buffer
+      if (url.endsWith('.ts')) {
+          res.setHeader('Cache-Control', 'public, max-age=3600');
+      }
+
       // Check if this is an M3U8 playlist that needs URL rewriting
       const isM3U8 = contentType?.includes('application/vnd.apple.mpegurl') || 
                      contentType?.includes('application/x-mpegurl') ||
@@ -588,6 +822,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const lines = playlist.split('\n');
         const rewrittenLines = lines.map(line => {
           const trimmedLine = line.trim();
+
+          // CRITICAL: If the URL is already pointing to our proxy, DO NOT wrap it again.
+          if (trimmedLine.includes('/api/proxy/stream')) {
+             return trimmedLine;
+          }
           
           // Skip empty lines and comments
           if (!trimmedLine || trimmedLine.startsWith('#')) {
@@ -607,6 +846,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           // If it's already an absolute URL, proxy it
           if (trimmedLine.startsWith('http://') || trimmedLine.startsWith('https://')) {
+            // Prevent recursive wrapping if it's already pointing to our proxy
+            // Check specifically for our proxy path to be safe (both raw and encoded)
+            if (trimmedLine.includes('/api/proxy/stream') || trimmedLine.includes('%2Fapi%2Fproxy%2Fstream')) {
+              return trimmedLine;
+            }
             return `/api/proxy/stream?url=${encodeURIComponent(trimmedLine)}`;
           }
           
@@ -695,13 +939,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   app.post(`${apiPrefix}/playlists`, async (req, res) => {
-    try {
-      const validatedData = schema.playlistInsertSchema.parse(req.body);
-      const newPlaylist = await storage.createPlaylist(validatedData);
-      return res.status(201).json(newPlaylist[0]);
-    } catch (error) {
-      handleError(res, error);
-    }
+    // DEPRECATED: Client-side storage only
+    return res.status(410).json({ message: "Playlist storage is now client-side only." });
   });
 
   app.patch(`${apiPrefix}/playlists/:id`, async (req, res) => {
