@@ -1,10 +1,6 @@
-import { Pool, neonConfig } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-serverless';
-import ws from "ws";
+import { Pool } from 'pg';
+import { drizzle } from 'drizzle-orm/node-postgres';
 import * as schema from "@shared/schema";
-
-// This is the correct way neon config - DO NOT change this
-neonConfig.webSocketConstructor = ws;
 
 // Allow running without DATABASE_URL for local development (Simple Player mode only)
 export const isDbAvailable = !!process.env.DATABASE_URL;
@@ -15,9 +11,13 @@ if (!isDbAvailable) {
   console.warn('   To use full features, set DATABASE_URL environment variable');
 }
 
-// Export pool and db (will be null if no DATABASE_URL)
-export const pool = isDbAvailable ? new Pool({ connectionString: process.env.DATABASE_URL! }) : null;
-export const db = isDbAvailable ? drizzle({ client: pool!, schema }) : null;
+// Use standard node-postgres Pool for TCP connection (avoids WebSocket/SSL issues on localhost)
+export const pool = isDbAvailable ? new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+}) : null;
+
+export const db = isDbAvailable ? drizzle(pool!, { schema }) : null;
 
 // Helper to guard routes that require database
 export function assertDb() {

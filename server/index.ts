@@ -4,9 +4,15 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
+// Initialize express
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// FORCE SSL VERIFICATION OFF GLOBALLY FOR INTERNAL CALLS
+// This fixes the "ERR_TLS_CERT_ALTNAME_INVALID" when the backend
+// fetches from localhost (which often has self-signed certs)
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 // Simple logger implementation
 function log(message: string, source = "express") {
@@ -20,6 +26,7 @@ function log(message: string, source = "express") {
   console.log(`${formattedTime} [${source}] ${message}`);
 }
 
+// Request logging middleware
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;

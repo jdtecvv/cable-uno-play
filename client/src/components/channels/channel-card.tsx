@@ -8,13 +8,15 @@ import { useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { DEFAULT_IMAGES, API_ENDPOINTS } from "@/lib/constants";
 import { useToast } from "@/hooks/use-toast";
-import { useKeyNavigation } from "@/hooks/use-key-navigation";
+import { getProxiedImageUrl } from "@/lib/utils";
 
 interface ChannelCardProps {
   channel: ChannelWithCategory;
   index?: number;
   columnCount?: number;
   onKeyNavigate?: (direction: "up" | "down" | "left" | "right") => void;
+  onPlay?: (channel: ChannelWithCategory) => void;
+  enableFavorites?: boolean;
 }
 
 export default function ChannelCard({
@@ -22,6 +24,8 @@ export default function ChannelCard({
   index,
   columnCount,
   onKeyNavigate,
+  onPlay,
+  enableFavorites = true,
 }: ChannelCardProps) {
   const [, navigate] = useLocation();
   const queryClient = useQueryClient();
@@ -35,6 +39,8 @@ export default function ChannelCard({
     e.stopPropagation();
     e.preventDefault();
     
+    if (!enableFavorites) return;
+
     try {
       await apiRequest("PATCH", `${API_ENDPOINTS.CHANNELS}/${channelData.id}/toggle-favorite`);
       
@@ -57,18 +63,28 @@ export default function ChannelCard({
   };
   
   const handlePlayChannel = () => {
-    // Update last watched timestamp
-    apiRequest("PATCH", `${API_ENDPOINTS.CHANNELS}/${channelData.id}/update-last-watched`)
-      .then(() => {
-        // Invalidate recent channels query
-        queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.RECENT] });
-      })
-      .catch(error => {
-        console.error("Failed to update last watched status:", error);
-      });
-    
-    // Navigate to watch page
-    navigate(`/watch/${channelData.id}`);
+    if (onPlay) {
+      onPlay(channel);
+      return;
+    }
+
+    // Update last watched timestamp only if we're in "normal" mode (id is positive/valid)
+    if (channelData.id > 0) {
+      apiRequest("PATCH", `${API_ENDPOINTS.CHANNELS}/${channelData.id}/update-last-watched`)
+        .then(() => {
+          // Invalidate recent channels query
+          queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.RECENT] });
+        })
+        .catch(error => {
+          console.error("Failed to update last watched status:", error);
+        });
+
+      // Navigate to watch page
+      navigate(`/watch/${channelData.id}`);
+    } else {
+       // Should not happen if onPlay is not provided for fake channels, but fallback to nothing or error
+       console.warn("Attempted to play a channel with invalid ID without onPlay handler");
+    }
   };
   
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -94,7 +110,7 @@ export default function ChannelCard({
   };
   
   // Use logo or default image
-  const logoUrl = channelData.logo || DEFAULT_IMAGES.CHANNEL_THUMBNAIL;
+  const logoUrl = getProxiedImageUrl(channelData.logo) || DEFAULT_IMAGES.CHANNEL_THUMBNAIL;
   
   return (
     <Card 
@@ -108,11 +124,12 @@ export default function ChannelCard({
       onKeyDown={handleKeyDown}
     >
       <div className="relative">
-        <div className="aspect-video bg-muted">
+        <div className="aspect-video bg-muted relative">
           <img 
             src={logoUrl} 
             alt={channelData.name} 
-            className="w-full h-full object-cover"
+            loading="lazy"
+            className="w-full h-full object-cover absolute inset-0"
             onError={(e) => {
               e.currentTarget.src = DEFAULT_IMAGES.CHANNEL_THUMBNAIL;
             }}
@@ -123,21 +140,23 @@ export default function ChannelCard({
             LIVE
           </div>
         </div>
-        <div className="absolute top-2 right-2">
-          <Button 
-            variant="ghost"
-            size="icon"
-            className="text-white bg-black/40 hover:bg-primary rounded-full w-8 h-8"
-            onClick={handleToggleFavorite}
-            tabIndex={-1}
-          >
-            {channelData.isFavorite ? (
-              <FavoriteFillIcon className="h-4 w-4" />
-            ) : (
-              <FavoriteIcon className="h-4 w-4" />
-            )}
-          </Button>
-        </div>
+        {enableFavorites && (
+          <div className="absolute top-2 right-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-white bg-black/40 hover:bg-primary rounded-full w-8 h-8"
+              onClick={handleToggleFavorite}
+              tabIndex={-1}
+            >
+              {channelData.isFavorite ? (
+                <FavoriteFillIcon className="h-4 w-4" />
+              ) : (
+                <FavoriteIcon className="h-4 w-4" />
+              )}
+            </Button>
+          </div>
+        )}
       </div>
       <CardContent className="p-3">
         <h3 className="font-medium text-foreground truncate">{channelData.name}</h3>

@@ -1,0 +1,19 @@
+
+> rest-express@1.0.0 dev
+> tsx server/index.ts
+
+⚠️  Running in development mode WITHOUT database (Simple Player only)
+   Only /api/proxy/* endpoints will work
+   To use full features, set DATABASE_URL environment variable
+🚀 Registering API routes with prefix: /api
+📡 Registering route: GET /api/proxy/image
+📡 Registering route: GET /api/proxy/stream
+/app/server/vite.ts:22
+  const viteLogger = vite.createLogger();
+                          ^
+
+TypeError: vite.createLogger is not a function
+    at setupVite (/app/server/vite.ts:22:27)
+    at async <anonymous> (/app/server/index.ts:54:5)
+
+Node.js v22.21.1
