@@ -408,26 +408,93 @@ const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
     };
 
     const toggleFullscreen = () => {
-      if (!playerContainerRef.current) return;
+      const container = playerContainerRef.current;
+      const video = videoRef.current;
       
-      if (!document.fullscreenElement) {
-        playerContainerRef.current.requestFullscreen()
-          .then(() => {
-            setIsFullscreen(true);
-          })
-          .catch((err) => {
-            console.error("Error attempting to enable fullscreen:", err);
+      if (!container || !video) return;
+
+      const isFullscreenMode = document.fullscreenElement ||
+                              (document as any).webkitFullscreenElement ||
+                              (document as any).mozFullScreenElement ||
+                              (document as any).msFullscreenElement ||
+                              (video as any).webkitDisplayingFullscreen;
+
+      if (!isFullscreenMode) {
+        // Enter fullscreen
+        if (container.requestFullscreen) {
+          container.requestFullscreen().catch((err) => {
+            console.warn("Standard fullscreen failed, trying video fallback:", err);
+            // Fallback for some mobile browsers (iOS Safari)
+            if ((video as any).webkitEnterFullscreen) {
+              (video as any).webkitEnterFullscreen();
+            } else if ((video as any).requestFullscreen) {
+               (video as any).requestFullscreen();
+            }
           });
+        } else if ((container as any).webkitRequestFullscreen) {
+          (container as any).webkitRequestFullscreen();
+        } else if ((container as any).mozRequestFullScreen) {
+          (container as any).mozRequestFullScreen();
+        } else if ((container as any).msRequestFullscreen) {
+          (container as any).msRequestFullscreen();
+        } else if ((video as any).webkitEnterFullscreen) {
+          // iOS Safari fallback
+          (video as any).webkitEnterFullscreen();
+        }
       } else {
-        document.exitFullscreen()
-          .then(() => {
-            setIsFullscreen(false);
-          })
-          .catch((err) => {
-            console.error("Error attempting to exit fullscreen:", err);
+        // Exit fullscreen
+        if (document.exitFullscreen) {
+          document.exitFullscreen().catch((err) => {
+             console.error("Error attempting to exit fullscreen:", err);
           });
+        } else if ((document as any).webkitExitFullscreen) {
+          (document as any).webkitExitFullscreen();
+        } else if ((document as any).mozCancelFullScreen) {
+          (document as any).mozCancelFullScreen();
+        } else if ((document as any).msExitFullscreen) {
+          (document as any).msExitFullscreen();
+        } else if ((video as any).webkitExitFullscreen) {
+           (video as any).webkitExitFullscreen();
+        }
       }
     };
+
+    // Sync fullscreen state with browser events
+    useEffect(() => {
+      const handleFullscreenChange = () => {
+        const isFullscreenMode = !!(document.fullscreenElement ||
+                                   (document as any).webkitFullscreenElement ||
+                                   (document as any).mozFullScreenElement ||
+                                   (document as any).msFullscreenElement);
+        setIsFullscreen(isFullscreenMode);
+      };
+
+      document.addEventListener("fullscreenchange", handleFullscreenChange);
+      document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
+      document.addEventListener("mozfullscreenchange", handleFullscreenChange);
+      document.addEventListener("msfullscreenchange", handleFullscreenChange);
+
+      const video = videoRef.current;
+      const handleIOSFullscreenBegin = () => setIsFullscreen(true);
+      const handleIOSFullscreenEnd = () => setIsFullscreen(false);
+
+      if (video) {
+        video.addEventListener("webkitbeginfullscreen", handleIOSFullscreenBegin);
+        video.addEventListener("webkitendfullscreen", handleIOSFullscreenEnd);
+      }
+
+      return () => {
+        document.removeEventListener("fullscreenchange", handleFullscreenChange);
+        document.removeEventListener("webkitfullscreenchange", handleFullscreenChange);
+        document.removeEventListener("mozfullscreenchange", handleFullscreenChange);
+        document.removeEventListener("msfullscreenchange", handleFullscreenChange);
+
+        if (video) {
+          video.removeEventListener("webkitbeginfullscreen", handleIOSFullscreenBegin);
+          video.removeEventListener("webkitendfullscreen", handleIOSFullscreenEnd);
+        }
+      };
+    }, []);
 
     const handleKeyDown = (e: KeyboardEvent) => {
       switch (e.key) {
